@@ -33,8 +33,9 @@ export const wedding = {
     familyHindi: 'यादव',
     address: {
       label: 'Yadav family home, Gadarwara',
-      address: 'Gayatri Nagar, MPEB Colony, Gadarwara, Madhya Pradesh 487551',
-      mapsQuery: 'Gayatri Nagar, MPEB Colony, Gadarwara, Madhya Pradesh 487551',
+      address: 'Gayatri Nagar, MPEB Colony, Gadarwara, M.P. 487551',
+      // Google's plus code for Gayatri Nagar (Pipariya Road, by MPEB Colony), so every Maps app lands on the same spot
+      mapsQuery: 'WQ9C+CM2 Gayatri Nagar, Gadarwara, Madhya Pradesh 487551',
     },
   },
 
@@ -58,8 +59,6 @@ export const wedding = {
 
   // Numbers printed on the card (Ramshlok Rai and Asha Devi Rai)
   phones: ['94283 00002', '94298 30002'],
-
-  engagement: { date: '2026-02-09', place: 'Surbhi Hotel, Gadarwara' },
 
   // Printed on the card, in the card's own words
   swagatatur: ['रामअयोध्या यादव', 'गणेश सिंह यादव', 'रणजीत सिंह यादव', 'रणवीर सिंह यादव'],
@@ -93,27 +92,19 @@ export const wedding = {
     couple: '/art/couple.webp',
   },
 
-  // Indian miniature paintings from The Met's Open Access collection (public domain, free to use)
-  paintings: {
-    elephantCover: '/art/elephant-alam.webp', // Portrait of the Elephant 'Alam Guman, Mughal, ca. 1640
-    elephantFamilies: '/art/elephant-adil.webp', // Sultan Muhammad 'Adil Shah riding an elephant, Bijapur, ca. 1645
-    baraat: {
-      src: '/art/baraat.webp',
-      caption: 'Maharana Jagat Singh II in a wedding procession, Udaipur, 1738 to 1740',
-    },
-    night: {
-      src: '/art/night-procession.webp',
-      caption: 'Wedding procession of Sultan Muhammad Quli Qutb Shah, Golconda, about 1650',
-    },
-    finale: {
-      src: '/art/yamuna.webp',
-      caption: 'Krishna and the gopis by the Yamuna, Tehri Garhwal, about 1775',
-    },
+  // Mahadev and Parvati artwork: free illustrations from Pixabay (Pixabay Content License,
+  // free to use with no attribution needed), resized to webp in public/art/.
+  art: {
+    cover: { src: '/art/shiva-parvati-stars.webp', alt: 'Mahadev and Parvati together under a sky full of stars' },
+    sunset: { src: '/art/shiva-parvati-sunset.webp', alt: 'Mahadev and Parvati against the setting sun' },
+    night: { src: '/art/shiva-parvati-temple.webp', alt: 'Mahadev and Parvati in a lamp-lit temple at night' },
+    nandi: { src: '/art/shiva-nandi.webp', alt: 'Mahadev and Nandi on the misty hills' },
+    finale: { src: '/art/shiva-parvati-valley.webp', alt: 'Mahadev and Parvati face to face in the Himalayas' },
   },
 
-  // Guest functions in order, as printed under "मांगलिक कार्यक्रम". `image` is the painting
-  // beside it; without one, `icon` picks a drawing. Empty `time` or `venue` hides that line.
-  // `mapsQuery` turns the venue into a directions link; `rituals` lists everything in the block.
+  // Guest functions in order, as printed under "मांगलिक कार्यक्रम". Empty `time` or `venue` hides
+  // that line. `mapsQuery` turns the venue into a directions link (`route` into a route from home
+  // to the venue); `rituals` lists everything in the block.
   functions: [
     {
       key: 'haldi',
@@ -125,8 +116,6 @@ export const wedding = {
       time: '10:00 AM to 12:00 PM',
       venue: home.label,
       mapsQuery: home.mapsQuery,
-      icon: 'haldi',
-      image: '/art/v-haldi.webp',
       rituals: ['मटिगमरा', 'उदरी', 'मंडप मुहूर्त', 'गणेश स्थापना', 'कलश स्थापना', 'हल्दी', 'कंगन'],
       about: "One packed morning at home. The mandap goes up, Ganesh ji and the kalash are set in place, and then the ladies get to the haldi (and the teasing). Wear something you don't mind getting yellow.",
     },
@@ -140,8 +129,6 @@ export const wedding = {
       time: '4:00 PM to 6:00 PM',
       venue: home.label,
       mapsQuery: home.mapsQuery,
-      icon: 'mehendi',
-      image: '/art/v-mehendi.webp',
       about: 'Mehendi for all the ladies, with the dholak going and plenty of folk songs. They say the darker it gets, the more you are loved.',
     },
     {
@@ -154,8 +141,6 @@ export const wedding = {
       time: '10:00 AM to 2:00 PM, lunch from 12:30',
       venue: home.label,
       mapsQuery: home.mapsQuery,
-      icon: 'tilak',
-      image: '/art/v-tilak.webp',
       about: "Samiksha's family comes over to put tilak on Himanshu and bless him. Then we all sit down to lunch together.",
     },
     {
@@ -168,8 +153,6 @@ export const wedding = {
       time: '7:00 PM onwards',
       venue: home.label,
       mapsQuery: home.mapsQuery,
-      icon: 'sangeet',
-      image: '/art/v-sangeet.webp',
       about: 'Songs, dholak and a lot of dancing on the evening before the wedding. Come ready to join in!',
     },
     {
@@ -181,8 +164,6 @@ export const wedding = {
       time: '4:00 PM onwards',
       venue: 'Rai family home, Yogi Nagar to Purshottam Party Plot, Bhayli',
       route: { from: home.mapsQuery, to: 'Purshottam Party Plot, Bhayli, Vadodara' },
-      icon: 'sangeet',
-      image: '/art/v-baraat.webp',
       about: 'The baraat leaves home at 4 PM with the band baaja and dances its way to the venue. Join us at Yogi Nagar, or meet us at the party plot.',
     },
     {
@@ -194,7 +175,6 @@ export const wedding = {
       time: 'Dwar puja 6:00 PM, vivah from 11:00 PM',
       venue: 'Purshottam Party Plot, Bhayli',
       mapsQuery: 'Purshottam Party Plot, Bhayli, Vadodara',
-      icon: 'vivah',
       highlight: true,
       about: 'Dwar puja, jaimala, dinner, and then the pheras late into the night. The big one!',
     },
@@ -202,15 +182,15 @@ export const wedding = {
 
   // 25 November, the wedding night, then bidaai the next morning
   weddingDay: [
-    { time: '4:00 PM', name: 'Baraat', hindi: 'बारात प्रस्थान', image: '/art/v-baraat.webp', route: { from: home.mapsQuery, to: 'Purshottam Party Plot, Bhayli, Vadodara', label: 'Rai family home, Yogi Nagar to Purshottam Party Plot' }, about: 'Himanshu sets off from home with the baraat. Expect band baaja and a lot of dancing all the way to the venue.' },
-    { time: '6:00 to 8:00 PM', name: 'Dwar Puja', hindi: 'द्वार पूजा', image: '/art/v-dwar.webp', about: "The baraat reaches the gate and Samiksha's family welcomes Himanshu with aarti." },
-    { time: '9:00 to 10:00 PM', name: 'Jaimala', hindi: 'जयमाला', about: 'Garlands are exchanged, and both sides try to lift their own higher.' },
-    { time: '9:30 PM onwards', name: 'Dinner', hindi: 'भोजन समारंभ', image: '/art/v-bhojan.webp', about: "Dinner is served. Please don't leave without eating!" },
-    { time: '11:00 PM onwards', name: 'Shubh Vivah', hindi: 'शुभ विवाह', image: '/art/v-mandap.webp', about: 'Panditji begins the vivah under the mandap. It goes on late into the night.', highlight: true },
-    { time: 'During the vivah', name: 'Kanyadaan', hindi: 'कन्यादान', image: '/art/v-kanyadaan.webp', about: "Samiksha's parents place her hand in Himanshu's. Keep a hanky ready for this one." },
-    { time: 'During the vivah', name: 'Saat Phere', hindi: 'सात फेरे', image: '/art/v-saath.webp', about: 'Seven rounds around the agni, and a promise with every round.', highlight: true },
-    { time: 'During the vivah', name: 'Sindoor Daan', hindi: 'सिंदूर दान', image: '/art/v-sindoor.webp', about: "Himanshu fills Samiksha's maang with sindoor. In Bihar, this is the moment they're married.", highlight: true },
-    { time: '6:00 AM, Thu 26 Nov', name: 'Bidaai', hindi: 'बिदाई', image: '/art/v-vidaai.webp', about: "At first light Samiksha leaves for her new home in Yogi Nagar, throwing rice back over her head to wish her parents' home well. Everyone cries." },
+    { time: '4:00 PM', name: 'Baraat', hindi: 'बारात प्रस्थान', route: { from: home.mapsQuery, to: 'Purshottam Party Plot, Bhayli, Vadodara', label: 'Rai family home, Yogi Nagar to Purshottam Party Plot' }, about: 'Himanshu sets off from home with the baraat. Expect band baaja and a lot of dancing all the way to the venue.' },
+    { time: '6:00 to 8:00 PM', name: 'Dwar Puja', hindi: 'द्वार पूजा', about: "The baraat reaches the gate and Samiksha's family welcomes Himanshu with aarti." },
+    { time: '9:00 PM onwards', name: 'Jaimala', hindi: 'जयमाला', about: 'Garlands are exchanged, and both sides try to lift their own higher.' },
+    { time: '9:30 PM onwards', name: 'Dinner', hindi: 'भोजन समारंभ', about: "Dinner is served. Please don't leave without eating!" },
+    { time: '11:00 PM onwards', name: 'Shubh Vivah', hindi: 'शुभ विवाह', about: 'Panditji begins the vivah under the mandap. It goes on late into the night.', highlight: true },
+    { time: 'During the vivah', name: 'Kanyadaan', hindi: 'कन्यादान', about: "Samiksha's parents place her hand in Himanshu's. Keep a hanky ready for this one." },
+    { time: 'During the vivah', name: 'Saat Phere', hindi: 'सात फेरे', about: 'Seven rounds around the agni, and a promise with every round.', highlight: true },
+    { time: 'During the vivah', name: 'Sindoor Daan', hindi: 'सिंदूर दान', about: "Himanshu fills Samiksha's maang with sindoor. In Bihar, this is the moment they're married.", highlight: true },
+    { time: '6:00 AM, Thu 26 Nov', name: 'Bidaai', hindi: 'बिदाई', about: "At first light Samiksha leaves for her new home in Yogi Nagar, throwing rice back over her head to wish her parents' home well. Everyone cries." },
   ],
 
   // Suggestions only, change them freely. `tone` picks the card colour.

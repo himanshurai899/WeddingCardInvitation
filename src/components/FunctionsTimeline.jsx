@@ -2,23 +2,9 @@ import { useId } from 'react';
 import { motion } from 'framer-motion';
 import { Clock, MapPin } from 'lucide-react';
 import { wedding, formatDate, directionsUrl, routeUrl } from '../config/wedding';
-import { Dholak, HaldiBowl, KalashIcon, MatkorPot, MehendiHands, ReceptionStage, TilakThali } from './art/Icons';
-import { CoupleArch } from './art/Couple';
-import { Vignette } from './art/Painting';
 
-const icons = {
-  mandap: KalashIcon,
-  mehendi: MehendiHands,
-  tilak: TilakThali,
-  vivah: CoupleArch,
-  haldi: HaldiBowl,
-  sangeet: Dholak,
-  matkor: MatkorPot,
-  reception: ReceptionStage,
-};
-
-// A sheer dupatta with a zari border, drifting and twisting down the page.
-// Drawn in a 100 × 1000 box stretched over the centre column; outlines use non-scaling strokes.
+// The Ganga coming down from Mahadev's jata, winding down the page past each rasam.
+// Drawn in a 100 × 1000 box stretched over the rail; outlines use non-scaling strokes.
 const H = 1000;
 const samples = Array.from({ length: 101 }, (_, i) => {
   const y = (i / 100) * H;
@@ -28,121 +14,122 @@ const samples = Array.from({ length: 101 }, (_, i) => {
   return { y, left: center - half, right: center + half, center, half };
 });
 const edge = (fn) => samples.map((s) => `${fn(s).toFixed(2)},${s.y.toFixed(1)}`).join(' ');
-const fabric = `M${edge((s) => s.left)} L${samples.slice().reverse().map((s) => `${s.right.toFixed(2)},${s.y.toFixed(1)}`).join(' ')} Z`;
+const water = `M${edge((s) => s.left)} L${samples.slice().reverse().map((s) => `${s.right.toFixed(2)},${s.y.toFixed(1)}`).join(' ')} Z`;
+const fade = 'linear-gradient(transparent, #000 5%, #000 95%, transparent)';
 
-const Dupatta = () => {
-  const id = useId();
+const Ganga = ({ className }) => {
+  const id = useId().replace(/[^a-zA-Z0-9_-]/g, '');
   return (
     <svg
       viewBox={`0 0 100 ${H}`}
       preserveAspectRatio="none"
-      className="absolute inset-y-0 left-1/2 -translate-x-1/2 w-[120px] sm:w-[200px] h-full pointer-events-none"
-      style={{ maskImage: 'linear-gradient(transparent, #000 6%, #000 94%, transparent)', WebkitMaskImage: 'linear-gradient(transparent, #000 6%, #000 94%, transparent)' }}
+      className={`absolute inset-y-0 -translate-x-1/2 h-full pointer-events-none ${className}`}
+      style={{ maskImage: fade, WebkitMaskImage: fade }}
       aria-hidden="true"
     >
       <defs>
-        <linearGradient id={`silk-${id}`} x1="0" x2="1">
-          <stop offset="0" stopColor="#f3c1ad" />
-          <stop offset=".45" stopColor="#fde4d8" />
-          <stop offset=".6" stopColor="#fbd3c2" />
-          <stop offset="1" stopColor="#efb49e" />
+        <linearGradient id={`ganga-${id}`} x1="0" x2="1">
+          <stop offset="0" stopColor="#a9c3ec" />
+          <stop offset=".45" stopColor="#e3edfb" />
+          <stop offset=".6" stopColor="#cddcf5" />
+          <stop offset="1" stopColor="#9db8e6" />
         </linearGradient>
       </defs>
-      <path d={fabric} fill={`url(#silk-${id})`} fillOpacity=".85" />
-      <polyline points={edge((s) => s.center + s.half * 0.15)} fill="none" stroke="#ffffff" strokeOpacity=".55" strokeWidth="6" vectorEffect="non-scaling-stroke" />
-      <polyline points={edge((s) => s.center - s.half * 0.5)} fill="none" stroke="#d4a24c" strokeWidth="3" strokeDasharray="0.1 14" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
-      <polyline points={edge((s) => s.center + s.half * 0.5)} fill="none" stroke="#d4a24c" strokeWidth="3" strokeDasharray="0.1 14" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
+      <path d={water} fill={`url(#ganga-${id})`} fillOpacity=".9" />
+      <polyline points={edge((s) => s.center + s.half * 0.15)} fill="none" stroke="#ffffff" strokeOpacity=".8" strokeWidth="5" vectorEffect="non-scaling-stroke" />
+      <polyline points={edge((s) => s.center - s.half * 0.5)} fill="none" stroke="#ffffff" strokeWidth="3" strokeDasharray="0.1 12" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
+      <polyline points={edge((s) => s.center + s.half * 0.5)} fill="none" stroke="#ffffff" strokeWidth="3" strokeDasharray="0.1 16" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
       {['left', 'right'].map((side) => (
-        <g key={side}>
-          <polyline points={edge((s) => s[side])} fill="none" stroke="#c9953a" strokeWidth="3.5" vectorEffect="non-scaling-stroke" />
-          <polyline points={edge((s) => s[side] + (side === 'left' ? 3 : -3) * Math.min(1, s.half / 14))} fill="none" stroke="#e0b45f" strokeWidth="1.2" strokeDasharray="3 3" vectorEffect="non-scaling-stroke" />
-        </g>
+        <polyline key={side} points={edge((s) => s[side])} fill="none" stroke="#7d9bd3" strokeWidth="2" vectorEffect="non-scaling-stroke" />
       ))}
     </svg>
   );
 };
 
+// The date on a gold-ringed disc that sits on the river
+const DateMedallion = ({ date, highlight }) => (
+  <div
+    className={`relative z-10 w-14 h-14 md:w-[76px] md:h-[76px] rounded-full grid place-items-center text-center border-2 border-gold-bright shadow-[0_6px_16px_rgba(23,37,90,.3)] ${highlight ? 'bg-gradient-to-b from-sindoor to-maroon-deep' : 'bg-gradient-to-b from-neel to-neel-ink'}`}
+  >
+    <span className="absolute inset-[3px] rounded-full border border-gold/40" aria-hidden="true" />
+    <span className="leading-none">
+      <span className="block font-serif text-2xl md:text-[32px] font-bold text-gold-pale">{formatDate(date, { day: 'numeric' })}</span>
+      <span className="block text-[9px] md:text-[10px] tracking-[0.2em] uppercase font-extrabold text-gold-bright mt-0.5">
+        {formatDate(date, { month: 'short' })}
+      </span>
+    </span>
+  </div>
+);
+
 const FunctionRow = ({ fn, index }) => {
-  const Icon = icons[fn.icon] ?? KalashIcon;
-  const textFirst = index % 2 === 0;
-
-  const text = (
-    <motion.div
-      initial={{ opacity: 0, x: textFirst ? -30 : 30 }}
-      whileInView={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.6 }}
-      viewport={{ once: true, margin: '-40px' }}
-      className={`min-w-0 ${textFirst ? 'text-right pr-2' : 'text-left pl-2'}`}
-    >
-      <p className="text-[10px] sm:text-xs tracking-[0.2em] uppercase font-extrabold text-marigold">
-        {formatDate(fn.date, { weekday: 'short', day: 'numeric', month: 'short' })}
-      </p>
-      {fn.tithi && <p className="deva text-[11px] text-ink-soft leading-tight">{fn.tithi}</p>}
-      <p className={`deva leading-tight mt-1 ${fn.highlight ? 'text-sindoor text-3xl' : 'text-maroon text-2xl'}`}>{fn.hindi}</p>
-      <h3 className={`script-font leading-none text-ink ${fn.highlight ? 'text-[34px]' : 'text-[28px]'}`}>{fn.name}</h3>
-      {fn.time && (
-        <p className="mt-2 text-[11px] sm:text-xs font-semibold text-ink">
-          <Clock className="inline w-3.5 h-3.5 mr-1 -mt-0.5 text-marigold" />{fn.time}
-        </p>
-      )}
-      {fn.venue && (
-        <p className="mt-1 text-[11px] sm:text-xs font-semibold text-ink">
-          <MapPin className="inline w-3.5 h-3.5 mr-1 -mt-0.5 text-marigold" />
-          {fn.route || fn.mapsQuery ? (
-            <a href={fn.route ? routeUrl(fn.route) : directionsUrl(fn.mapsQuery)} target="_blank" rel="noopener noreferrer" className="underline decoration-gold/60 underline-offset-2">
-              {fn.venue}
-            </a>
-          ) : fn.venue}
-        </p>
-      )}
-      {fn.rituals && (
-        <p className="mt-2 font-devaText text-[11px] sm:text-xs leading-relaxed text-maroon">{fn.rituals.join(' • ')}</p>
-      )}
-      <p className="mt-2 text-xs sm:text-sm leading-relaxed text-ink-soft">{fn.about}</p>
-    </motion.div>
-  );
-
-  const art = (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.85 }}
-      whileInView={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.6, delay: 0.1 }}
-      viewport={{ once: true, margin: '-40px' }}
-      className="flex justify-center"
-    >
-      {fn.image ? (
-        <Vignette src={fn.image} alt={fn.name} className="w-full max-w-[140px]" />
-      ) : (
-        <Icon className={`${fn.icon === 'vivah' ? 'w-full max-w-[180px]' : 'w-full max-w-[140px]'} h-auto drop-shadow-md animate-float`} style={{ animationDelay: `${index * 0.7}s` }} />
-      )}
-    </motion.div>
-  );
+  const left = index % 2 === 0;
+  const link = fn.route ? routeUrl(fn.route) : fn.mapsQuery ? directionsUrl(fn.mapsQuery) : null;
+  const card = fn.highlight
+    ? 'bg-gradient-to-br from-maroon to-maroon-deep text-cream border-gold'
+    : 'bg-cream-card text-ink border-gold/45';
+  const soft = fn.highlight ? 'text-gold-pale/85' : 'text-ink-soft';
 
   return (
-    <div className="grid grid-cols-[1fr_84px_1fr] sm:grid-cols-[1fr_150px_1fr] items-center py-8 sm:py-10">
-      {textFirst ? text : art}
-      <span aria-hidden="true" />
-      {textFirst ? art : text}
-    </div>
+    <li className="relative grid grid-cols-[56px_minmax(0,1fr)] md:grid-cols-[minmax(0,1fr)_120px_minmax(0,1fr)] items-start md:items-center gap-x-4 md:gap-x-0 py-3 md:py-5">
+      <div className="row-start-1 col-start-1 md:col-start-2 flex justify-center pt-4 md:pt-0">
+        <DateMedallion date={fn.date} highlight={fn.highlight} />
+      </div>
+
+      <motion.article
+        initial={{ opacity: 0, y: 24 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        viewport={{ once: true, margin: '-40px' }}
+        className={`row-start-1 col-start-2 ${left ? 'md:col-start-1' : 'md:col-start-3'} min-w-0 rounded-2xl border px-5 py-5 shadow-[0_8px_24px_rgba(92,20,32,.1)] ${card}`}
+      >
+        <p className={`text-[11px] tracking-[0.2em] uppercase font-extrabold ${fn.highlight ? 'text-gold-bright' : 'text-marigold'}`}>
+          {formatDate(fn.date, { weekday: 'long', day: 'numeric', month: 'long' })}
+        </p>
+        {fn.tithi && <p className={`deva text-xs leading-snug ${soft}`}>{fn.tithi}</p>}
+        <h3 className={`deva leading-tight mt-2 text-[26px] sm:text-3xl ${fn.highlight ? 'text-gold-pale' : 'text-maroon'}`}>{fn.hindi}</h3>
+        <p className={`script-font leading-none text-[30px] ${fn.highlight ? 'text-cream' : 'text-ink'}`}>{fn.name}</p>
+
+        {fn.time && (
+          <p className="mt-3 flex items-start gap-1.5 text-[13px] font-semibold">
+            <Clock className={`w-4 h-4 flex-none mt-px ${fn.highlight ? 'text-gold-bright' : 'text-marigold'}`} />{fn.time}
+          </p>
+        )}
+        {fn.venue && (
+          <p className="mt-1.5 flex items-start gap-1.5 text-[13px] font-semibold">
+            <MapPin className={`w-4 h-4 flex-none mt-px ${fn.highlight ? 'text-gold-bright' : 'text-marigold'}`} />
+            {link ? (
+              <a href={link} target="_blank" rel="noopener noreferrer" className="underline decoration-gold/60 underline-offset-2">
+                {fn.venue}
+              </a>
+            ) : fn.venue}
+          </p>
+        )}
+        {fn.rituals && (
+          <p className={`mt-3 font-devaText text-[13px] leading-relaxed ${fn.highlight ? 'text-gold-pale' : 'text-maroon'}`}>{fn.rituals.join(' • ')}</p>
+        )}
+        <p className={`mt-2 text-sm leading-relaxed ${soft}`}>{fn.about}</p>
+      </motion.article>
+    </li>
   );
 };
 
 const FunctionsTimeline = () => {
   return (
-    <section id="rituals" className="relative py-16 px-4 paper overflow-hidden">
-      <header className="text-center mb-6">
+    <section id="rituals" className="relative py-16 sm:py-20 px-4 paper overflow-hidden">
+      <header className="text-center mb-8">
         <p className="text-[11px] tracking-[0.35em] uppercase font-extrabold text-sindoor">The wedding week</p>
         <h2 className="deva text-5xl text-maroon-deep mt-2">रस्में</h2>
-        <p className="font-serif italic text-lg text-ink-soft mt-1">Four busy days at home and then the big night. Come for as many as you can!</p>
+        <p className="font-serif italic text-lg text-ink-soft mt-1 max-w-md mx-auto">Four busy days at home and then the big night. Come for as many as you can!</p>
       </header>
 
-      <div className="relative max-w-2xl mx-auto">
-        <Dupatta />
-        <div className="relative">
+      <div className="relative max-w-md md:max-w-4xl mx-auto">
+        {/* down the left on phones, down the middle once there's room for a zigzag */}
+        <Ganga className="left-[28px] w-[46px] md:left-1/2 md:w-[150px]" />
+        <ol className="relative">
           {wedding.functions.map((fn, i) => (
             <FunctionRow key={fn.key} fn={fn} index={i} />
           ))}
-        </div>
+        </ol>
       </div>
     </section>
   );

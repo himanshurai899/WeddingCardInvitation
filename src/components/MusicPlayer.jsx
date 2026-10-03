@@ -59,7 +59,7 @@ const MusicPlayer = ({ src }) => {
   if (!available) return null;
 
   return (
-    <div className="fixed bottom-24 right-4 z-50 sm:bottom-28">
+    <div className="fixed right-4 z-50 bottom-[calc(5.5rem+env(safe-area-inset-bottom))] sm:bottom-28">
       <motion.button
         type="button"
         onClick={togglePlay}

@@ -31,6 +31,15 @@ export default {
           DEFAULT: "#53301f",
           soft: "#8a6a52",
         },
+        // Mahadev's side of the palette: the night sky over Kailash
+        neel: {
+          DEFAULT: "#24387a",
+          deep: "#17255a",
+          ink: "#0f1838",
+          night: "#0b1230",
+          soft: "#8fa4dc",
+          pale: "#dfe6f6",
+        },
         sindoor: "#c8102e",
         haldi: "#f2b705",
         mehendi: "#3f6212",

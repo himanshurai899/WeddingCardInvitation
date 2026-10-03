@@ -1,14 +1,16 @@
 # Himanshu & Samiksha · Shubh Vivah
 
 Digital wedding card for 25 November 2026, Vadodara. A QR code on the printed card
-opens this site: guests tap **Open Invitation**, the haveli doors swing open on scroll,
+opens this site: guests tap **Open Invitation**, the Shiv and Shakti doors swing open,
 and the page walks through the rasmein, the wedding night, the Saat Phere, the venue and the RSVP.
 
-Built with React + Vite + Tailwind + framer-motion. The artwork is traditional Indian miniature
-painting (royal elephants, wedding processions, the vignettes beside each rasam) from
-[The Met's Open Access collection](https://www.metmuseum.org/about-the-met/policies-and-documents/open-access),
-which is public domain, cropped into `public/art/`. The small ornaments (toran, Madhubani fish,
-kalash, diya) are hand-drawn SVG in `src/components/art/`.
+Built with React + Vite + Tailwind + framer-motion. The card is themed on Mahadev and Parvati:
+Shiva's night blue of Kailash next to Parvati's sindoor and gold. The pictures of Shiva and Parvati
+are free illustrations from [Pixabay](https://pixabay.com/service/license-summary/) (free to use,
+no attribution needed), resized into `public/art/`. The small symbols (trishul and damru, the
+crescent, rudraksha, the Kailash range, the bel patra toran) are SVG in `src/components/art/`.
+The site is laid out for phones first (checked on an iPhone 15 and an iPhone SE) and spreads into
+two and three columns on tablets and laptops.
 
 ## Edit the details
 
@@ -19,6 +21,8 @@ lives in **`src/config/wedding.js`**. Lines marked `VERIFY` still need your conf
 - **RSVP:** replies go to the WhatsApp number in `rsvpWhatsApp` (currently 94081 01002).
 - **Couple image:** the hero uses `public/art/couple.webp` (upscaled 4x from the image you shared).
   Swap in any other image by changing `images.couple`, or set it to `''` to go back to the drawing.
+- **Shiva and Parvati pictures:** listed under `art` in the config (cover, countdown, wedding night,
+  families, finale). Drop a new webp into `public/art/` and point the entry at it to swap one.
 - **Save the Date:** adds the wedding to Apple or Google Calendar, with the site link in the event notes.
 - **Personal links:** `https://your-site.vercel.app/?guest=Sharma%20Ji` greets that guest by name on the cover.
 

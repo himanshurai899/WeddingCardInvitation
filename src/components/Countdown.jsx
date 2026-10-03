@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { wedding } from '../config/wedding';
-import { FramedPainting } from './art/Painting';
 
 const target = new Date(wedding.muhurat).getTime();
 
@@ -20,7 +19,7 @@ const pad = (n) => String(n).padStart(2, '0');
 
 const TimerUnit = ({ value, label }) => (
   <div className="flex flex-col items-center min-w-0">
-    <span className="font-serif text-4xl sm:text-5xl font-semibold text-maroon-deep tabular-nums leading-none">{pad(value)}</span>
+    <span className="font-serif text-[clamp(2rem,10vw,3.5rem)] font-semibold text-maroon-deep tabular-nums leading-none">{pad(value)}</span>
     <span className="mt-2 text-[10px] sm:text-xs tracking-[0.2em] uppercase text-ink-soft font-bold">
       {label}
     </span>
@@ -43,38 +42,44 @@ const Countdown = () => {
   }, []);
 
   return (
-    <section className="py-14 px-4 bg-cream-card flex flex-col items-center overflow-hidden">
+    <section className="py-16 sm:py-20 px-5 bg-cream-card flex flex-col items-center overflow-hidden">
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         whileInView={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.7 }}
         viewport={{ once: true }}
-        className="w-full max-w-md text-center"
+        className="w-full max-w-md md:max-w-2xl text-center"
       >
         <p className="deva text-marigold text-lg">बैंड बाजा बारात</p>
-        <h3 className="text-maroon script-font text-4xl leading-tight">Counting down</h3>
-        <p className="text-[10px] tracking-[0.3em] uppercase font-bold text-ink-soft mb-5">to the shubh muhurat</p>
-        <FramedPainting
-          src={wedding.paintings.baraat.src}
-          alt="A royal wedding procession with elephants, horses and musicians"
-          caption={wedding.paintings.baraat.caption}
-          className="mb-6"
-        />
+        <h3 className="text-maroon script-font text-5xl leading-tight">Counting down</h3>
+        <p className="text-[10px] tracking-[0.3em] uppercase font-bold text-ink-soft mb-6">to the shubh vivah</p>
 
-        <div role="timer" aria-label="Countdown to the wedding" className="mt-2 rounded border border-gold/40 bg-[#fff2d9] px-3 py-6 shadow-sm">
-          {timeLeft.done ? (
-            <p className="font-serif italic text-3xl text-maroon">Aaj shaadi hai!</p>
-          ) : (
-            <div className="grid grid-cols-[1fr_auto_1fr_auto_1fr_auto_1fr] items-center gap-2 sm:gap-4">
-              <TimerUnit value={timeLeft.days} label="Days" />
-              <Rule />
-              <TimerUnit value={timeLeft.hours} label="Hours" />
-              <Rule />
-              <TimerUnit value={timeLeft.minutes} label="Mins" />
-              <Rule />
-              <TimerUnit value={timeLeft.seconds} label="Secs" />
-            </div>
-          )}
+        <div className="relative">
+          <div className="rounded-t-[999px] rounded-b-2xl bg-gradient-to-b from-gold-pale via-gold to-gold-dark p-[4px] shadow-[0_14px_36px_rgba(92,20,32,.25)]">
+            <img
+              src={wedding.art.sunset.src}
+              alt={wedding.art.sunset.alt}
+              loading="lazy"
+              decoding="async"
+              className="block w-full aspect-[4/3] md:aspect-[16/10] object-cover object-[50%_60%] rounded-t-[999px] rounded-b-[13px]"
+            />
+          </div>
+
+          <div role="timer" aria-label="Countdown to the wedding" className="relative -mt-12 mx-3 sm:mx-8 rounded-2xl border border-gold/50 bg-[#fff6e3]/95 backdrop-blur px-3 py-5 sm:py-6 shadow-lg">
+            {timeLeft.done ? (
+              <p className="font-serif italic text-3xl text-maroon">Aaj shaadi hai!</p>
+            ) : (
+              <div className="grid grid-cols-[1fr_auto_1fr_auto_1fr_auto_1fr] items-center gap-1.5 sm:gap-4">
+                <TimerUnit value={timeLeft.days} label="Days" />
+                <Rule />
+                <TimerUnit value={timeLeft.hours} label="Hours" />
+                <Rule />
+                <TimerUnit value={timeLeft.minutes} label="Mins" />
+                <Rule />
+                <TimerUnit value={timeLeft.seconds} label="Secs" />
+              </div>
+            )}
+          </div>
         </div>
       </motion.div>
     </section>

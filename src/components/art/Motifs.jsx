@@ -1,31 +1,10 @@
 import { useId } from 'react';
 
-// Small Madhubani (Mithila) ornaments. Every motif spreads extra props onto its <svg>,
-// so it works both as a standalone element and nested inside a larger illustration
-// (pass x / y / width / height).
+// Small ornaments: lotus, kalash, diya, the toran and a gold divider. Every motif spreads
+// extra props onto its <svg>, so it works both as a standalone element and nested inside
+// a larger illustration (pass x / y / width / height).
 
 const flame = { transformBox: 'fill-box', transformOrigin: 'center bottom' };
-
-// Machhli: in Mithila art a pair of fish stands for marriage and fertility
-export const Fish = ({ body = '#e8821e', line = '#5c1420', flip = false, ...props }) => (
-  <svg viewBox="0 0 120 60" aria-hidden="true" {...props}>
-    <g transform={flip ? 'translate(120 0) scale(-1 1)' : undefined} stroke={line} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M26 30 L7 12 Q15 30 7 48 Z" fill={body} />
-      <path d="M11 22 L24 30 M9 30 H24 M11 38 L24 30" fill="none" strokeWidth="1.4" />
-      <path d="M26 30 C46 6 88 8 110 30 C88 52 46 54 26 30 Z" fill={body} />
-      <path d="M58 13 Q64 2 75 11 M58 47 Q64 58 75 49" fill={body} />
-      <path d="M40 17 Q34 30 40 43 M46 14 Q40 30 46 46" fill="none" />
-      {[22, 30, 38].map((y) =>
-        [52, 60, 68].map((x) => (
-          <path key={`${x}-${y}`} d={`M${x + (y === 30 ? 4 : 0)} ${y - 3} q4 6 8 0`} fill="none" strokeWidth="1.4" />
-        ))
-      )}
-      <path d="M86 16 Q78 30 86 44" fill="none" />
-      <circle cx="96" cy="27" r="4.5" fill="#fffaf0" />
-      <circle cx="96" cy="27" r="1.8" fill={line} stroke="none" />
-    </g>
-  </svg>
-);
 
 export const Lotus = ({ petal = '#f472b6', inner = '#fbcfe8', line = '#9d174d', ...props }) => (
   <svg viewBox="0 0 60 44" aria-hidden="true" {...props}>
@@ -37,20 +16,6 @@ export const Lotus = ({ petal = '#f472b6', inner = '#fbcfe8', line = '#9d174d', 
       <path d="M30 2 C38 12 38 28 30 38 C22 28 22 12 30 2 Z" fill={petal} />
       <path d="M30 10 V32 M16 16 L27 32 M44 16 L33 32" fill="none" strokeWidth="0.8" opacity=".6" />
     </g>
-  </svg>
-);
-
-export const Marigold = ({ outer = '#f59e0b', mid = '#ea580c', core = '#9a3412', ...props }) => (
-  <svg viewBox="0 0 40 40" aria-hidden="true" {...props}>
-    {Array.from({ length: 12 }, (_, i) => {
-      const a = (i / 12) * Math.PI * 2;
-      return <circle key={i} cx={20 + Math.cos(a) * 12} cy={20 + Math.sin(a) * 12} r="6.5" fill={outer} />;
-    })}
-    {Array.from({ length: 8 }, (_, i) => {
-      const a = (i / 8) * Math.PI * 2 + 0.3;
-      return <circle key={i} cx={20 + Math.cos(a) * 6.5} cy={20 + Math.sin(a) * 6.5} r="5" fill={mid} />;
-    })}
-    <circle cx="20" cy="20" r="4.5" fill={core} />
   </svg>
 );
 
@@ -87,7 +52,9 @@ export const Diya = ({ bowl = '#c2410c', ...props }) => (
   </svg>
 );
 
-// Toran: mango leaves and marigolds strung across a doorway
+// Toran: bel patra (Mahadev's three-leaf offering) and marigolds strung across a doorway
+const belLeaflet = 'M0 0 C-7 7 -8 22 0 34 C8 22 7 7 0 0 Z';
+
 export const Toran = ({ className }) => {
   const id = useId();
   return (
@@ -95,8 +62,12 @@ export const Toran = ({ className }) => {
       <defs>
         <pattern id={`toran-${id}`} width="48" height="58" patternUnits="userSpaceOnUse">
           <path d="M0 5 Q24 15 48 5" stroke="#7c2d12" strokeWidth="1.6" fill="none" />
-          <path d="M24 10 C32 22 32 38 24 52 C16 38 16 22 24 10 Z" fill="#4d7c0f" stroke="#365314" strokeWidth="1" />
-          <path d="M24 13 V48" stroke="#a3e635" strokeWidth=".8" />
+          {[34, -34, 0].map((deg) => (
+            <g key={deg} transform={`translate(24 11) rotate(${deg}) scale(${deg ? 0.74 : 1})`}>
+              <path d={belLeaflet} fill={deg ? '#3f6212' : '#4d7c0f'} stroke="#365314" strokeWidth="1" />
+              <path d="M0 3 V30" stroke="#a3e635" strokeWidth=".8" />
+            </g>
+          ))}
           {[8, 18, 27].map((y, i) => (
             <circle key={y} cx="0" cy={y} r={7 - i * 1.5} fill={i === 1 ? '#c8102e' : '#f59e0b'} stroke="#c2410c" strokeWidth=".8" />
           ))}
@@ -109,38 +80,6 @@ export const Toran = ({ className }) => {
     </svg>
   );
 };
-
-// Madhubani sawtooth border ("dant") framed by double rules
-export const MadhubaniBand = ({ className, color = '#7b1e2b', accent = '#c9a24b' }) => {
-  const id = useId();
-  return (
-    <svg className={className} width="100%" height="24" aria-hidden="true">
-      <defs>
-        <pattern id={`band-${id}`} width="20" height="24" patternUnits="userSpaceOnUse">
-          <path d="M0 19 L5 6 L10 19 Z" fill={color} />
-          <path d="M10 6 L15 19 L20 6" fill="none" stroke={color} strokeWidth="1.2" />
-          <circle cx="15" cy="10" r="1.4" fill={accent} />
-        </pattern>
-      </defs>
-      <rect y="0.5" width="100%" height="1.2" fill={color} />
-      <rect y="3" width="100%" height="0.8" fill={accent} />
-      <rect width="100%" height="24" fill={`url(#band-${id})`} />
-      <rect y="20.2" width="100%" height="0.8" fill={accent} />
-      <rect y="22.3" width="100%" height="1.2" fill={color} />
-    </svg>
-  );
-};
-
-// Fish pair around a lotus, the classic Mithila wedding emblem, used as a divider
-export const FishDivider = ({ className }) => (
-  <div className={`flex items-center justify-center gap-2 ${className ?? ''}`} aria-hidden="true">
-    <span className="h-px w-10 sm:w-16 bg-gradient-to-r from-transparent to-gold" />
-    <Fish className="w-12 h-6" />
-    <Lotus className="w-8 h-6" />
-    <Fish className="w-12 h-6" flip />
-    <span className="h-px w-10 sm:w-16 bg-gradient-to-l from-transparent to-gold" />
-  </div>
-);
 
 export const Divider = ({ className }) => (
   <svg viewBox="0 0 240 24" className={className} aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.2">

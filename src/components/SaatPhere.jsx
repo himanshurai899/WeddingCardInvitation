@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { RotateCcw } from 'lucide-react';
 import confetti from 'canvas-confetti';
-import { JaimalaCouple } from './art/Couple';
+import { wedding } from '../config/wedding';
 
 const vows = [
   { hindi: 'पहला फेरा', theme: 'अन्न', text: "We'll make sure there's always food on our table, and we'll share it." },
@@ -40,7 +40,7 @@ const SaatPhere = () => {
   };
 
   return (
-    <section className="relative py-16 px-5 overflow-hidden bg-gradient-to-b from-maroon-deep to-maroon-ink text-cream">
+    <section className="relative py-16 sm:py-20 px-5 overflow-hidden bg-gradient-to-b from-maroon-deep to-maroon-ink text-cream">
       <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 60% 40% at 50% 45%, rgba(232,130,30,.25), transparent 70%)' }} />
 
       <header className="relative text-center">
@@ -91,7 +91,10 @@ const SaatPhere = () => {
             animate={{ rotate: -turns * 360 }}
             transition={{ duration: 1.6, ease: 'easeInOut' }}
           >
-            <JaimalaCouple className="w-16 h-20 sm:w-20 sm:h-24 drop-shadow-[0_2px_6px_rgba(0,0,0,.5)]" />
+            {/* the couple's own picture, in a small gold medallion */}
+            <span className="block w-[68px] h-[68px] sm:w-20 sm:h-20 rounded-full p-[3px] bg-gradient-to-b from-gold-pale to-gold-dark shadow-[0_2px_10px_rgba(0,0,0,.5)]">
+              <img src={wedding.images.couple} alt="" className="w-full h-full rounded-full object-cover object-[50%_12%] bg-cream-card" />
+            </span>
           </motion.div>
         </motion.div>
       </div>

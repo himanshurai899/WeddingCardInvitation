@@ -15,7 +15,7 @@ const toneOf = (item) => tones[item.tone] ?? tones.pastel;
 
 const DressCode = () => {
   return (
-    <section id="dress" className="py-16 px-5 bg-cream-card">
+    <section id="dress" className="py-16 sm:py-20 px-5 bg-cream-card">
       <header className="text-center mb-8">
         <p className="text-[11px] tracking-[0.35em] uppercase font-extrabold text-sindoor">What to wear</p>
         <h2 className="font-serif text-4xl sm:text-5xl font-bold text-maroon-deep mt-2">Dress Code</h2>
@@ -23,7 +23,7 @@ const DressCode = () => {
         <p className="font-serif italic text-lg text-ink-soft">Dress up, it&apos;s a shaadi!</p>
       </header>
 
-      <div className="max-w-md mx-auto space-y-4">
+      <div className="max-w-md sm:max-w-3xl lg:max-w-5xl mx-auto grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {wedding.dressCode.map((item, i) => (
           <motion.article
             key={item.event}
@@ -31,7 +31,7 @@ const DressCode = () => {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: i * 0.08 }}
             viewport={{ once: true }}
-            className={`rounded-2xl border px-6 py-8 text-center shadow-md ${toneOf(item)[0]}`}
+            className={`rounded-2xl border px-6 py-8 text-center shadow-md flex flex-col items-center ${toneOf(item)[0]}`}
           >
             <h3 className="font-serif text-3xl font-bold">{item.event}</h3>
             <p className={`mt-1 text-xs tracking-[0.25em] uppercase font-extrabold ${toneOf(item)[1]}`}>
@@ -48,7 +48,7 @@ const DressCode = () => {
           </motion.article>
         ))}
 
-        <p className="flex items-start gap-3 rounded-2xl border border-dashed border-gold/60 px-5 py-4 text-sm leading-relaxed text-ink-soft">
+        <p className="flex items-start gap-3 self-center rounded-2xl border border-dashed border-gold/60 px-5 py-4 text-sm leading-relaxed text-ink-soft">
           <Shirt className="w-5 h-5 flex-none text-marigold mt-0.5" />
           <span><strong className="text-maroon-deep">None of this is a rule.</strong> Wear whatever you&apos;re comfortable in. You being there is the real shagun.</span>
         </p>

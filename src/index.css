@@ -12,6 +12,8 @@
   --marigold: #e8821e;
   --cream: #faf1dd;
   --cream-card: #fffaf0;
+  --neel-night: #0b1230;
+  --neel-deep: #17255a;
 }
 
 html {
@@ -62,6 +64,45 @@ h1, h2, h3, h4 {
     radial-gradient(120% 60% at 50% -10%, rgba(224, 180, 95, .16) 0%, rgba(224, 180, 95, 0) 60%),
     radial-gradient(circle at 8% 90%, rgba(242, 161, 75, .10) 0, transparent 30%),
     #fffaf0;
+}
+
+/* Kailash at night: deep blue with a scatter of stars (two layers, the second one twinkles).
+   In the components layer so utilities such as `fixed` still win over its `position`. */
+@layer components {
+  .night-sky {
+    position: relative;
+    isolation: isolate;
+    background:
+      radial-gradient(ellipse 80% 50% at 50% 0%, rgba(84, 110, 190, .35) 0%, transparent 70%),
+      linear-gradient(180deg, var(--neel-night) 0%, #121c48 55%, var(--neel-deep) 100%);
+  }
+
+  .night-sky::before,
+  .night-sky::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image:
+      radial-gradient(circle at 12% 18%, rgba(255, 247, 224, .9) 0 1px, transparent 1.6px),
+      radial-gradient(circle at 37% 62%, rgba(255, 247, 224, .7) 0 1px, transparent 1.6px),
+      radial-gradient(circle at 64% 28%, rgba(255, 247, 224, .85) 0 1.2px, transparent 1.8px),
+      radial-gradient(circle at 86% 74%, rgba(255, 247, 224, .6) 0 1px, transparent 1.6px),
+      radial-gradient(circle at 52% 88%, rgba(255, 247, 224, .5) 0 .8px, transparent 1.4px);
+    background-size: 190px 170px, 230px 210px, 160px 240px, 270px 190px, 210px 150px;
+  }
+
+  .night-sky::after {
+    background-size: 310px 260px, 260px 330px, 350px 280px, 290px 360px, 240px 300px;
+    background-position: 40px 60px;
+    animation: twinkle 3.2s ease-in-out infinite alternate;
+  }
+}
+
+@keyframes twinkle {
+  0% { opacity: .25; }
+  100% { opacity: 1; }
 }
 
 /* Luxury Card Effect */

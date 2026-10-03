@@ -15,7 +15,6 @@ import MusicPlayer from './components/MusicPlayer';
 import WelcomeOverlay from './components/WelcomeOverlay';
 import SectionNav from './components/SectionNav';
 import ScrollProgress from './components/ScrollProgress';
-import { FramedPainting } from './components/art/Painting';
 import { Diya } from './components/art/Motifs';
 import { MotionConfig, motion } from 'framer-motion';
 import { wedding, coupleShort } from './config/wedding';
@@ -56,13 +55,13 @@ function App() {
         <Rsvp />
 
         {/* Final Blessing Section */}
-        <section className="relative pt-16 paper text-center overflow-hidden">
+        <section className="relative pt-16 sm:pt-20 paper text-center overflow-hidden">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
-            className="max-w-2xl mx-auto px-8"
+            className="max-w-2xl mx-auto px-6"
           >
             <div className="mb-8 flex justify-center gap-3">
               {[1, 2, 3].map(i => (
@@ -87,19 +86,33 @@ function App() {
 
             <div className="flex flex-col items-center">
               <span className="text-sindoor tracking-[0.5em] uppercase text-xs font-bold mb-3">With Love</span>
-              <h4 className="script-font text-5xl text-maroon">{coupleShort}</h4>
+              <h4 className="script-font text-[clamp(2.75rem,12vw,4.5rem)] leading-tight text-maroon">{coupleShort}</h4>
               <p className="deva text-lg text-marigold mt-1">
                 {wedding.groom.familyHindi} एवं {wedding.bride.familyHindi} परिवार
               </p>
             </div>
           </motion.div>
 
-          <FramedPainting
-            src={wedding.paintings.finale.src}
-            alt="Krishna with the gopis beneath the trees on the bank of the Yamuna"
-            caption={wedding.paintings.finale.caption}
-            className="max-w-2xl mx-auto px-5 mt-10 pb-12"
-          />
+          <motion.figure
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="max-w-3xl mx-auto px-5 mt-10 pb-14"
+          >
+            <div className="rounded-2xl bg-gradient-to-br from-gold-bright via-gold to-gold-dark p-[4px] shadow-[0_14px_36px_rgba(92,20,32,.25)]">
+              <img
+                src={wedding.art.finale.src}
+                alt={wedding.art.finale.alt}
+                loading="lazy"
+                decoding="async"
+                className="block w-full aspect-[16/10] sm:aspect-[16/9] object-cover object-[50%_30%] rounded-[13px]"
+              />
+            </div>
+            <figcaption className="mt-3 font-serif italic text-lg text-ink-soft">
+              Har Har Mahadev. May Gauri Shankar bless the two of them.
+            </figcaption>
+          </motion.figure>
         </section>
 
         {/* Footer Branding */}
@@ -108,7 +121,7 @@ function App() {
             Shubh Vivah • 25.11.2026 • Vadodara
           </p>
           <p className="mt-2 px-6 text-[10px] leading-relaxed text-ink-soft/80">
-            Paintings courtesy of The Metropolitan Museum of Art, Open Access (public domain)
+            Mahadev and Parvati artwork: free illustrations from Pixabay
           </p>
         </footer>
       </main>

@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { Navigation, Phone } from 'lucide-react';
 import { wedding, directionsUrl, telUrl } from '../config/wedding';
-import { MadhubaniBand } from './art/Motifs';
+import { MalaBand } from './art/Shiva';
 
 const Side = ({ label, hindi, person, delay }) => (
   <motion.div
@@ -33,38 +33,47 @@ const Side = ({ label, hindi, person, delay }) => (
 );
 
 // A titled list of names, set the way the printed card sets them
-const NameList = ({ title, english, names }) => (
+const NameList = ({ title, english, names, tail }) => (
   <div className="text-center">
     <p className="deva text-lg text-sindoor">✻ {title} ✻</p>
     <p className="text-[10px] tracking-[0.25em] uppercase font-extrabold text-ink-soft">{english}</p>
     <p className="mt-2 font-devaText text-base leading-relaxed text-ink">
+      {/* Each name stays on one line; the breaks fall between names */}
       {names.map((n, i) => (
-        <span key={n} className="whitespace-nowrap">
-          {n}{i < names.length - 1 ? ', ' : ''}{' '}
+        <span key={n}>
+          <span className="whitespace-nowrap">{n}{i < names.length - 1 ? ',' : ''}</span>{' '}
         </span>
       ))}
+      {tail && <span className="whitespace-nowrap">{tail}</span>}
     </p>
   </div>
 );
+
+const bannerFade = 'linear-gradient(to right, transparent, #000 18%, #000 82%, transparent), linear-gradient(to bottom, transparent, #000 22%, #000 70%, transparent)';
 
 // Nimantrak: the families who invite you, the names printed on the card, and the kids' request
 const Families = () => {
   const { balManuhar } = wedding;
   return (
-    <section className="py-16 px-5 paper overflow-hidden">
-      <div className="flex items-end justify-center gap-2 sm:gap-6">
-        <img src={wedding.paintings.elephantFamilies} alt="" loading="lazy" className="w-24 sm:w-36 h-auto flex-none drop-shadow-md" />
-        <header className="text-center pb-2">
-          <p className="text-[11px] tracking-[0.3em] uppercase font-extrabold text-sindoor">With love from</p>
-          <h2 className="deva text-4xl sm:text-5xl text-maroon-deep mt-1">निमंत्रक</h2>
-          <p className="font-serif italic text-ink-soft">Your hosts</p>
-        </header>
-        <img src={wedding.paintings.elephantFamilies} alt="" loading="lazy" className="w-24 sm:w-36 h-auto flex-none -scale-x-100 drop-shadow-md" />
-      </div>
+    <section className="py-16 sm:py-20 px-5 paper overflow-hidden">
+      {/* Mahadev and Nandi on the hills, faded out on every side so it melts into the paper */}
+      <img
+        src={wedding.art.nandi.src}
+        alt={wedding.art.nandi.alt}
+        loading="lazy"
+        decoding="async"
+        className="block w-full max-w-2xl mx-auto -mt-6 aspect-[16/7] object-cover object-[50%_62%] mix-blend-multiply"
+        style={{ maskImage: bannerFade, WebkitMaskImage: bannerFade, maskComposite: 'intersect', WebkitMaskComposite: 'source-in' }}
+      />
+      <header className="text-center mt-1">
+        <p className="text-[11px] tracking-[0.3em] uppercase font-extrabold text-sindoor">With love from</p>
+        <h2 className="deva text-4xl sm:text-5xl text-maroon-deep mt-1">निमंत्रक</h2>
+        <p className="font-serif italic text-ink-soft">Your hosts</p>
+      </header>
 
-      <MadhubaniBand className="max-w-md mx-auto block my-6" />
+      <MalaBand className="max-w-md mx-auto block my-6" />
 
-      <div className="max-w-md mx-auto grid grid-cols-1 gap-3">
+      <div className="max-w-md sm:max-w-3xl mx-auto grid sm:grid-cols-2 gap-4">
         <Side label="Groom's family" hindi="वर पक्ष" person={wedding.groom} delay={0} />
         <Side label="Bride's family" hindi="वधू पक्ष" person={wedding.bride} delay={0.1} />
       </div>
@@ -74,10 +83,10 @@ const Families = () => {
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
         viewport={{ once: true }}
-        className="max-w-md mx-auto mt-8 space-y-6"
+        className="max-w-md sm:max-w-2xl mx-auto mt-10 space-y-7"
       >
         <NameList title="स्वागतातुर" english="Eager to welcome you" names={wedding.swagatatur} />
-        <NameList title="दर्शनाभिलाषी" english="Waiting to see you" names={[...wedding.darshanabhilashi, `एवं समस्त ${wedding.groom.familyHindi} परिवार`]} />
+        <NameList title="दर्शनाभिलाषी" english="Waiting to see you" names={wedding.darshanabhilashi} tail={`एवं समस्त ${wedding.groom.familyHindi} परिवार`} />
 
         <div className="text-center">
           <p className="deva text-lg text-sindoor">✻ विनीत ✻</p>

@@ -96,19 +96,29 @@ const ScratchReveal = () => {
     if (!canvas) return;
     const ctx = canvas.getContext('2d', { willReadFrequently: true });
 
-    // Set proper resolution for high-DPI displays
-    const rect = canvas.getBoundingClientRect();
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    canvas.width = rect.width * dpr;
-    canvas.height = rect.height * dpr;
-    ctx.scale(dpr, dpr);
-
-    const width = rect.width;
-    const height = rect.height;
+    let width = 0;
+    let height = 0;
     let revealed = false;
 
+    // Sized from the layout box (offsetWidth ignores the hover zoom), at high-DPI resolution.
+    // Runs again if the leaf changes size, e.g. when a phone is turned sideways; that
+    // repaints a fresh leaf, which beats scratches landing in the wrong place.
+    const fit = () => {
+      if (revealed || !canvas.offsetWidth) return;
+      if (canvas.offsetWidth === width && canvas.offsetHeight === height) return;
+      width = canvas.offsetWidth;
+      height = canvas.offsetHeight;
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      paintLeaf(ctx, width, height);
+    };
+    fit();
+    const resize = new ResizeObserver(fit);
+    resize.observe(canvas);
+
     // Fonts may still be loading on a slow connection; repaint once they arrive
-    paintLeaf(ctx, width, height);
     document.fonts?.ready.then(() => { if (!revealed) paintLeaf(ctx, width, height); });
 
     let isDrawing = false;
@@ -145,14 +155,23 @@ const ScratchReveal = () => {
       }
     };
 
+    // Screen position to canvas position, undoing the hover zoom on the leaf
     const point = (e) => {
       const clientRect = canvas.getBoundingClientRect();
-      return [e.clientX - clientRect.left, e.clientY - clientRect.top];
+      return [
+        (e.clientX - clientRect.left) * (width / clientRect.width),
+        (e.clientY - clientRect.top) * (height / clientRect.height),
+      ];
     };
 
     // The canvas allows vertical panning (touch-action: pan-y), so an up/down swipe
     // still scrolls the page (the browser sends pointercancel); rubbing sideways scratches.
     const handleStart = (e) => {
+      // With a mouse, stop the drag from selecting text and keep the stroke even if it leaves the leaf
+      if (e.pointerType === 'mouse') {
+        e.preventDefault();
+        canvas.setPointerCapture?.(e.pointerId);
+      }
       isDrawing = true;
       last = point(e);
     };
@@ -175,6 +194,7 @@ const ScratchReveal = () => {
     canvas.addEventListener('pointercancel', handleEnd);
 
     return () => {
+      resize.disconnect();
       canvas.removeEventListener('pointerdown', handleStart);
       canvas.removeEventListener('pointermove', handleMove);
       canvas.removeEventListener('pointerup', handleEnd);
@@ -199,7 +219,7 @@ const ScratchReveal = () => {
         </h3>
 
         {/* Outer Glow & Hover Container */}
-        <div className="relative w-full max-w-[300px] sm:max-w-[340px] aspect-[5/6] group">
+        <div className="relative w-full max-w-[300px] sm:max-w-[340px] aspect-[5/6] group select-none">
 
           <div className="absolute inset-6 bg-marigold blur-3xl opacity-20 group-hover:opacity-35 transition-opacity duration-1000 rounded-full pointer-events-none" />
 
@@ -220,19 +240,19 @@ const ScratchReveal = () => {
             }}
           >
             {/* What the leaf hides */}
-            <div className="absolute inset-0 flex flex-col items-center pt-[26%] bg-gradient-to-b from-cream-card to-gold-pale text-center">
-              <span className="deva text-sindoor text-2xl">शुभ मुहूर्त</span>
-              <span className="text-maroon-deep font-serif text-3xl sm:text-4xl font-bold mt-1">25 November</span>
-              <span className="text-maroon-deep font-serif text-2xl font-bold">2026</span>
-              <span className="text-ink-soft text-[11px] tracking-[0.2em] uppercase font-bold mt-2">
-                Wednesday · vivah 11 PM
+            <div className="absolute inset-0 flex flex-col items-center pt-[25%] px-[14%] bg-gradient-to-b from-cream-card to-gold-pale text-center leading-tight">
+              <span className="deva text-sindoor text-xl sm:text-2xl">शुभ मुहूर्त</span>
+              <span className="text-maroon-deep font-serif text-[clamp(1.6rem,8vw,2.1rem)] font-bold mt-1">25 November</span>
+              <span className="text-maroon-deep font-serif text-xl sm:text-2xl font-bold">2026</span>
+              <span className="text-ink-soft text-[10px] sm:text-[11px] tracking-[0.15em] uppercase font-bold mt-2">
+                Wednesday · 11 PM
               </span>
               {isRevealed && (
                 <motion.span
                   initial={{ scale: 0.8, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ duration: 0.8, type: "spring" }}
-                  className="mt-2 text-maroon script-font text-3xl"
+                  className="mt-1 text-maroon script-font text-[1.7rem] sm:text-3xl"
                 >
                   Milte hain!
                 </motion.span>
