@@ -7,7 +7,7 @@ const title = `Shubh Vivah · ${coupleShort}`;
 const location = `${wedding.venue.name}, ${wedding.venue.address}`;
 const details = (url) =>
   `${wedding.groom.fullName} & ${wedding.bride.fullName} are getting married!\n` +
-  `Baraat at 5:00 PM, pheras from 8:00 PM.\n\n` +
+  `${wedding.calendar.summary}\n\n` +
   `Invitation: ${url}`;
 
 const utcStamp = (date) => date.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');

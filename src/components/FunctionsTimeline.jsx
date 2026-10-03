@@ -1,7 +1,7 @@
 import { useId } from 'react';
 import { motion } from 'framer-motion';
 import { Clock, MapPin } from 'lucide-react';
-import { wedding, formatDate, directionsUrl } from '../config/wedding';
+import { wedding, formatDate, directionsUrl, routeUrl } from '../config/wedding';
 import { Dholak, HaldiBowl, KalashIcon, MatkorPot, MehendiHands, ReceptionStage, TilakThali } from './art/Icons';
 import { CoupleArch } from './art/Couple';
 import { Vignette } from './art/Painting';
@@ -77,6 +77,7 @@ const FunctionRow = ({ fn, index }) => {
       <p className="text-[10px] sm:text-xs tracking-[0.2em] uppercase font-extrabold text-marigold">
         {formatDate(fn.date, { weekday: 'short', day: 'numeric', month: 'short' })}
       </p>
+      {fn.tithi && <p className="deva text-[11px] text-ink-soft leading-tight">{fn.tithi}</p>}
       <p className={`deva leading-tight mt-1 ${fn.highlight ? 'text-sindoor text-3xl' : 'text-maroon text-2xl'}`}>{fn.hindi}</p>
       <h3 className={`script-font leading-none text-ink ${fn.highlight ? 'text-[34px]' : 'text-[28px]'}`}>{fn.name}</h3>
       {fn.time && (
@@ -87,12 +88,15 @@ const FunctionRow = ({ fn, index }) => {
       {fn.venue && (
         <p className="mt-1 text-[11px] sm:text-xs font-semibold text-ink">
           <MapPin className="inline w-3.5 h-3.5 mr-1 -mt-0.5 text-marigold" />
-          {fn.mapsQuery ? (
-            <a href={directionsUrl(fn.mapsQuery)} target="_blank" rel="noopener noreferrer" className="underline decoration-gold/60 underline-offset-2">
+          {fn.route || fn.mapsQuery ? (
+            <a href={fn.route ? routeUrl(fn.route) : directionsUrl(fn.mapsQuery)} target="_blank" rel="noopener noreferrer" className="underline decoration-gold/60 underline-offset-2">
               {fn.venue}
             </a>
           ) : fn.venue}
         </p>
+      )}
+      {fn.rituals && (
+        <p className="mt-2 font-devaText text-[11px] sm:text-xs leading-relaxed text-maroon">{fn.rituals.join(' • ')}</p>
       )}
       <p className="mt-2 text-xs sm:text-sm leading-relaxed text-ink-soft">{fn.about}</p>
     </motion.div>
@@ -129,7 +133,7 @@ const FunctionsTimeline = () => {
       <header className="text-center mb-6">
         <p className="text-[11px] tracking-[0.35em] uppercase font-extrabold text-sindoor">The wedding week</p>
         <h2 className="deva text-5xl text-maroon-deep mt-2">रस्में</h2>
-        <p className="font-serif italic text-lg text-ink-soft mt-1">Four busy days. Come for as many as you can!</p>
+        <p className="font-serif italic text-lg text-ink-soft mt-1">Four busy days at home and then the big night. Come for as many as you can!</p>
       </header>
 
       <div className="relative max-w-2xl mx-auto">

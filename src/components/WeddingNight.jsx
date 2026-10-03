@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
-import { wedding } from '../config/wedding';
+import { MapPin } from 'lucide-react';
+import { wedding, routeUrl } from '../config/wedding';
 import { FramedPainting, Vignette } from './art/Painting';
 import { Diya } from './art/Motifs';
 
@@ -15,6 +16,11 @@ const Moment = ({ item, index }) => {
         {item.name}
       </h3>
       <p className="deva text-ink-soft text-sm">{item.hindi}</p>
+      {item.route && (
+        <a href={routeUrl(item.route)} target="_blank" rel="noopener noreferrer" className="mt-1 inline-block text-[11px] sm:text-xs font-semibold text-ink underline decoration-gold/60 underline-offset-2">
+          <MapPin className="inline w-3.5 h-3.5 mr-1 -mt-0.5 text-marigold" />{item.route.label}
+        </a>
+      )}
       <p className="mt-1 text-xs sm:text-sm leading-relaxed text-ink">{item.about}</p>
     </div>
   );
@@ -51,6 +57,7 @@ const WeddingNight = () => {
     <section id="timeline" className="relative py-16 px-4 overflow-hidden bg-gradient-to-b from-[#fdf3e2] via-cream-card to-[#fdf3e2]">
       <header className="text-center mb-8">
         <p className="text-[11px] tracking-[0.35em] uppercase font-extrabold text-sindoor">Wednesday · 25 November 2026</p>
+        <p className="deva text-xs text-ink-soft mt-1">मार्गशीर्ष कृष्ण प्रतिपदा</p>
         <h2 className="font-serif text-4xl sm:text-5xl font-bold text-maroon-deep mt-2">The Wedding Night</h2>
         <p className="deva text-xl text-marigold mt-1">विवाह की शुभ रात्रि</p>
       </header>

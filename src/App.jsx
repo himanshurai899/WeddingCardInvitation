@@ -76,6 +76,11 @@ function App() {
               ))}
             </div>
 
+            <p className="font-devaText text-xl md:text-2xl text-maroon-deep leading-relaxed mb-4">
+              {wedding.doha.map((line) => (
+                <span key={line} className="block">{line}</span>
+              ))}
+            </p>
             <p className="text-xl md:text-2xl font-serif text-maroon-deep italic leading-relaxed mb-10">
               With our elders' blessings and God's grace, we can't wait to welcome you.
             </p>

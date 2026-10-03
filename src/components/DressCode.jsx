@@ -3,12 +3,15 @@ import { Shirt } from 'lucide-react';
 import { wedding } from '../config/wedding';
 import { Divider } from './art/Motifs';
 
-const cardTone = (item) => {
-  if (item.sunny) return 'bg-gradient-to-br from-[#fde047] to-[#f59e0b] text-maroon-deep border-gold/60';
-  if (item.feature) return 'bg-gradient-to-br from-maroon to-maroon-deep text-cream border-gold';
-  if (item.glitter) return 'glitter-shimmer bg-gradient-to-br from-mehendi to-[#1f3a0c] text-cream border-gold/60';
-  return 'bg-gradient-to-br from-[#fdebe0] to-[#f6e7f4] text-maroon-deep border-gold/40';
+// Card colour and label colour per `tone` in the config
+const tones = {
+  haldi: ['bg-gradient-to-br from-[#fde047] to-[#f59e0b] text-maroon-deep border-gold/60', 'text-maroon'],
+  mehendi: ['bg-gradient-to-br from-mehendi to-[#1f3a0c] text-cream border-gold/60', 'text-gold-pale'],
+  pastel: ['bg-gradient-to-br from-[#fdebe0] to-[#f6e7f4] text-maroon-deep border-gold/40', 'text-marigold'],
+  sangeet: ['glitter-shimmer bg-gradient-to-br from-[#6b21a8] to-[#3b0764] text-cream border-gold/60', 'text-gold-pale'],
+  vivah: ['bg-gradient-to-br from-maroon to-maroon-deep text-cream border-gold', 'text-gold-pale'],
 };
+const toneOf = (item) => tones[item.tone] ?? tones.pastel;
 
 const DressCode = () => {
   return (
@@ -28,10 +31,10 @@ const DressCode = () => {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: i * 0.08 }}
             viewport={{ once: true }}
-            className={`rounded-2xl border px-6 py-8 text-center shadow-md ${cardTone(item)}`}
+            className={`rounded-2xl border px-6 py-8 text-center shadow-md ${toneOf(item)[0]}`}
           >
             <h3 className="font-serif text-3xl font-bold">{item.event}</h3>
-            <p className={`mt-1 text-xs tracking-[0.25em] uppercase font-extrabold ${item.sunny ? 'text-maroon' : item.feature || item.glitter ? 'text-gold-pale' : 'text-marigold'}`}>
+            <p className={`mt-1 text-xs tracking-[0.25em] uppercase font-extrabold ${toneOf(item)[1]}`}>
               {item.label}
             </p>
             {item.chips && (

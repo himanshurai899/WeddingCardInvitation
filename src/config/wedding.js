@@ -1,48 +1,76 @@
 // Every name, date, venue and line of copy on the card lives here.
-// Lines marked VERIFY still need a final check before the card goes out.
+// Details follow the printed card (Himanshu & Samiksha.cdr). Lines marked VERIFY need a final check.
 
 const home = {
-  label: 'Rai family home, Gotri',
-  address: 'B/144 Yoginagar Township, Near Swaminarayan High School, Gotri, Vadodara 390021',
-  mapsQuery: 'B/144 Yoginagar Township, Near Swaminarayan High School, Gotri, Vadodara 390021',
+  label: 'Rai family home, Yogi Nagar',
+  address: 'B-144, Yogi Nagar Township, Near Ambika Nagar, Gotri, Vadodara 390021',
+  mapsQuery: 'Yogi Nagar Township, Near Ambika Nagar, Gotri, Vadodara 390021',
 };
 
 export const wedding = {
   groom: {
     name: 'Himanshu',
+    nameHindi: 'चि. हिमांशु',
     fullName: 'Himanshu Rai',
-    parents: 'Shri Ramshlok Rai & Smt. Asha Devi',
+    relation: 'Elder son of',
+    parents: 'Shri Ramshlok Rai & Smt. Asha Devi Rai',
+    grandparents: 'Smt. Laheshari Devi & Late Shri Ramyatan Rai',
     home: 'Gotri, Vadodara',
+    native: 'Kanhenapur, P.O. Lai, Dist. Patna, Bihar 801112',
     family: 'Rai Parivar',
     familyHindi: 'राय',
     address: home,
   },
   bride: {
     name: 'Samiksha',
+    nameHindi: 'चि.सौ.कां. समीक्षा',
     fullName: 'Samiksha Yadav',
-    parents: '', // VERIFY: add Samiksha's parents
-    home: '',
+    relation: 'Daughter of',
+    parents: 'Shri Rampukar Yadav & Smt. Mithilesh Yadav',
+    home: 'Gadarwara, Madhya Pradesh',
+    native: 'Sankhmohan, Dist. Samastipur, Bihar',
     family: 'Yadav Parivar',
     familyHindi: 'यादव',
+    address: {
+      label: 'Yadav family home, Gadarwara',
+      address: 'Gayatri Nagar, MPEB Colony, Gadarwara, Madhya Pradesh 487551',
+      mapsQuery: 'Gayatri Nagar, MPEB Colony, Gadarwara, Madhya Pradesh 487551',
+    },
   },
 
-  // Shubh muhurat, used by the countdown
-  muhurat: '2026-11-25T20:00:00+05:30',
-  // What "Save the Date" puts in the guest's calendar: baraat to the end of the pheras
+  // Shubh vivah, used by the countdown
+  muhurat: '2026-11-25T23:00:00+05:30',
+  // What "Save the Date" puts in the guest's calendar: baraat until well into the vivah
   calendar: {
-    start: '2026-11-25T17:00:00+05:30',
-    end: '2026-11-25T23:30:00+05:30',
+    start: '2026-11-25T16:00:00+05:30',
+    end: '2026-11-26T01:00:00+05:30',
+    summary: 'Baraat leaves at 4:00 PM, dwar puja 6 to 8 PM, jaimala 9 PM, dinner from 9:30 PM, vivah from 11:00 PM.',
   },
   city: 'Vadodara, Gujarat',
 
   venue: {
     name: 'Purshottam Party Plot',
-    address: 'Millennium Northway, Kabir Rd, opp. Navrachna University, Bhayli, Vadodara, Gujarat 391410',
+    nameHindi: 'पुरुषोत्तम पार्टी प्लॉट',
+    address: 'Millennium Northway, opp. Navrachna University, behind Kabir Road, Bhayli, Vadodara 391410',
     mapsQuery: 'Purshottam Party Plot, Bhayli, Vadodara',
   },
   home,
 
-  engagement: { date: '2026-02-09', place: 'Surbhi Hotel, Gadarwada' },
+  // Numbers printed on the card (Ramshlok Rai and Asha Devi Rai)
+  phones: ['94283 00002', '94298 30002'],
+
+  engagement: { date: '2026-02-09', place: 'Surbhi Hotel, Gadarwara' },
+
+  // Printed on the card, in the card's own words
+  swagatatur: ['रामअयोध्या यादव', 'गणेश सिंह यादव', 'रणजीत सिंह यादव', 'रणवीर सिंह यादव'],
+  darshanabhilashi: [
+    'हरेन्द्र सिंह', 'अर्जुन सिंह', 'अखिलेश यादव', 'केशव सिंह',
+    'हितेष राय', 'कृष्ण यादव', 'जीत यादव',
+    'आरुष लय', // VERIFY: printed as "लय"; probably meant "राय"
+    'मिथिलेश यादव', 'नीरज यादव',
+  ],
+  vineet: ['आशा देवी राय', 'रामश्लोक राय'],
+  doha: ['आते हैं जिस भाव से, भक्तों के भगवान।', 'उसी भाव से आप भी, दर्शन दें श्रीमान्॥'],
 
   // "Bal Manuhar", the kids' request printed on North Indian wedding cards
   balManuhar: {
@@ -83,51 +111,47 @@ export const wedding = {
     },
   },
 
-  // Guest functions in order. `image` is the painting shown beside it; without one, `icon`
-  // picks a drawing (mandap, haldi, mehendi, tilak, vivah, sangeet, matkor, reception).
-  // Empty `time` or `venue` hides that line.
-  // `mapsQuery` turns the venue into a directions link.
+  // Guest functions in order, as printed under "मांगलिक कार्यक्रम". `image` is the painting
+  // beside it; without one, `icon` picks a drawing. Empty `time` or `venue` hides that line.
+  // `mapsQuery` turns the venue into a directions link; `rituals` lists everything in the block.
   functions: [
     {
-      key: 'mandap',
-      name: 'Mandap Muhurat',
-      hindi: 'मंडप मुहूर्त',
-      date: '2026-11-22',
-      time: '', // VERIFY: add the muhurat time
-      venue: '', // VERIFY: add the venue (home?)
-      icon: 'mandap',
-      image: '/art/v-mandap-muhurat.webp',
-      about: 'The mandap goes up with a small puja. This is where all the wedding rituals begin.',
-    },
-    {
       key: 'haldi',
-      name: 'Haldi',
-      hindi: 'हल्दी',
+      name: 'Mandap & Haldi',
+      short: 'Mandap & Haldi',
+      hindi: 'मंडप मुहूर्त एवं हल्दी',
       date: '2026-11-22',
-      time: '', // VERIFY: add the time
+      tithi: 'कार्तिक शुक्ल त्रयोदशी',
+      time: '10:00 AM to 12:00 PM',
       venue: home.label,
       mapsQuery: home.mapsQuery,
       icon: 'haldi',
       image: '/art/v-haldi.webp',
-      about: "The ladies of the house put haldi on Himanshu and sing while they're at it (mostly teasing him). Wear something you don't mind getting yellow.",
+      rituals: ['मटिगमरा', 'उदरी', 'मंडप मुहूर्त', 'गणेश स्थापना', 'कलश स्थापना', 'हल्दी', 'कंगन'],
+      about: "One packed morning at home. The mandap goes up, Ganesh ji and the kalash are set in place, and then the ladies get to the haldi (and the teasing). Wear something you don't mind getting yellow.",
     },
     {
       key: 'mehendi',
       name: 'Mehendi',
+      short: 'Mehendi',
       hindi: 'मेहंदी',
       date: '2026-11-23',
-      time: '2:00 PM onwards',
-      venue: "Bride's home",
+      tithi: 'कार्तिक शुक्ल चतुर्दशी',
+      time: '4:00 PM to 6:00 PM',
+      venue: home.label,
+      mapsQuery: home.mapsQuery,
       icon: 'mehendi',
       image: '/art/v-mehendi.webp',
-      about: 'Mehendi for Samiksha and any lady who wants it, with the dholak going and folk songs all afternoon. They say the darker it gets, the more she is loved.',
+      about: 'Mehendi for all the ladies, with the dholak going and plenty of folk songs. They say the darker it gets, the more you are loved.',
     },
     {
       key: 'tilak',
       name: 'Tilak & Lunch',
-      hindi: 'तिलक',
+      short: 'Tilak',
+      hindi: 'शुभ तिलकोत्सव',
       date: '2026-11-24',
-      time: '10:00 AM, lunch after', // VERIFY: time carried over from the Vivah planner
+      tithi: 'कार्तिक पूर्णिमा',
+      time: '10:00 AM to 2:00 PM, lunch from 12:30',
       venue: home.label,
       mapsQuery: home.mapsQuery,
       icon: 'tilak',
@@ -135,36 +159,67 @@ export const wedding = {
       about: "Samiksha's family comes over to put tilak on Himanshu and bless him. Then we all sit down to lunch together.",
     },
     {
+      key: 'sangeet',
+      name: 'Sangeet',
+      short: 'Sangeet',
+      hindi: 'संगीत',
+      date: '2026-11-24',
+      tithi: 'कार्तिक पूर्णिमा',
+      time: '7:00 PM onwards',
+      venue: home.label,
+      mapsQuery: home.mapsQuery,
+      icon: 'sangeet',
+      image: '/art/v-sangeet.webp',
+      about: 'Songs, dholak and a lot of dancing on the evening before the wedding. Come ready to join in!',
+    },
+    {
+      key: 'baraat',
+      name: 'Baraat',
+      hindi: 'बारात प्रस्थान',
+      date: '2026-11-25',
+      tithi: 'मार्गशीर्ष कृष्ण प्रतिपदा',
+      time: '4:00 PM onwards',
+      venue: 'Rai family home, Yogi Nagar to Purshottam Party Plot, Bhayli',
+      route: { from: home.mapsQuery, to: 'Purshottam Party Plot, Bhayli, Vadodara' },
+      icon: 'sangeet',
+      image: '/art/v-baraat.webp',
+      about: 'The baraat leaves home at 4 PM with the band baaja and dances its way to the venue. Join us at Yogi Nagar, or meet us at the party plot.',
+    },
+    {
       key: 'vivah',
       name: 'Shubh Vivah',
       hindi: 'शुभ विवाह',
       date: '2026-11-25',
-      time: 'Baraat 5:00 PM, pheras from 8:00 PM',
+      tithi: 'मार्गशीर्ष कृष्ण प्रतिपदा',
+      time: 'Dwar puja 6:00 PM, vivah from 11:00 PM',
       venue: 'Purshottam Party Plot, Bhayli',
       mapsQuery: 'Purshottam Party Plot, Bhayli, Vadodara',
       icon: 'vivah',
       highlight: true,
-      about: 'Baraat, jaimala, pheras and sindoor daan. The big night!',
+      about: 'Dwar puja, jaimala, dinner, and then the pheras late into the night. The big one!',
     },
   ],
 
-  // 25 November, the wedding night
+  // 25 November, the wedding night, then bidaai the next morning
   weddingDay: [
-    { time: '5:00 PM', name: 'Baraat', hindi: 'बारात', image: '/art/v-baraat.webp', about: 'Himanshu heads out with the band baaja. Expect a lot of dancing on the road.' },
-    { time: '7:30 PM', name: 'Jaimala', hindi: 'जयमाला', about: 'Garlands are exchanged, and both sides try to lift their own higher.' },
-    { time: '8:00 PM', name: 'Mandap Ceremony', hindi: 'मंडप', image: '/art/v-mandap.webp', about: 'The shubh muhurat. Panditji starts the mantras and the rituals begin.' },
-    { time: '9:00 PM', name: 'Kanyadaan', hindi: 'कन्यादान', image: '/art/v-kanyadaan.webp', about: "Samiksha's parents place her hand in Himanshu's. Keep a hanky ready for this one." },
-    { time: '9:30 PM', name: 'Saat Phere', hindi: 'सात फेरे', image: '/art/v-saath.webp', about: 'Seven rounds around the agni, and a promise with every round.', highlight: true },
-    { time: '10:30 PM', name: 'Sindoor Daan', hindi: 'सिंदूर दान', image: '/art/v-sindoor.webp', about: "Himanshu fills Samiksha's maang with sindoor. In Bihar, this is the moment they're married.", highlight: true },
-    { time: '11:45 PM', name: 'Vidaai', hindi: 'विदाई', image: '/art/v-vidaai.webp', about: 'Samiksha throws rice back over her head as she leaves, wishing her parents\' home well. Everyone cries.' },
+    { time: '4:00 PM', name: 'Baraat', hindi: 'बारात प्रस्थान', image: '/art/v-baraat.webp', route: { from: home.mapsQuery, to: 'Purshottam Party Plot, Bhayli, Vadodara', label: 'Rai family home, Yogi Nagar to Purshottam Party Plot' }, about: 'Himanshu sets off from home with the baraat. Expect band baaja and a lot of dancing all the way to the venue.' },
+    { time: '6:00 to 8:00 PM', name: 'Dwar Puja', hindi: 'द्वार पूजा', image: '/art/v-dwar.webp', about: "The baraat reaches the gate and Samiksha's family welcomes Himanshu with aarti." },
+    { time: '9:00 to 10:00 PM', name: 'Jaimala', hindi: 'जयमाला', about: 'Garlands are exchanged, and both sides try to lift their own higher.' },
+    { time: '9:30 PM onwards', name: 'Dinner', hindi: 'भोजन समारंभ', image: '/art/v-bhojan.webp', about: "Dinner is served. Please don't leave without eating!" },
+    { time: '11:00 PM onwards', name: 'Shubh Vivah', hindi: 'शुभ विवाह', image: '/art/v-mandap.webp', about: 'Panditji begins the vivah under the mandap. It goes on late into the night.', highlight: true },
+    { time: 'During the vivah', name: 'Kanyadaan', hindi: 'कन्यादान', image: '/art/v-kanyadaan.webp', about: "Samiksha's parents place her hand in Himanshu's. Keep a hanky ready for this one." },
+    { time: 'During the vivah', name: 'Saat Phere', hindi: 'सात फेरे', image: '/art/v-saath.webp', about: 'Seven rounds around the agni, and a promise with every round.', highlight: true },
+    { time: 'During the vivah', name: 'Sindoor Daan', hindi: 'सिंदूर दान', image: '/art/v-sindoor.webp', about: "Himanshu fills Samiksha's maang with sindoor. In Bihar, this is the moment they're married.", highlight: true },
+    { time: '6:00 AM, Thu 26 Nov', name: 'Bidaai', hindi: 'बिदाई', image: '/art/v-vidaai.webp', about: "At first light Samiksha leaves for her new home in Yogi Nagar, throwing rice back over her head to wish her parents' home well. Everyone cries." },
   ],
 
-  // Suggestions only, change them freely
+  // Suggestions only, change them freely. `tone` picks the card colour.
   dressCode: [
-    { event: 'Haldi', label: 'Haldi Yellow', note: "Yellow, obviously. Pick something you won't mind getting haldi on.", chips: ['#f2b705', '#fcd34d', '#fde68a', '#fdba74', '#fef3c7'], sunny: true },
-    { event: 'Mehendi', label: 'Shades of Green', note: 'Greens, with a bit of gold or mirror work if you like.', chips: ['#3f6212', '#65a30d', '#a3e635', '#d9f99d', '#c9a24b'], glitter: true },
-    { event: 'Tilak', label: 'Light Pastels', note: "It's a daytime puja, so something light and comfortable.", chips: ['#fcd5b5', '#f8d1d1', '#cde7c6', '#fbe7a6', '#d7d3f0'] },
-    { event: 'Shubh Vivah', label: 'Traditional', note: 'Sarees, lehengas, sherwanis, kurtas. A Bhagalpuri silk would be perfect.', chips: ['#7b1e2b', '#b91c1c', '#c9a24b', '#e8821e', '#f7e2a8'], feature: true },
+    { event: 'Haldi', label: 'Haldi Yellow', note: "Yellow, obviously. Pick something you won't mind getting haldi on.", chips: ['#f2b705', '#fcd34d', '#fde68a', '#fdba74', '#fef3c7'], tone: 'haldi' },
+    { event: 'Mehendi', label: 'Shades of Green', note: 'Greens, with a bit of gold or mirror work if you like.', chips: ['#3f6212', '#65a30d', '#a3e635', '#d9f99d', '#c9a24b'], tone: 'mehendi' },
+    { event: 'Tilak', label: 'Light Pastels', note: "It's a daytime puja, so something light and comfortable.", chips: ['#fcd5b5', '#f8d1d1', '#cde7c6', '#fbe7a6', '#d7d3f0'], tone: 'pastel' },
+    { event: 'Sangeet', label: 'Shimmer & Glitter', note: 'Sequins, mirror work, anything that catches the light. You will be dancing.', chips: ['#7e22ce', '#db2777', '#c9a24b', '#f472b6', '#1e1b4b'], tone: 'sangeet' },
+    { event: 'Shubh Vivah', label: 'Traditional', note: 'Sarees, lehengas, sherwanis, kurtas. A Bhagalpuri silk would be perfect.', chips: ['#7b1e2b', '#b91c1c', '#c9a24b', '#e8821e', '#f7e2a8'], tone: 'vivah' },
   ],
 };
 
@@ -176,6 +231,11 @@ export const coupleShort = `${wedding.groom.name} & ${wedding.bride.name}`;
 
 export const directionsUrl = (query) =>
   `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(query)}`;
+
+export const routeUrl = ({ from, to }) =>
+  `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(from)}&destination=${encodeURIComponent(to)}`;
+
+export const telUrl = (phone) => `tel:+91${phone.replace(/\D/g, '')}`;
 
 export const mapsUrl = directionsUrl(wedding.venue.mapsQuery);
 export const mapsEmbedUrl = `https://maps.google.com/maps?q=${encodeURIComponent(wedding.venue.mapsQuery)}&z=15&output=embed`;

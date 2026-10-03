@@ -1,6 +1,10 @@
 import { motion } from 'framer-motion';
 import { House, Navigation, Sparkles } from 'lucide-react';
-import { wedding, mapsUrl, mapsEmbedUrl, directionsUrl } from '../config/wedding';
+import { wedding, mapsUrl, mapsEmbedUrl, directionsUrl, telUrl } from '../config/wedding';
+
+const atHome = new Intl.ListFormat('en', { style: 'long', type: 'conjunction' }).format(
+  wedding.functions.filter((f) => f.mapsQuery === wedding.home.mapsQuery).map((f) => f.short ?? f.name)
+);
 import SaveTheDate from './SaveTheDate';
 import { Divider } from './art/Motifs';
 
@@ -61,7 +65,7 @@ const Venue = () => {
         <div className="min-w-0">
           <h3 className="font-serif text-xl font-bold text-maroon-deep">Rai family home</h3>
           <p className="text-xs font-bold tracking-wide text-marigold">
-            {wedding.functions.filter((f) => f.mapsQuery === wedding.home.mapsQuery).map((f) => f.name.split(' & ')[0]).join(' and ')} happen here
+            {atHome} are all here
           </p>
           <p className="mt-1 text-sm leading-relaxed text-ink-soft">{wedding.home.address}</p>
           <a
@@ -77,7 +81,11 @@ const Venue = () => {
 
       <p className="max-w-md mx-auto mt-5 flex items-start gap-3 rounded-2xl border border-dashed border-gold/60 bg-cream-card px-4 py-3 text-sm leading-relaxed text-ink-soft">
         <Sparkles className="w-5 h-5 flex-none text-marigold mt-0.5" />
-        Coming from out of town? Just call us and we&apos;ll help with travel and stay.
+        <span>
+          Coming from out of town? Call us on{' '}
+          <a href={telUrl(wedding.phones[0])} className="font-bold text-maroon underline decoration-gold/60 underline-offset-2">{wedding.phones[0]}</a>
+          {' '}and we&apos;ll help with travel and stay.
+        </span>
       </p>
     </section>
   );

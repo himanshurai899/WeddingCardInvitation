@@ -225,7 +225,7 @@ const ScratchReveal = () => {
               <span className="text-maroon-deep font-serif text-3xl sm:text-4xl font-bold mt-1">25 November</span>
               <span className="text-maroon-deep font-serif text-2xl font-bold">2026</span>
               <span className="text-ink-soft text-[11px] tracking-[0.2em] uppercase font-bold mt-2">
-                Wednesday · 8 PM
+                Wednesday · vivah 11 PM
               </span>
               {isRevealed && (
                 <motion.span

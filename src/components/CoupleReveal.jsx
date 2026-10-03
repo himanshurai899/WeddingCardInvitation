@@ -2,23 +2,33 @@ import { motion } from 'framer-motion';
 import { wedding, formatDate } from '../config/wedding';
 import { Fish, Lotus } from './art/Motifs';
 
-const Person = ({ person, relation, delay }) => (
+const Person = ({ person, delay }) => (
   <motion.div
     initial={{ y: 20, opacity: 0 }}
     whileInView={{ y: 0, opacity: 1 }}
     transition={{ duration: 0.7, delay }}
     viewport={{ once: true }}
+    className="max-w-md mx-auto"
   >
+    <p className="deva text-lg text-marigold">{person.nameHindi}</p>
     <h2 className="script-font text-6xl md:text-8xl text-maroon-deep leading-tight">
       {person.name}
     </h2>
     {person.parents && (
-      <p className="mt-2 font-serif text-lg text-ink">
-        <span className="text-ink-soft italic">{relation}</span> {person.parents}
+      <p className="mt-2 font-serif text-lg text-ink leading-snug">
+        <span className="text-ink-soft italic">{person.relation}</span> {person.parents}
+      </p>
+    )}
+    {person.grandparents && (
+      <p className="mt-1 font-serif text-base text-ink-soft leading-snug">
+        <span className="italic">Grandson of</span> {person.grandparents}
       </p>
     )}
     {person.home && (
-      <p className="text-[11px] tracking-[0.25em] uppercase text-ink-soft mt-1">{person.home}</p>
+      <p className="text-[11px] tracking-[0.25em] uppercase text-ink-soft mt-2">{person.home}</p>
+    )}
+    {person.native && (
+      <p className="text-xs text-ink-soft mt-0.5">Roots in {person.native}</p>
     )}
   </motion.div>
 );
@@ -37,7 +47,7 @@ const CoupleReveal = () => {
           With the blessings of our elders
         </p>
 
-        <Person person={wedding.groom} relation="Son of" delay={0.1} />
+        <Person person={wedding.groom} delay={0.1} />
 
         <motion.div
           initial={{ scale: 0, opacity: 0 }}
@@ -55,7 +65,7 @@ const CoupleReveal = () => {
           <Fish className="w-16 h-8" flip />
         </motion.div>
 
-        <Person person={wedding.bride} relation="Daughter of" delay={0.2} />
+        <Person person={wedding.bride} delay={0.2} />
 
         <motion.p
           initial={{ opacity: 0 }}

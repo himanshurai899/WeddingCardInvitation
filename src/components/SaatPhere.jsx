@@ -21,10 +21,13 @@ const SaatPhere = () => {
   const [step, setStep] = useState(0);
   // Rounds walked in total. It only grows, so "Once more" doesn't spin the couple backwards
   const [turns, setTurns] = useState(0);
+  // True from a tap until that phera's vow has landed, so taps can't stack up
+  const [walking, setWalking] = useState(false);
   const done = step === vows.length;
 
   const next = () => {
-    if (done) return;
+    if (done || walking) return;
+    setWalking(true);
     const upcoming = step + 1;
     setStep(upcoming);
     setTurns((t) => t + 1);
@@ -100,8 +103,9 @@ const SaatPhere = () => {
             key={step}
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -12 }}
+            exit={{ opacity: 0, y: -12, transition: { duration: 0.3 } }}
             transition={{ duration: 0.5, delay: step ? 0.9 : 0 }}
+            onAnimationComplete={(def) => def.opacity === 1 && setWalking(false)}
           >
             {step === 0 && (
               <p className="font-serif text-xl text-gold-pale leading-relaxed">
@@ -130,8 +134,9 @@ const SaatPhere = () => {
           <motion.button
             type="button"
             onClick={next}
+            disabled={walking}
             whileTap={{ scale: 0.95 }}
-            className="rounded-full px-7 py-3 font-extrabold tracking-wider text-sm text-maroon-ink border border-gold-pale shadow-[0_6px_24px_rgba(224,180,95,.35)]"
+            className="rounded-full px-7 py-3 font-extrabold tracking-wider text-sm text-maroon-ink border border-gold-pale shadow-[0_6px_24px_rgba(224,180,95,.35)] transition-opacity disabled:opacity-50"
             style={{ background: 'linear-gradient(135deg, #c9a24b 0%, #f7e2a8 50%, #c9a24b 100%)' }}
           >
             Take the {ordinal[step]} phera
@@ -140,8 +145,9 @@ const SaatPhere = () => {
           <motion.button
             type="button"
             onClick={() => setStep(0)}
+            disabled={walking}
             whileTap={{ scale: 0.95 }}
-            className="inline-flex items-center gap-2 rounded-full px-6 py-3 font-bold text-sm text-gold-pale border border-gold/60"
+            className="inline-flex items-center gap-2 rounded-full px-6 py-3 font-bold text-sm text-gold-pale border border-gold/60 transition-opacity disabled:opacity-50"
           >
             <RotateCcw className="w-4 h-4" /> Once more
           </motion.button>
