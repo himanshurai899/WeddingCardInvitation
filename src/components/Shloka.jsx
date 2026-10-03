@@ -14,7 +14,7 @@ const Shloka = () => {
         className="max-w-2xl flex flex-col items-center"
       >
         <Trishul className="w-9 h-24 mb-3" />
-        <p className="deva text-marigold text-lg tracking-wide mb-4">॥ ॐ नमः शिवाय ॥</p>
+        <p className="deva text-marigold-deep text-lg tracking-wide mb-4">॥ ॐ नमः शिवाय ॥</p>
         <p className="font-devaText text-[clamp(1.4rem,6vw,2.1rem)] text-maroon-deep leading-relaxed mb-5">
           <span className="block">वागर्थाविव सम्पृक्तौ</span>
           <span className="block">वागर्थप्रतिपत्तये ।</span>

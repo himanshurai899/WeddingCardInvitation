@@ -10,7 +10,7 @@ const Person = ({ person, delay }) => (
     viewport={{ once: true }}
     className="max-w-md mx-auto lg:mx-0 lg:w-full"
   >
-    <p className="deva text-lg text-marigold">{person.nameHindi}</p>
+    <p className="deva text-lg text-marigold-deep">{person.nameHindi}</p>
     <h2 className="script-font text-6xl md:text-8xl text-maroon-deep leading-tight">
       {person.name}
     </h2>

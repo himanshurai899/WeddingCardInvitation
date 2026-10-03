@@ -4,7 +4,7 @@ import { Send } from 'lucide-react';
 import { wedding, coupleShort } from '../config/wedding';
 import { Divider } from './art/Motifs';
 
-const field = 'w-full rounded-xl border-[1.5px] border-maroon/15 bg-white px-4 py-3 text-[15px] text-ink outline-none transition focus:border-gold focus:ring-4 focus:ring-gold/25';
+const field = 'w-full rounded-xl border-[1.5px] border-maroon/25 bg-white px-4 py-3 text-[15px] text-ink placeholder:text-ink-soft/80 outline-none transition focus:border-gold focus:ring-4 focus:ring-gold/25';
 const label = 'text-[11px] font-extrabold tracking-[0.16em] uppercase text-maroon';
 
 // The RSVP goes out as a pre-filled WhatsApp message, so no backend is needed on Vercel's free tier
@@ -50,7 +50,7 @@ const Rsvp = () => {
         >
           <p className="script-font text-5xl text-maroon">Dhanyavaad!</p>
           <p className="mt-3 text-ink">WhatsApp should have opened with your reply typed out. Just hit send.</p>
-          <button type="button" onClick={() => setSent(false)} className="mt-5 text-sm font-bold text-marigold underline underline-offset-4">
+          <button type="button" onClick={() => setSent(false)} className="mt-5 text-sm font-bold text-marigold-deep underline underline-offset-4">
             Send another response
           </button>
         </motion.div>

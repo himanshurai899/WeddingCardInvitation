@@ -67,7 +67,7 @@ const FunctionRow = ({ fn, index }) => {
   const card = fn.highlight
     ? 'bg-gradient-to-br from-maroon to-maroon-deep text-cream border-gold'
     : 'bg-cream-card text-ink border-gold/45';
-  const soft = fn.highlight ? 'text-gold-pale/85' : 'text-ink-soft';
+  const soft = fn.highlight ? 'text-gold-pale' : 'text-ink-soft';
 
   return (
     <li className="relative grid grid-cols-[56px_minmax(0,1fr)] md:grid-cols-[minmax(0,1fr)_120px_minmax(0,1fr)] items-start md:items-center gap-x-4 md:gap-x-0 py-3 md:py-5">
@@ -82,7 +82,7 @@ const FunctionRow = ({ fn, index }) => {
         viewport={{ once: true, margin: '-40px' }}
         className={`row-start-1 col-start-2 ${left ? 'md:col-start-1' : 'md:col-start-3'} min-w-0 rounded-2xl border px-5 py-5 shadow-[0_8px_24px_rgba(92,20,32,.1)] ${card}`}
       >
-        <p className={`text-[11px] tracking-[0.2em] uppercase font-extrabold ${fn.highlight ? 'text-gold-bright' : 'text-marigold'}`}>
+        <p className={`text-[11px] tracking-[0.2em] uppercase font-extrabold ${fn.highlight ? 'text-gold-bright' : 'text-marigold-deep'}`}>
           {formatDate(fn.date, { weekday: 'long', day: 'numeric', month: 'long' })}
         </p>
         {fn.tithi && <p className={`deva text-xs leading-snug ${soft}`}>{fn.tithi}</p>}
@@ -91,12 +91,12 @@ const FunctionRow = ({ fn, index }) => {
 
         {fn.time && (
           <p className="mt-3 flex items-start gap-1.5 text-[13px] font-semibold">
-            <Clock className={`w-4 h-4 flex-none mt-px ${fn.highlight ? 'text-gold-bright' : 'text-marigold'}`} />{fn.time}
+            <Clock className={`w-4 h-4 flex-none mt-px ${fn.highlight ? 'text-gold-bright' : 'text-marigold-deep'}`} />{fn.time}
           </p>
         )}
         {fn.venue && (
           <p className="mt-1.5 flex items-start gap-1.5 text-[13px] font-semibold">
-            <MapPin className={`w-4 h-4 flex-none mt-px ${fn.highlight ? 'text-gold-bright' : 'text-marigold'}`} />
+            <MapPin className={`w-4 h-4 flex-none mt-px ${fn.highlight ? 'text-gold-bright' : 'text-marigold-deep'}`} />
             {link ? (
               <a href={link} target="_blank" rel="noopener noreferrer" className="underline decoration-gold/60 underline-offset-2">
                 {fn.venue}

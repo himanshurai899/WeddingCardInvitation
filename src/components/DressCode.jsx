@@ -7,7 +7,7 @@ import { Divider } from './art/Motifs';
 const tones = {
   haldi: ['bg-gradient-to-br from-[#fde047] to-[#f59e0b] text-maroon-deep border-gold/60', 'text-maroon'],
   mehendi: ['bg-gradient-to-br from-mehendi to-[#1f3a0c] text-cream border-gold/60', 'text-gold-pale'],
-  pastel: ['bg-gradient-to-br from-[#fdebe0] to-[#f6e7f4] text-maroon-deep border-gold/40', 'text-marigold'],
+  pastel: ['bg-gradient-to-br from-[#fdebe0] to-[#f6e7f4] text-maroon-deep border-gold/40', 'text-marigold-deep'],
   sangeet: ['glitter-shimmer bg-gradient-to-br from-[#6b21a8] to-[#3b0764] text-cream border-gold/60', 'text-gold-pale'],
   vivah: ['bg-gradient-to-br from-maroon to-maroon-deep text-cream border-gold', 'text-gold-pale'],
 };
@@ -49,7 +49,7 @@ const DressCode = () => {
         ))}
 
         <p className="flex items-start gap-3 self-center rounded-2xl border border-dashed border-gold/60 px-5 py-4 text-sm leading-relaxed text-ink-soft">
-          <Shirt className="w-5 h-5 flex-none text-marigold mt-0.5" />
+          <Shirt className="w-5 h-5 flex-none text-marigold-deep mt-0.5" />
           <span><strong className="text-maroon-deep">None of this is a rule.</strong> Wear whatever you&apos;re comfortable in. You being there is the real shagun.</span>
         </p>
       </div>

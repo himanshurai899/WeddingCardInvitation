@@ -73,9 +73,16 @@ export const wedding = {
 
   // "Bal Manuhar", the kids' request printed on North Indian wedding cards
   balManuhar: {
-    hindi: 'मेरे भैया की शादी में ज़रूर-ज़रूर आना!',
-    english: "You have to come to my bhaiya's wedding. No excuses!",
-    from: 'The kids of the family',
+    title: 'बाल मनुहार',
+    lines: [
+      'हमारे भैया की शादी में धूम मचाएँगे,',
+      'ढोल पे नाचेंगे, जी भर मिठाई खाएँगे।',
+      'आप ज़रूर-ज़रूर आना, बहाना नहीं चलेगा,',
+      'वरना हम सब रूठ जाएँगे!',
+    ],
+    english: "We're going to dance to the dhol and eat all the mithai at bhaiya's wedding. You have to come. No excuses, or we're all going to sulk!",
+    fromHindi: ['आपके इंतज़ार में,', 'भैया के छोटे भाई-बहन'],
+    from: "Bhaiya's little brothers and sisters",
   },
 
   // RSVPs arrive on this WhatsApp number (digits only, with country code)
@@ -92,14 +99,13 @@ export const wedding = {
     couple: '/art/couple.webp',
   },
 
-  // Mahadev and Parvati artwork: free illustrations from Pixabay (Pixabay Content License,
-  // free to use with no attribution needed), resized to webp in public/art/.
+  // Mahadev and Parvati artwork, kept to a few realistic pictures and silhouettes: free images
+  // from Pixabay (Pixabay Content License, free to use with no attribution needed), resized to
+  // webp in public/art/.
   art: {
-    cover: { src: '/art/shiva-parvati-stars.webp', alt: 'Mahadev and Parvati together under a sky full of stars' },
-    sunset: { src: '/art/shiva-parvati-sunset.webp', alt: 'Mahadev and Parvati against the setting sun' },
+    cover: { src: '/art/shiva-parvati-sunset.webp', alt: 'Mahadev and Parvati as silhouettes against the setting sun' },
     night: { src: '/art/shiva-parvati-temple.webp', alt: 'Mahadev and Parvati in a lamp-lit temple at night' },
     nandi: { src: '/art/shiva-nandi.webp', alt: 'Mahadev and Nandi on the misty hills' },
-    finale: { src: '/art/shiva-parvati-valley.webp', alt: 'Mahadev and Parvati face to face in the Himalayas' },
   },
 
   // Guest functions in order, as printed under "मांगलिक कार्यक्रम". Empty `time` or `venue` hides

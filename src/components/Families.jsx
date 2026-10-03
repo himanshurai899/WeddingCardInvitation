@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { Navigation, Phone } from 'lucide-react';
 import { wedding, directionsUrl, telUrl } from '../config/wedding';
 import { MalaBand } from './art/Shiva';
+import BalManuhar from './BalManuhar';
 
 const Side = ({ label, hindi, person, delay }) => (
   <motion.div
@@ -11,7 +12,7 @@ const Side = ({ label, hindi, person, delay }) => (
     viewport={{ once: true }}
     className="luxury-card px-5 py-6 text-center"
   >
-    <p className="deva text-lg text-marigold">{hindi}</p>
+    <p className="deva text-lg text-marigold-deep">{hindi}</p>
     <p className="text-[10px] tracking-[0.25em] uppercase font-extrabold text-ink-soft">{label}</p>
     <h3 className="font-serif text-2xl font-bold text-maroon-deep mt-2">{person.family}</h3>
     {person.parents && <p className="mt-2 text-sm leading-relaxed text-ink">{person.parents}</p>}
@@ -53,7 +54,6 @@ const bannerFade = 'linear-gradient(to right, transparent, #000 18%, #000 82%, t
 
 // Nimantrak: the families who invite you, the names printed on the card, and the kids' request
 const Families = () => {
-  const { balManuhar } = wedding;
   return (
     <section className="py-16 sm:py-20 px-5 paper overflow-hidden">
       {/* Mahadev and Nandi on the hills, faded out on every side so it melts into the paper */}
@@ -111,22 +111,7 @@ const Families = () => {
         <span className="block text-sm italic text-ink-soft">and all our friends and well-wishers</span>
       </p>
 
-      {balManuhar && (
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9, rotate: -2 }}
-          whileInView={{ opacity: 1, scale: 1, rotate: -2 }}
-          transition={{ duration: 0.8, type: 'spring' }}
-          viewport={{ once: true }}
-          className="relative max-w-xs mx-auto mt-10 rounded-3xl bg-haldi/90 px-6 py-5 text-center shadow-lg"
-        >
-          <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-sindoor px-3 py-0.5 text-[10px] font-extrabold tracking-[0.2em] uppercase text-cream">
-            Bal Manuhar
-          </span>
-          <p className="deva text-xl text-maroon-deep leading-snug">{balManuhar.hindi}</p>
-          <p className="mt-1 text-sm text-maroon">{balManuhar.english}</p>
-          <p className="mt-2 text-[11px] italic text-maroon/80">{balManuhar.from}</p>
-        </motion.div>
-      )}
+      <BalManuhar />
     </section>
   );
 };

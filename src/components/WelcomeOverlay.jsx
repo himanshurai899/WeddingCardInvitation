@@ -73,11 +73,11 @@ const WelcomeOverlay = ({ onOpen }) => {
               <motion.p {...rise(0.2)} className="deva text-gold-bright text-[15px] sm:text-base tracking-wide">
                 ॥ श्री गणेशाय नमः ॥
               </motion.p>
-              <motion.p {...rise(0.3)} className="hidden [@media(min-height:780px)]:block font-devaText italic text-gold-pale/75 text-[13px] leading-relaxed mt-1 max-w-[300px]">
+              <motion.p {...rise(0.3)} className="hidden [@media(min-height:780px)]:block font-devaText italic text-gold-pale/90 text-[13px] leading-relaxed mt-1 max-w-[300px]">
                 वक्रतुण्ड महाकाय सूर्यकोटि समप्रभ ।<br />निर्विघ्नं कुरु मे देव सर्वकार्येषु सर्वदा ॥
               </motion.p>
 
-              {/* Mahadev and Parvati in a gold jharokha */}
+              {/* Mahadev and Parvati against the setting sun, in a gold jharokha */}
               <motion.div
                 initial={{ opacity: 0, scale: 0.94 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -89,7 +89,7 @@ const WelcomeOverlay = ({ onOpen }) => {
                   alt={wedding.art.cover.alt}
                   fetchPriority="high"
                   decoding="async"
-                  className="w-full h-full object-cover object-[50%_22%] rounded-t-full"
+                  className="w-full h-full object-cover object-center rounded-t-full"
                 />
                 <span className="pointer-events-none absolute inset-[7px] rounded-t-full border border-gold-pale/60" aria-hidden="true" />
               </motion.div>
@@ -116,7 +116,7 @@ const WelcomeOverlay = ({ onOpen }) => {
               <motion.div {...rise(1.0)} className="w-40 my-2 opacity-80">
                 <MalaBand />
               </motion.div>
-              <motion.p {...rise(1.0)} className="text-[11px] tracking-[0.3em] uppercase text-gold-pale/80">
+              <motion.p {...rise(1.0)} className="text-[11px] tracking-[0.3em] uppercase text-gold-pale/90">
                 25 · 11 · 2026 &nbsp;•&nbsp; Vadodara
               </motion.p>
 

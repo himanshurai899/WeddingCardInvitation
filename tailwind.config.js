@@ -21,6 +21,8 @@ export default {
         marigold: {
           DEFAULT: "#e8821e",
           soft: "#f2a14b",
+          // for text on cream: plain marigold is too light to read there (about 2.6:1)
+          deep: "#a64d0a",
         },
         cream: {
           DEFAULT: "#faf1dd",
@@ -29,7 +31,7 @@ export default {
         },
         ink: {
           DEFAULT: "#53301f",
-          soft: "#8a6a52",
+          soft: "#6b4f3a",
         },
         // Mahadev's side of the palette: the night sky over Kailash
         neel: {

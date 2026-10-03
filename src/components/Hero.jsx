@@ -78,7 +78,7 @@ const Hero = ({ opened }) => {
               <i key={i} style={{ left: `${8 + ((i * 29) % 86)}%`, animationDuration: `${8 + (i % 3)}s`, animationDelay: `${i * 0.9}s` }} />
             ))}
           </div>
-          <span className="deva text-marigold text-2xl sm:text-3xl">सुस्वागतम्</span>
+          <span className="deva text-marigold-deep text-2xl sm:text-3xl">सुस्वागतम्</span>
           <CoupleArch className="h-[min(44svh,460px)] w-auto max-w-[82vw] mt-1" />
           <h2 className="script-font text-[clamp(1.9rem,9vw,4rem)] text-maroon-deep mt-1 leading-tight">
             {wedding.groom.name} <span className="text-sindoor">&amp;</span> {wedding.bride.name}

@@ -46,7 +46,7 @@ const SaatPhere = () => {
       <header className="relative text-center">
         <p className="text-[11px] tracking-[0.35em] uppercase font-extrabold text-gold-bright">Saat Vachan</p>
         <h2 className="deva text-5xl mt-2 bg-gradient-to-b from-[#fff6e0] to-gold-bright bg-clip-text text-transparent">सात फेरे</h2>
-        <p className="font-serif italic text-lg text-gold-pale/80 mt-1">Tap the button and walk each phera with them</p>
+        <p className="font-serif italic text-lg text-gold-pale/90 mt-1">Tap the button and walk each phera with them</p>
       </header>
 
       {/* The agni and its circle */}

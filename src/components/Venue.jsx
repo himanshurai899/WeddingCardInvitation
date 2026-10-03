@@ -15,7 +15,7 @@ const Venue = () => {
         <p className="text-[11px] tracking-[0.35em] uppercase font-extrabold text-sindoor">Venue</p>
         <h2 className="font-serif text-4xl sm:text-5xl font-bold text-maroon-deep mt-2">Where to come</h2>
         <Divider className="w-44 h-5 mx-auto my-3 text-gold" />
-        <p className="deva text-xl text-marigold">विवाह स्थल</p>
+        <p className="deva text-xl text-marigold-deep">विवाह स्थल</p>
       </header>
 
       <motion.div
@@ -65,7 +65,7 @@ const Venue = () => {
           </span>
           <div className="min-w-0">
             <h3 className="font-serif text-xl font-bold text-maroon-deep">Rai family home</h3>
-            <p className="text-xs font-bold tracking-wide text-marigold">
+            <p className="text-xs font-bold tracking-wide text-marigold-deep">
               {atHome} are all here
             </p>
             <p className="mt-1 text-sm leading-relaxed text-ink-soft">{wedding.home.address}</p>
@@ -81,7 +81,7 @@ const Venue = () => {
         </motion.div>
 
         <p className="flex items-start gap-3 rounded-2xl border border-dashed border-gold/60 bg-cream-card px-4 py-3 text-sm leading-relaxed text-ink-soft">
-          <Sparkles className="w-5 h-5 flex-none text-marigold mt-0.5" />
+          <Sparkles className="w-5 h-5 flex-none text-marigold-deep mt-0.5" />
           <span>
             Coming from out of town? Call us on{' '}
             <a href={telUrl(wedding.phones[0])} className="font-bold text-maroon underline decoration-gold/60 underline-offset-2">{wedding.phones[0]}</a>

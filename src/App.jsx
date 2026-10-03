@@ -61,7 +61,7 @@ function App() {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
-            className="max-w-2xl mx-auto px-6"
+            className="max-w-2xl mx-auto px-6 pb-16 sm:pb-20"
           >
             <div className="mb-8 flex justify-center gap-3">
               {[1, 2, 3].map(i => (
@@ -87,32 +87,11 @@ function App() {
             <div className="flex flex-col items-center">
               <span className="text-sindoor tracking-[0.5em] uppercase text-xs font-bold mb-3">With Love</span>
               <h4 className="script-font text-[clamp(2.75rem,12vw,4.5rem)] leading-tight text-maroon">{coupleShort}</h4>
-              <p className="deva text-lg text-marigold mt-1">
+              <p className="deva text-lg text-marigold-deep mt-1">
                 {wedding.groom.familyHindi} एवं {wedding.bride.familyHindi} परिवार
               </p>
             </div>
           </motion.div>
-
-          <motion.figure
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="max-w-3xl mx-auto px-5 mt-10 pb-14"
-          >
-            <div className="rounded-2xl bg-gradient-to-br from-gold-bright via-gold to-gold-dark p-[4px] shadow-[0_14px_36px_rgba(92,20,32,.25)]">
-              <img
-                src={wedding.art.finale.src}
-                alt={wedding.art.finale.alt}
-                loading="lazy"
-                decoding="async"
-                className="block w-full aspect-[16/10] sm:aspect-[16/9] object-cover object-[50%_30%] rounded-[13px]"
-              />
-            </div>
-            <figcaption className="mt-3 font-serif italic text-lg text-ink-soft">
-              Har Har Mahadev. May Gauri Shankar bless the two of them.
-            </figcaption>
-          </motion.figure>
         </section>
 
         {/* Footer Branding */}
@@ -120,8 +99,8 @@ function App() {
           <p className="text-[10px] tracking-[0.3em] uppercase text-ink-soft">
             Shubh Vivah • 25.11.2026 • Vadodara
           </p>
-          <p className="mt-2 px-6 text-[10px] leading-relaxed text-ink-soft/80">
-            Mahadev and Parvati artwork: free illustrations from Pixabay
+          <p className="mt-2 px-6 text-[10px] leading-relaxed text-ink-soft">
+            Artwork and photos: free images from Pixabay
           </p>
         </footer>
       </main>

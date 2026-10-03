@@ -19,14 +19,14 @@ const Moment = ({ item }) => (
     <p className="text-xs sm:text-[13px] font-extrabold tracking-[0.18em] uppercase text-gold-bright">{item.time}</p>
     <h3 className={`font-serif font-bold leading-tight uppercase tracking-wide mt-0.5 ${item.highlight ? 'text-[#ffb4a8] text-2xl' : 'text-cream text-xl'}`}>
       {item.name}
-      <span className="deva normal-case tracking-normal font-normal text-gold-pale/80 text-base ml-2">{item.hindi}</span>
+      <span className="deva normal-case tracking-normal font-normal text-gold-pale/90 text-base ml-2">{item.hindi}</span>
     </h3>
     {item.route && (
       <a href={routeUrl(item.route)} target="_blank" rel="noopener noreferrer" className="mt-1 inline-flex items-start gap-1 text-[13px] font-semibold text-gold-pale underline decoration-gold/60 underline-offset-2">
         <MapPin className="w-4 h-4 flex-none mt-px text-gold-bright" />{item.route.label}
       </a>
     )}
-    <p className="mt-1 text-sm leading-relaxed text-neel-pale/85">{item.about}</p>
+    <p className="mt-1 text-sm leading-relaxed text-neel-pale">{item.about}</p>
   </motion.li>
 );
 
@@ -36,7 +36,7 @@ const WeddingNight = () => {
       <header className="relative text-center mb-10">
         <Chandra className="w-12 h-8 mx-auto mb-2" />
         <p className="text-[11px] tracking-[0.35em] uppercase font-extrabold text-gold-bright">Wednesday · 25 November 2026</p>
-        <p className="deva text-xs text-gold-pale/70 mt-1">मार्गशीर्ष कृष्ण प्रतिपदा</p>
+        <p className="deva text-xs text-gold-pale/90 mt-1">मार्गशीर्ष कृष्ण प्रतिपदा</p>
         <h2 className="font-serif text-4xl sm:text-5xl font-bold mt-2 bg-gradient-to-b from-[#fff6e0] to-gold-bright bg-clip-text text-transparent">The Wedding Night</h2>
         <p className="deva text-xl text-marigold-soft mt-1">विवाह की शुभ रात्रि</p>
       </header>
@@ -58,7 +58,7 @@ const WeddingNight = () => {
               className="block w-full aspect-[3/4] object-cover object-top rounded-t-full rounded-b-[13px]"
             />
           </div>
-          <figcaption className="mt-3 text-center font-serif italic text-gold-pale/80">
+          <figcaption className="mt-3 text-center font-serif italic text-gold-pale/90">
             Gauri Shankar, whose blessing every bride asks for
           </figcaption>
         </motion.figure>

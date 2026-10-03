@@ -49,7 +49,7 @@ const SectionNav = ({ visible }) => {
                 className={`relative h-full flex flex-col items-center justify-center gap-1 transition-colors ${on ? 'text-maroon' : 'text-ink-soft'}`}
               >
                 <Icon className={`w-5 h-5 transition-transform ${on ? '-translate-y-0.5' : ''}`} strokeWidth={1.8} />
-                <span className="text-[9.5px] font-extrabold tracking-wider uppercase">{label}</span>
+                <span className="text-[10.5px] font-extrabold tracking-wider uppercase">{label}</span>
                 <span className={`absolute bottom-0 h-[3px] w-11 rounded-t bg-gradient-to-r from-maroon to-marigold transition-transform ${on ? 'scale-x-100' : 'scale-x-0'}`} />
               </a>
             </li>
