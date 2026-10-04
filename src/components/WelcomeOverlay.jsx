@@ -3,9 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { wedding } from '../config/wedding';
 import { Toran } from './art/Motifs';
 import { KailashRange, MalaBand } from './art/Shiva';
-
-// Personalised link: https://your-site.vercel.app/?guest=Sharma%20Ji
-const guest = new URLSearchParams(window.location.search).get('guest')?.trim().slice(0, 40);
+import { guest } from '../lib/guests';
 
 const rise = (delay) => ({
   initial: { opacity: 0, y: 14 },

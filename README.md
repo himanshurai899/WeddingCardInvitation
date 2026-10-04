@@ -38,7 +38,8 @@ lives in **`src/config/wedding.js`**. Lines marked `VERIFY` still need your conf
 - **Pictures:** Mahadev and Parvati are listed under `art` in the config (cover, week, night, families).
   Drop a new webp into `public/art/` and point the entry at it to swap one.
 - **Save the Date:** adds the wedding to Apple or Google Calendar, with the site link in the event notes.
-- **Personal links:** `https://your-site.vercel.app/?guest=Sharma%20Ji` greets that guest by name on the cover.
+- **Personal links:** `https://your-site.vercel.app/?guest=Sharma%20Ji` greets that guest by name on the cover and in the closing blessing, and pre-fills their name in the RSVP.
+- **Guest list (`/admin`):** import a CSV or a contacts `.vcf` (iPhone: share contacts from the Contacts app; Google Contacts: export as CSV), or on Android Chrome pick from phone contacts. Each guest is invited as just them, plus one, or family (the card then reads "Sharma Ji & Family" and the RSVP guest count starts at 4), and gets a personal link plus a WhatsApp button with a Hindi and English message that includes the venue and a Maps link (edit it on the page). The list is stored in that browser only. Set `siteUrl` in the config to your final address first.
 
 ## Run locally
 

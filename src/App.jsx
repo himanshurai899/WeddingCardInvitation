@@ -18,6 +18,7 @@ import ScrollProgress from './components/ScrollProgress';
 import { Diya } from './components/art/Motifs';
 import { MotionConfig, motion } from 'framer-motion';
 import { wedding, coupleShort } from './config/wedding';
+import { guest } from './lib/guests';
 
 function App() {
   const [opened, setOpened] = useState(false);
@@ -82,7 +83,7 @@ function App() {
             </p>
             <p className="deva text-2xl text-marigold-deep mb-6">{wedding.maithili}</p>
             <p className="text-xl md:text-2xl font-serif text-maroon-deep italic leading-relaxed mb-10">
-              With our elders' blessings and God's grace, we can't wait to welcome you.
+              With our elders' blessings and God's grace, we can't wait to welcome you{guest && `, ${guest}`}.
             </p>
 
             <div className="flex flex-col items-center">

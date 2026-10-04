@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Send } from 'lucide-react';
 import { wedding, coupleShort } from '../config/wedding';
 import { Divider } from './art/Motifs';
+import { guestName, party, PARTIES } from '../lib/guests';
 
 const field = 'w-full rounded-xl border-[1.5px] border-maroon/25 bg-white px-4 py-3 text-[15px] text-ink placeholder:text-ink-soft/80 outline-none transition focus:border-gold focus:ring-4 focus:ring-gold/25';
 const label = 'text-[11px] font-extrabold tracking-[0.16em] uppercase text-maroon';
@@ -58,7 +59,7 @@ const Rsvp = () => {
         <form onSubmit={handleSubmit} className="luxury-card max-w-md mx-auto p-6 flex flex-col gap-5" noValidate>
           <label className="flex flex-col gap-2">
             <span className={label}>Your name</span>
-            <input name="name" type="text" required autoComplete="name" placeholder="Full name" className={field} />
+            <input name="name" type="text" required autoComplete="name" defaultValue={guestName} placeholder="Full name" className={field} />
           </label>
 
           <fieldset className="flex flex-col gap-2">
@@ -73,7 +74,7 @@ const Rsvp = () => {
 
           <label className="flex flex-col gap-2">
             <span className={label}>Number of guests</span>
-            <select name="guests" defaultValue="2" className={field}>
+            <select name="guests" defaultValue={guestName ? PARTIES[party].seats : 2} className={field}>
               {Array.from({ length: 10 }, (_, i) => (
                 <option key={i + 1} value={i + 1}>{i + 1}</option>
               ))}

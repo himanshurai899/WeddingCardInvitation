@@ -141,6 +141,9 @@ export const wedding = {
     from: "Bhaiya's little brothers and sisters",
   },
 
+  // The live address, used by the admin page (/admin) to build each guest's invitation link
+  siteUrl: 'https://himanshu-samiksha-vivah.vercel.app',
+
   // RSVPs arrive on this WhatsApp number (digits only, with country code)
   rsvpWhatsApp: '919408101002',
 
