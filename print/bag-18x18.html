@@ -3,133 +3,50 @@
 <head>
 <meta charset="utf-8" />
 <title>Bag print 18x18</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Great+Vibes&family=Tiro+Devanagari+Hindi&family=Yatra+One&family=Nunito+Sans:wght@400;600&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500&family=Montserrat:wght@500&display=swap" rel="stylesheet" />
 <style>
-  /* 1800 css px = 18 in. Rendered at 3x = 5400 px = 300 DPI. Safe margin 150px = 1.5 in. */
-  :root { --gold:#c9a24b; --gold-bright:#e0b45f; --gold-pale:#f7e2a8; --marigold:#e8821e; }
-  * { box-sizing: border-box; margin: 0; }
-  html, body { width: 1800px; height: 1800px; overflow: hidden; }
-  body {
-    background:
-      radial-gradient(circle at 50% 38%, #24387a 0%, #17255a 38%, #0f1838 70%, #0b1230 100%);
-    color: var(--gold-pale);
-    font-family: 'Cormorant Garamond', Georgia, serif;
-    position: relative;
-  }
-  /* soft stars, kept simple and symmetric-ish */
-  .stars { position:absolute; inset:0;
-    background-image:
-      radial-gradient(2px 2px at 12% 14%, #f7e2a8 60%, transparent 62%),
-      radial-gradient(3px 3px at 88% 10%, #f7e2a8 60%, transparent 62%),
-      radial-gradient(2px 2px at 8% 52%, #f7e2a8 60%, transparent 62%),
-      radial-gradient(3px 3px at 93% 47%, #f7e2a8 60%, transparent 62%),
-      radial-gradient(2px 2px at 15% 88%, #f7e2a8 60%, transparent 62%),
-      radial-gradient(2px 2px at 85% 90%, #f7e2a8 60%, transparent 62%),
-      radial-gradient(2px 2px at 5% 30%, #f7e2a8 60%, transparent 62%),
-      radial-gradient(2px 2px at 95% 72%, #f7e2a8 60%, transparent 62%);
-    opacity:.7; }
-
-  .frame { position:absolute; inset:150px; border:6px solid var(--gold); }
-  .frame::before { content:""; position:absolute; inset:16px; border:2px solid var(--gold-bright); opacity:.8; }
-  .frame i { position:absolute; width:34px; height:34px; background:var(--gold-bright); transform:rotate(45deg); }
-  .frame i:nth-child(1){ left:-20px; top:-20px; }
-  .frame i:nth-child(2){ right:-20px; top:-20px; }
-  .frame i:nth-child(3){ left:-20px; bottom:-20px; }
-  .frame i:nth-child(4){ right:-20px; bottom:-20px; }
-
-  .content { position:absolute; inset:150px; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:0 60px; }
-
-  .om { font-family:'Yatra One','Tiro Devanagari Hindi',serif; font-size:54px; letter-spacing:6px; color:var(--gold-bright); margin-bottom:28px; }
-
-  .medallion { width:420px; height:420px; border-radius:50%; border:10px solid var(--gold);
-    box-shadow: 0 0 0 14px #0f1838, 0 0 0 18px var(--gold-bright), 0 0 90px rgba(232,130,30,.35);
-    overflow:hidden; }
-  .medallion img { width:100%; height:100%; object-fit:cover; object-position:50% 50%; display:block; }
-
-  .mono { width:1380px; height:auto; display:block; margin-top:10px; }
-
-  .names { margin-top:20px; font-size:84px; font-weight:500; letter-spacing:10px; text-transform:uppercase; color:var(--gold-pale); }
-  .names em { font-family:'Great Vibes',cursive; font-style:normal; text-transform:none; font-size:84px; letter-spacing:0; color:var(--marigold); margin:0 18px; }
-
-  .rule { display:flex; align-items:center; gap:22px; margin:24px 0 20px; }
-  .rule b { width:260px; height:3px; background:linear-gradient(90deg,transparent,var(--gold-bright)); }
-  .rule b:last-child { transform:scaleX(-1); }
-  .rule i { width:18px; height:18px; background:var(--gold-bright); transform:rotate(45deg); }
-
-  .when { font-family:'Nunito Sans',sans-serif; font-weight:600; font-size:42px; letter-spacing:12px; text-transform:uppercase; color:var(--gold-bright); }
+  /* 1800 css px = 18 in. Rendered at 3x = 5400 px = 300 DPI. Artwork is 12 in wide, centred. */
+  * { margin:0; box-sizing:border-box; }
+  html, body { width:1800px; height:1800px; overflow:hidden; background:transparent; }
+  .art { position:absolute; left:300px; top:300px; width:1200px; height:1200px; }
 </style>
 </head>
 <body>
-  <div class="stars"></div>
-  <div class="frame"><i></i><i></i><i></i><i></i></div>
-  <div class="content">
-    <div class="om">॥ ॐ नमः शिवाय ॥</div>
-    <svg class="mono" viewBox="0 0 1500 910" xmlns="http://www.w3.org/2000/svg">
+  <svg class="art" viewBox="0 0 1200 1200" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f7e2a8"/><stop offset=".55" stop-color="#e0b45f"/><stop offset="1" stop-color="#c9a24b"/></linearGradient>
-    <linearGradient id="p" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#9b0f2a"/><stop offset=".6" stop-color="#e0486b"/><stop offset="1" stop-color="#f8b3c2"/></linearGradient>
-    <linearGradient id="lf" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#0a4146"/><stop offset="1" stop-color="#14808a"/></linearGradient>
-    <path id="pt" d="M0 0 C-42 -40 -38 -115 0 -165 C38 -115 42 -40 0 0Z"/>
-    <path id="leaf" d="M0 0 C70 -46 220 -46 300 4 C220 36 70 30 0 0Z"/>
-    <clipPath id="cp"><circle cx="750" cy="380" r="206"/></clipPath>
+    <linearGradient id="p" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#b3204a"/><stop offset=".55" stop-color="#e2557a"/><stop offset="1" stop-color="#fbc4d0"/></linearGradient>
+    <linearGradient id="p2" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#8e1838"/><stop offset="1" stop-color="#e86d8e"/></linearGradient>
+    <linearGradient id="p3" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#e2557a"/><stop offset="1" stop-color="#fde3e9"/></linearGradient>
+    <path id="pt" d="M0 0 C-40 -38 -36 -112 0 -160 C36 -112 40 -38 0 0Z"/>
+    <path id="leaf" d="M0 0 C18 -17 46 -19 70 0 C46 19 18 17 0 0Z"/>
+    <!-- a gap around the S, so it reads as woven over the H and the vine -->
+    <path id="S" transform="translate(625.9,720) scale(0.66,-0.66)" d="M576 715Q566 689 549.5 639.5Q533 590 517 511H497Q500 525 501.5 540.0Q503 555 503 568Q503 605 488.5 635.5Q474 666 443.0 684.5Q412 703 361 703Q301 703 261.0 672.0Q221 641 221 576Q221 538 239.5 505.5Q258 473 286.5 443.5Q315 414 347.5 384.5Q380 355 408.5 324.0Q437 293 455.5 258.5Q474 224 474 182Q474 130 451.0 93.0Q428 56 391.0 32.5Q354 9 309.5 -2.5Q265 -14 221 -14Q181 -14 154.0 -6.5Q127 1 109.0 12.0Q91 23 79 32Q68 41 58.5 44.0Q49 47 43 47Q30 47 21.5 33.5Q13 20 2 -7H-18Q-9 15 1.0 44.0Q11 73 23.0 118.5Q35 164 50 233H70Q66 212 63.0 192.5Q60 173 61 152Q64 84 103.0 45.0Q142 6 224 6Q289 6 330.0 36.0Q371 66 371 131Q371 173 354.5 206.0Q338 239 311.5 267.5Q285 296 255.5 323.0Q226 350 199.5 379.5Q173 409 156.5 445.0Q140 481 140 527Q140 575 159.0 611.5Q178 648 209.5 672.5Q241 697 280.0 709.5Q319 722 360 722Q402 722 432.0 712.0Q462 702 490 680Q502 671 510.0 666.5Q518 662 523 662Q537 662 556 715Z"/>
+    <mask id="gap" maskUnits="userSpaceOnUse" x="0" y="0" width="1200" height="1200">
+      <rect width="1200" height="1200" fill="#fff"/>
+      <use href="#S" fill="#000" stroke="#000" stroke-width="39.4" stroke-linejoin="round"/>
+    </mask>
   </defs>
-  <!-- mandala around the couple -->
-  <g transform="translate(750,380)">
-    <circle r="330" fill="#0b1230" fill-opacity=".4"/>
-    <use href="#pt" transform="rotate(0) translate(0,-238) scale(.5)" fill="none" stroke="#e0b45f" stroke-opacity=".75" stroke-width="3"/>
-    <use href="#pt" transform="rotate(15) translate(0,-238) scale(.5)" fill="none" stroke="#e0b45f" stroke-opacity=".75" stroke-width="3"/>
-    <use href="#pt" transform="rotate(30) translate(0,-238) scale(.5)" fill="none" stroke="#e0b45f" stroke-opacity=".75" stroke-width="3"/>
-    <use href="#pt" transform="rotate(45) translate(0,-238) scale(.5)" fill="none" stroke="#e0b45f" stroke-opacity=".75" stroke-width="3"/>
-    <use href="#pt" transform="rotate(60) translate(0,-238) scale(.5)" fill="none" stroke="#e0b45f" stroke-opacity=".75" stroke-width="3"/>
-    <use href="#pt" transform="rotate(75) translate(0,-238) scale(.5)" fill="none" stroke="#e0b45f" stroke-opacity=".75" stroke-width="3"/>
-    <use href="#pt" transform="rotate(90) translate(0,-238) scale(.5)" fill="none" stroke="#e0b45f" stroke-opacity=".75" stroke-width="3"/>
-    <use href="#pt" transform="rotate(105) translate(0,-238) scale(.5)" fill="none" stroke="#e0b45f" stroke-opacity=".75" stroke-width="3"/>
-    <use href="#pt" transform="rotate(120) translate(0,-238) scale(.5)" fill="none" stroke="#e0b45f" stroke-opacity=".75" stroke-width="3"/>
-    <use href="#pt" transform="rotate(135) translate(0,-238) scale(.5)" fill="none" stroke="#e0b45f" stroke-opacity=".75" stroke-width="3"/>
-    <use href="#pt" transform="rotate(150) translate(0,-238) scale(.5)" fill="none" stroke="#e0b45f" stroke-opacity=".75" stroke-width="3"/>
-    <use href="#pt" transform="rotate(165) translate(0,-238) scale(.5)" fill="none" stroke="#e0b45f" stroke-opacity=".75" stroke-width="3"/>
-    <use href="#pt" transform="rotate(180) translate(0,-238) scale(.5)" fill="none" stroke="#e0b45f" stroke-opacity=".75" stroke-width="3"/>
-    <use href="#pt" transform="rotate(195) translate(0,-238) scale(.5)" fill="none" stroke="#e0b45f" stroke-opacity=".75" stroke-width="3"/>
-    <use href="#pt" transform="rotate(210) translate(0,-238) scale(.5)" fill="none" stroke="#e0b45f" stroke-opacity=".75" stroke-width="3"/>
-    <use href="#pt" transform="rotate(225) translate(0,-238) scale(.5)" fill="none" stroke="#e0b45f" stroke-opacity=".75" stroke-width="3"/>
-    <use href="#pt" transform="rotate(240) translate(0,-238) scale(.5)" fill="none" stroke="#e0b45f" stroke-opacity=".75" stroke-width="3"/>
-    <use href="#pt" transform="rotate(255) translate(0,-238) scale(.5)" fill="none" stroke="#e0b45f" stroke-opacity=".75" stroke-width="3"/>
-    <use href="#pt" transform="rotate(270) translate(0,-238) scale(.5)" fill="none" stroke="#e0b45f" stroke-opacity=".75" stroke-width="3"/>
-    <use href="#pt" transform="rotate(285) translate(0,-238) scale(.5)" fill="none" stroke="#e0b45f" stroke-opacity=".75" stroke-width="3"/>
-    <use href="#pt" transform="rotate(300) translate(0,-238) scale(.5)" fill="none" stroke="#e0b45f" stroke-opacity=".75" stroke-width="3"/>
-    <use href="#pt" transform="rotate(315) translate(0,-238) scale(.5)" fill="none" stroke="#e0b45f" stroke-opacity=".75" stroke-width="3"/>
-    <use href="#pt" transform="rotate(330) translate(0,-238) scale(.5)" fill="none" stroke="#e0b45f" stroke-opacity=".75" stroke-width="3"/>
-    <use href="#pt" transform="rotate(345) translate(0,-238) scale(.5)" fill="none" stroke="#e0b45f" stroke-opacity=".75" stroke-width="3"/>
-    <circle r="330" fill="none" stroke="#e0b45f" stroke-width="4" stroke-dasharray="1 14" stroke-linecap="round"/>
-    <circle r="344" fill="none" stroke="#c9a24b" stroke-width="3"/>
-    <circle r="236" fill="#0b1230" stroke="#c9a24b" stroke-width="3"/>
+
+  <g mask="url(#gap)">
+    <path transform="translate(162.8,720) scale(0.64,-0.64)" d="M460 0V20Q494 22 511.5 28.0Q529 34 535.0 52.0Q541 70 541 106V602Q541 639 535.0 656.5Q529 674 511.5 680.5Q494 687 460 688V708Q483 707 518.0 706.0Q553 705 587 705Q626 705 660.0 706.0Q694 707 715 708V688Q681 687 663.5 680.5Q646 674 640.0 656.5Q634 639 634 602V106Q634 70 640.0 52.0Q646 34 663.5 28.0Q681 22 715 20V0Q694 2 660.0 2.5Q626 3 587 3Q553 3 518.0 2.5Q483 2 460 0ZM42 0V20Q76 22 93.5 28.0Q111 34 117.0 52.0Q123 70 123 106V602Q123 639 117.0 656.5Q111 674 93.5 680.5Q76 687 42 688V708Q63 707 97.0 706.0Q131 705 170 705Q205 705 239.5 706.0Q274 707 297 708V688Q263 687 245.5 680.5Q228 674 222.0 656.5Q216 639 216 602V106Q216 70 222.0 52.0Q228 34 245.5 28.0Q263 22 297 20V0Q274 2 239.5 2.5Q205 3 170 3Q131 3 97.0 2.5Q63 2 42 0ZM181 346V366H576V346Z" fill="#7b1e2b"/>
+    <!-- vine over the H, under the S -->
+    <path d="M180 840 C400 700 640 330 1060 190" fill="none" stroke="#5d7f4f" stroke-width="5" stroke-linecap="round"/>
+    <use href="#leaf" transform="translate(213.2,817.3) rotate(-78.0) scale(0.71)" fill="#87a874"/><use href="#leaf" transform="translate(254.5,785.3) rotate(2.7) scale(0.82)" fill="#5d7f4f"/><use href="#leaf" transform="translate(296.7,749.2) rotate(-83.6) scale(0.91)" fill="#5d7f4f"/><use href="#leaf" transform="translate(340.0,709.6) rotate(-1.1) scale(0.99)" fill="#87a874"/><use href="#leaf" transform="translate(384.6,667.4) rotate(-85.8) scale(1.06)" fill="#5d7f4f"/><use href="#leaf" transform="translate(430.7,622.9) rotate(-2.0) scale(1.10)" fill="#5d7f4f"/><use href="#leaf" transform="translate(478.5,577.0) rotate(-85.6) scale(1.12)" fill="#87a874"/><use href="#leaf" transform="translate(528.3,530.3) rotate(-0.7) scale(1.11)" fill="#5d7f4f"/><use href="#leaf" transform="translate(580.3,483.3) rotate(-83.4) scale(1.08)" fill="#5d7f4f"/><use href="#leaf" transform="translate(634.7,436.8) rotate(2.4) scale(1.03)" fill="#87a874"/><use href="#leaf" transform="translate(691.8,391.4) rotate(-79.4) scale(0.96)" fill="#5d7f4f"/><use href="#leaf" transform="translate(751.7,347.6) rotate(7.2) scale(0.87)" fill="#5d7f4f"/><use href="#leaf" transform="translate(814.7,306.2) rotate(-73.8) scale(0.77)" fill="#87a874"/><use href="#leaf" transform="translate(881.0,267.8) rotate(13.7) scale(0.66)" fill="#5d7f4f"/><use href="#leaf" transform="translate(950.9,233.1) rotate(-66.6) scale(0.62)" fill="#5d7f4f"/>
+    <path d="M329.8 719.1 L316.6 687.8" stroke="#5d7f4f" stroke-width="3"/><circle cx="316.6" cy="687.8" r="7" fill="#b8892e"/><path d="M528.3 530.3 L515.2 498.9" stroke="#5d7f4f" stroke-width="3"/><circle cx="515.2" cy="498.9" r="7" fill="#b8892e"/><path d="M736.1 358.6 L727.0 325.8" stroke="#5d7f4f" stroke-width="3"/><circle cx="727.0" cy="325.8" r="7" fill="#b8892e"/>
+    <!-- lotus bud on a short side stem -->
+    <path d="M432.8 620.8 Q362.8 580.8 340.8 500.8" fill="none" stroke="#5d7f4f" stroke-width="4"/>
+    <g transform="translate(340.8,502.8) rotate(-18) scale(.42)" stroke="#a3233f" stroke-width="3">
+      <use href="#pt" transform="rotate(-16) scale(.8)" fill="url(#p2)"/><use href="#pt" transform="rotate(16) scale(.8)" fill="url(#p2)"/><use href="#pt" fill="url(#p)"/>
+    </g>
   </g>
-  <image href="../public/art/shiva-parvati-sunset.webp" x="470" y="170" width="560" height="420" clip-path="url(#cp)" preserveAspectRatio="xMidYMid slice"/>
-  <circle cx="750" cy="380" r="210" fill="none" stroke="#e0b45f" stroke-width="10"/>
-  <!-- initials -->
-  <g font-family="'Cormorant Garamond',Georgia,serif" font-weight="600" font-size="480" text-anchor="middle" fill="url(#g)">
-    <text x="205" y="545">H</text><text x="1295" y="545">S</text>
-  </g>
-  <!-- diamonds linking letters to the mandala -->
-  <g fill="#e0b45f"><path d="M395 380 l12 -12 l12 12 l-12 12z"/><path d="M1081 380 l12 -12 l12 12 l-12 12z"/></g>
-  <!-- leaves, lotus and water -->
-  <use href="#leaf" transform="translate(722,845) scale(-1.6,1.3)" fill="url(#lf)" stroke="#e0b45f" stroke-width="2.5"/>
-  <use href="#leaf" transform="translate(778,845) scale(1.6,1.3)" fill="url(#lf)" stroke="#e0b45f" stroke-width="2.5"/>
-  <g>
-    <use href="#pt" transform="translate(750,830) rotate(-72) scale(1.2)" fill="url(#p)" stroke="#f7e2a8" stroke-width="3"/>
-    <use href="#pt" transform="translate(750,830) rotate(72) scale(1.2)" fill="url(#p)" stroke="#f7e2a8" stroke-width="3"/>
-    <use href="#pt" transform="translate(750,830) rotate(-48) scale(1.38)" fill="url(#p)" stroke="#f7e2a8" stroke-width="3"/>
-    <use href="#pt" transform="translate(750,830) rotate(48) scale(1.38)" fill="url(#p)" stroke="#f7e2a8" stroke-width="3"/>
-    <use href="#pt" transform="translate(750,830) rotate(-24) scale(1.5)" fill="url(#p)" stroke="#f7e2a8" stroke-width="3"/>
-    <use href="#pt" transform="translate(750,830) rotate(24) scale(1.5)" fill="url(#p)" stroke="#f7e2a8" stroke-width="3"/>
-    <use href="#pt" transform="translate(750,830) rotate(0) scale(1.68)" fill="url(#p)" stroke="#f7e2a8" stroke-width="3"/>
-  </g>
-  <ellipse cx="750" cy="826" rx="70" ry="16" fill="#e0b45f" stroke="#f7e2a8" stroke-width="2"/>
-  <path d="M250 886 Q750 920 1250 886" fill="none" stroke="#e0b45f" stroke-width="3" stroke-opacity=".7"/>
+  <use href="#S" fill="#7b1e2b"/>
+  <!-- lotus where the vine ends -->
+  <g transform="translate(1068,196) rotate(18) scale(0.78)" stroke="#a3233f" stroke-width="1.6"><use href="#pt" transform="rotate(-58) scale(0.72)" fill="url(#p2)"/><use href="#pt" transform="rotate(58) scale(0.72)" fill="url(#p2)"/><use href="#pt" transform="rotate(-30) scale(0.9)" fill="url(#p)"/><use href="#pt" transform="rotate(30) scale(0.9)" fill="url(#p)"/><use href="#pt" transform="rotate(0) scale(1.05)" fill="url(#p)"/><use href="#pt" transform="rotate(-14) scale(0.62)" fill="url(#p3)"/><use href="#pt" transform="rotate(14) scale(0.62)" fill="url(#p3)"/></g>
+
+  <!-- names and date -->
+  <text x="600" y="960" text-anchor="middle" font-family="'Cinzel',serif" font-weight="500" font-size="62" letter-spacing="7" fill="#7b1e2b">HIMANSHU &amp; SAMIKSHA</text>
+  <g fill="#b8892e"><path d="M430 1012 H560" stroke="#b8892e" stroke-width="2"/><path d="M640 1012 H770" stroke="#b8892e" stroke-width="2"/><path d="M600 1000 l12 12 l-12 12 l-12 -12z"/></g>
+  <text x="600" y="1088" text-anchor="middle" font-family="'Montserrat',sans-serif" font-weight="500" font-size="36" letter-spacing="14" fill="#b8892e">25 . 11 . 2026</text>
 </svg>
-    <div class="names">Himanshu<em>weds</em>Samiksha</div>
-    <div class="rule"><b></b><i></i><b></b></div>
-    <div class="when">25 November 2026 &nbsp;·&nbsp; Vadodara</div>
-  </div>
 </body>
 </html>

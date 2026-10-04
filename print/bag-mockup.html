@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Bag mockup</title>
+<style>
+  /* The bag front is 760px square = 18 in, so bag-18x18.png sits on it at true scale. */
+  * { margin:0; box-sizing:border-box; }
+  html, body { width:1600px; height:1200px; overflow:hidden; }
+  body {
+    position:relative;
+    background:
+      radial-gradient(ellipse 70% 60% at 62% 30%, rgba(255,248,232,.85), transparent 70%),
+      linear-gradient(180deg, #e8dbc3 0%, #e2d2b6 74%, #d6c3a2 74%, #cdb995 100%);
+  }
+  .shadow { position:absolute; left:420px; top:1050px; width:780px; height:80px; border-radius:50%;
+    background:rgba(70,48,20,.35); filter:blur(26px); }
+  .bag { position:absolute; left:420px; top:330px; width:760px; height:760px; }
+  .body { position:absolute; inset:0; border-radius:8px 8px 18px 18px; overflow:hidden;
+    background:linear-gradient(90deg, #e6dac3 0%, #f4ecdc 18%, #f8f2e5 45%, #f1e8d6 75%, #e2d4ba 100%);
+    box-shadow: inset 0 -30px 40px -20px rgba(90,60,25,.25), inset 0 26px 30px -24px rgba(90,60,25,.3); }
+  .print { position:absolute; inset:0; width:100%; height:100%; mix-blend-mode:multiply; opacity:.96; }
+  .weave { position:absolute; inset:0; mix-blend-mode:multiply; opacity:.5;
+    background:
+      repeating-linear-gradient(0deg, rgba(120,95,60,.07) 0 1px, transparent 1px 3px),
+      repeating-linear-gradient(90deg, rgba(120,95,60,.06) 0 1px, transparent 1px 3px); }
+  .noise { position:absolute; inset:0; width:100%; height:100%; mix-blend-mode:multiply; opacity:.22; }
+  .folds { position:absolute; inset:0;
+    background:
+      radial-gradient(ellipse 18% 55% at 22% 62%, rgba(255,255,255,.35), transparent 70%),
+      radial-gradient(ellipse 10% 60% at 30% 60%, rgba(110,80,40,.08), transparent 70%),
+      radial-gradient(ellipse 14% 50% at 80% 58%, rgba(110,80,40,.10), transparent 70%); }
+  .hem { position:absolute; left:0; right:0; top:34px; border-top:2px dashed rgba(120,95,60,.35); }
+  .handles { position:absolute; left:0; top:-300px; width:760px; height:340px; overflow:visible; }
+</style>
+</head>
+<body>
+  <div class="shadow"></div>
+  <div class="bag">
+    <!-- back handle, behind the bag -->
+    <svg class="handles" viewBox="0 -300 760 340" style="z-index:0">
+      <path d="M262 30 C262 -210 498 -210 498 30" fill="none" stroke="#d9cbb0" stroke-width="46"/>
+    </svg>
+    <div class="body">
+      <img class="print" src="bag-18x18.png" alt="" />
+      <div class="weave"></div>
+      <svg class="noise"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="3" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter><rect width="100%" height="100%" filter="url(#n)"/></svg>
+      <div class="folds"></div>
+      <div class="hem"></div>
+    </div>
+    <!-- front handle, stitched onto the front -->
+    <svg class="handles" viewBox="0 -300 760 340">
+      <defs><linearGradient id="hg" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#e7dcc6"/><stop offset=".5" stop-color="#f7f0e2"/><stop offset="1" stop-color="#e2d5bc"/></linearGradient></defs>
+      <path d="M232 40 C232 -250 528 -250 528 40" fill="none" stroke="rgba(90,60,25,.25)" stroke-width="50" transform="translate(4,6)"/>
+      <path d="M232 40 C232 -250 528 -250 528 40" fill="none" stroke="url(#hg)" stroke-width="48"/>
+      <path d="M232 40 C232 -250 528 -250 528 40" fill="none" stroke="rgba(120,95,60,.4)" stroke-width="1.6" stroke-dasharray="7 6" transform="translate(-16,0)"/>
+      <path d="M232 40 C232 -250 528 -250 528 40" fill="none" stroke="rgba(120,95,60,.4)" stroke-width="1.6" stroke-dasharray="7 6" transform="translate(16,0)"/>
+      <!-- box stitches where the handle meets the bag -->
+      <g fill="#f3eadb" stroke="rgba(120,95,60,.45)" stroke-width="1.6">
+        <rect x="208" y="-12" width="48" height="56"/><path d="M208 -12 L256 44 M256 -12 L208 44" fill="none"/>
+        <rect x="504" y="-12" width="48" height="56"/><path d="M504 -12 L552 44 M552 -12 L504 44" fill="none"/>
+      </g>
+    </svg>
+  </div>
+</body>
+</html>
