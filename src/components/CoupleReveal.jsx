@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { wedding } from '../config/wedding';
-import { Chandra } from './art/Shiva';
+import { Crest } from './art/Symbols';
 import { Fish } from './art/Motifs';
 
 const Person = ({ person, delay }) => (
@@ -62,7 +62,7 @@ const CoupleReveal = () => {
             <span className="h-px w-10 lg:w-px lg:h-12 bg-gradient-to-r lg:bg-gradient-to-b from-transparent to-gold" />
             <Fish className="w-14 h-7 lg:rotate-90 lg:my-3" />
             <div className="flex flex-col items-center">
-              <Chandra className="w-10 h-7" />
+              <Crest className="w-10 h-7" />
               <span className="deva text-3xl text-sindoor -mt-1">संग</span>
             </div>
             <Fish className="w-14 h-7 lg:rotate-90 lg:my-3" flip />

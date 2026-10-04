@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { MapPin } from 'lucide-react';
 import { wedding, routeUrl } from '../config/wedding';
-import { Chandra } from './art/Shiva';
+import { Crest } from './art/Symbols';
 
 // One moment of the night on a gold rail: a marker, then the time and what happens
 const Moment = ({ item }) => (
@@ -34,7 +34,7 @@ const WeddingNight = () => {
   return (
     <section id="timeline" className="night-sky py-16 sm:py-20 px-5 overflow-clip text-cream">
       <header className="relative text-center mb-10">
-        <Chandra className="w-12 h-8 mx-auto mb-2" />
+        <Crest className="w-12 h-8 mx-auto mb-2" />
         <p className="text-[11px] tracking-[0.35em] uppercase font-extrabold text-gold-bright">Wednesday · 25 November 2026</p>
         <p className="deva text-xs text-gold-pale/90 mt-1">मार्गशीर्ष कृष्ण प्रतिपदा</p>
         <h2 className="font-serif text-4xl sm:text-5xl font-bold mt-2 bg-gradient-to-b from-[#fff6e0] to-gold-bright bg-clip-text text-transparent">The Wedding Night</h2>
@@ -59,7 +59,7 @@ const WeddingNight = () => {
             />
           </div>
           <figcaption className="mt-3 text-center font-serif italic text-gold-pale/90">
-            Shiv ji took his baraat to Parvati&apos;s door by torchlight too
+            {wedding.art.night.caption}
           </figcaption>
         </motion.figure>
 

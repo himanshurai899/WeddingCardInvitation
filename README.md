@@ -12,6 +12,20 @@ crescent, rudraksha, the Kailash range, the bel patra toran) are SVG in `src/com
 The site is laid out for phones first (checked on an iPhone 15 and an iPhone SE) and spreads into
 two and three columns on tablets and laptops.
 
+## Two looks: Shiv-Parvati or Ram-Sita
+
+The card ships with two themes. Shiv-Parvati is the default. Ram-Sita swaps the pictures (a Ravi Varma Ram darbar on
+the cover, a Madhubani Ram and Sita jaimala for the wedding week, Dhurandhar's Ram baraat for the wedding night, the
+Janaki Mandir of Janakpur behind the hosts), the gate words (राम / सीता with a dhanush), the opening verse and the
+crest (a rising sun instead of the crescent). Everything else, including your names, dates and venues, stays the same.
+
+- **Preview either one:** add `?theme=ram` or `?theme=shiv` to the address. A guest link can carry it too, for example
+  `?guest=Sharma%20Ji&theme=ram`.
+- **Make Ram-Sita the card everyone gets:** change `DEFAULT_THEME` to `'ram'` at the top of `src/config/wedding.js`.
+  The WhatsApp preview picture (`public/og.jpg`) is the Shiv cover, so say so if you want it redone for Ram.
+- **Credits:** the Madhubani painting (Janakpur Art) and the Janaki Mandir photo (Rajesh Dhungana) are CC BY-SA 4.0,
+  so the footer names them whenever the Ram theme is showing. Keep that line if you keep those pictures.
+
 ## Edit the details
 
 Everything guests see (names, parents, dates, times, venues, dress code, WhatsApp number)

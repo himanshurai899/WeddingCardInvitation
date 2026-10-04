@@ -1,7 +1,7 @@
 import { useId } from 'react';
 import { wedding } from '../../config/wedding';
 import { Lotus } from './Motifs';
-import { Chandra } from './Shiva';
+import { Crest } from './Symbols';
 
 const bezier = (p0, p1, p2, p3, t) => {
   const u = 1 - t;
@@ -265,8 +265,8 @@ export const CoupleArch = (props) => {
         </g>
       ))}
       <ellipse cx="160" cy="250" rx="130" ry="150" fill={`url(#glow-${uid})`} />
-      {/* Mahadev's crescent crowns the arch */}
-      <Chandra x="138" y="14" width="44" height="28" />
+      {/* the theme's crest (crescent or sun) crowns the arch */}
+      <Crest x="138" y="14" width="44" height="28" />
 
       {ladi(52, 9)}
       {ladi(64, 6)}

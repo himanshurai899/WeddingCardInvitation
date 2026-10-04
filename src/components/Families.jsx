@@ -58,8 +58,8 @@ const Families = () => {
     <section className="py-16 sm:py-20 px-5 paper overflow-hidden">
       {/* Mahadev and Nandi on the hills, faded out on every side so it melts into the paper */}
       <img
-        src={wedding.art.nandi.src}
-        alt={wedding.art.nandi.alt}
+        src={wedding.art.banner.src}
+        alt={wedding.art.banner.alt}
         loading="lazy"
         decoding="async"
         className="block w-full max-w-2xl mx-auto -mt-6 aspect-[16/7] object-cover object-[50%_62%] mix-blend-multiply"

@@ -7,6 +7,57 @@ const home = {
   mapsQuery: 'Yogi Nagar Township, Near Ambika Nagar, Gotri, Vadodara 390021',
 };
 
+// The card has two looks. Shiv-Parvati is the default; Ram-Sita is the other option.
+// Switch for everyone by changing DEFAULT_THEME, or preview either one with ?theme=ram or ?theme=shiv
+// (a guest link can carry it too, e.g. ?guest=Sharma%20Ji&theme=ram).
+const DEFAULT_THEME = 'shiv';
+
+const themes = {
+  shiv: {
+    door: ['शिव', 'शक्ति'], // left and right gate, blue and maroon
+    art: {
+      cover: { src: '/art/shiva-parvati-sunset.webp', alt: 'Mahadev and Parvati as silhouettes against the setting sun' },
+      week: { src: '/art/gauri-shankar.webp', alt: 'Mahadev and Parvati with Nandi, a Raja Ravi Varma oleograph' },
+      night: {
+        src: '/art/shiv-baraat.webp',
+        alt: "Mahadev and Parvati riding Nandi in Shiv ji's torchlit wedding procession",
+        caption: "Shiv ji took his baraat to Parvati's door by torchlight too",
+      },
+      banner: { src: '/art/shiva-nandi.webp', alt: 'Mahadev and Nandi on the misty hills' },
+    },
+    shloka: {
+      salutation: '॥ ॐ नमः शिवाय ॥',
+      lines: ['वागर्थाविव सम्पृक्तौ', 'वागर्थप्रतिपत्तये ।', 'जगतः पितरौ वन्दे', 'पार्वतीपरमेश्वरौ ॥'],
+      english: 'We bow to Parvati and Mahadev, the mother and father of the whole world, who belong together like a word and its meaning.',
+      source: 'Kalidasa, Raghuvamsham',
+    },
+    credits: 'Artwork: Pixabay, and paintings by Raja Ravi Varma and M. V. Dhurandhar (public domain, Wikimedia Commons)',
+  },
+  ram: {
+    door: ['राम', 'सीता'],
+    art: {
+      cover: { src: '/art/ram-parivar.webp', alt: 'Ram and Sita seated together with their brothers and Hanuman, a Raja Ravi Varma lithograph' },
+      week: { src: '/art/ram-madhubani.webp', alt: 'Ram and Sita exchanging garlands, a Madhubani painting by Janakpur Art' },
+      night: {
+        src: '/art/ram-baraat.webp',
+        alt: "Ram's wedding procession arriving at Janakpur, a painting by M. V. Dhurandhar",
+        caption: "Ram ji's baraat reached Sita's Mithila in just this style",
+      },
+      banner: { src: '/art/ram-janaki.webp', alt: 'Janaki Mandir in Janakpur, the temple of Sita in Mithila' },
+    },
+    shloka: {
+      salutation: '॥ श्री सीतारामाभ्यां नमः ॥',
+      lines: ['आपदामपहर्तारं', 'दातारं सर्वसम्पदाम् ।', 'लोकाभिरामं श्रीरामं', 'भूयो भूयो नमाम्यहम् ॥'],
+      english: 'We bow to Shri Ram again and again. He takes away every trouble, gives every blessing and is the joy of the whole world.',
+      source: '',
+    },
+    credits: 'Artwork: paintings by Raja Ravi Varma and M. V. Dhurandhar (public domain, Wikimedia Commons); Madhubani painting by Janakpur Art and Janaki Mandir photo by Rajesh Dhungana (CC BY-SA 4.0)',
+  },
+};
+
+const asked = typeof window === 'undefined' ? null : new URLSearchParams(window.location.search).get('theme');
+const themeKey = asked in themes ? asked : DEFAULT_THEME;
+
 export const wedding = {
   groom: {
     name: 'Himanshu',
@@ -104,15 +155,9 @@ export const wedding = {
     couple: '/art/couple.webp',
   },
 
-  // Mahadev and Parvati artwork, kept to a few realistic pictures and silhouettes: free images
-  // from Pixabay (Pixabay Content License, free to use with no attribution needed), resized to
-  // webp in public/art/.
-  art: {
-    cover: { src: '/art/shiva-parvati-sunset.webp', alt: 'Mahadev and Parvati as silhouettes against the setting sun' },
-    week: { src: '/art/gauri-shankar.webp', alt: 'Mahadev and Parvati with Nandi, a Raja Ravi Varma oleograph' },
-    night: { src: '/art/shiv-baraat.webp', alt: "Mahadev and Parvati riding Nandi in Shiv ji's torchlit wedding procession" },
-    nandi: { src: '/art/shiva-nandi.webp', alt: 'Mahadev and Nandi on the misty hills' },
-  },
+  // Everything the theme changes: gate words, pictures, the opening verse and the footer credit
+  theme: themeKey,
+  ...themes[themeKey],
 
   // Guest functions in order, as printed under "मांगलिक कार्यक्रम". Empty `time` or `venue` hides
   // that line. `mapsQuery` turns the venue into a directions link (`route` into a route from home

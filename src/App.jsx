@@ -101,7 +101,7 @@ function App() {
             Shubh Vivah • 25.11.2026 • Vadodara
           </p>
           <p className="mt-2 px-6 text-[10px] leading-relaxed text-ink-soft">
-            Artwork and photos: free images from Pixabay
+            {wedding.credits}
           </p>
         </footer>
       </main>

@@ -3,10 +3,11 @@ import { ChevronDown } from 'lucide-react';
 import { wedding } from '../config/wedding';
 import { CoupleArch } from './art/Couple';
 import { Kalash, Lotus, Toran } from './art/Motifs';
-import { MalaBand, Trishul } from './art/Shiva';
+import { MalaBand } from './art/Shiva';
+import { Emblem } from './art/Symbols';
 
-// One leaf of the gate. Shiva's door is the night blue of Kailash with his trishul,
-// Parvati's is sindoor maroon with the mangal kalash. Closed, they read "शिव शक्ति".
+// One leaf of the gate: the left is night blue with the theme's emblem (trishul or dhanush), the right
+// is sindoor maroon with the mangal kalash. Closed, they read "शिव शक्ति" or "राम सीता".
 const DoorPanel = ({ side }) => {
   const shiva = side === 'left';
   return (
@@ -17,13 +18,13 @@ const DoorPanel = ({ side }) => {
       <div className="relative h-full flex flex-col items-center gap-3 px-5 sm:px-8 pt-8 pb-6">
         <div className="w-full max-w-[220px] lg:max-w-[280px] max-h-[24svh] aspect-[5/4] rounded-t-full border-2 border-gold/70 bg-black/20 grid place-items-center">
           <span className="deva text-[clamp(2.5rem,7svh,4rem)] pt-[8%] bg-gradient-to-b from-[#fff6e0] to-gold-bright bg-clip-text text-transparent">
-            {shiva ? 'शिव' : 'शक्ति'}
+            {wedding.door[shiva ? 0 : 1]}
           </span>
         </div>
 
         <div className="studs w-full max-w-[220px] lg:max-w-[280px] flex-1 min-h-0 border border-gold/50 flex flex-col items-center justify-center gap-3 overflow-hidden">
           {shiva ? (
-            <Trishul className="h-[min(70%,300px)] w-auto drop-shadow-[0_0_10px_rgba(224,180,95,.45)]" />
+            <Emblem className="h-[min(70%,300px)] w-auto drop-shadow-[0_0_10px_rgba(224,180,95,.45)]" />
           ) : (
             <>
               <Kalash className="h-[min(42%,170px)] w-auto drop-shadow" />
