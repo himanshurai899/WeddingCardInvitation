@@ -55,11 +55,11 @@ const WeddingNight = () => {
               alt={wedding.art.night.alt}
               loading="lazy"
               decoding="async"
-              className="block w-full aspect-[3/4] object-cover object-top rounded-t-full rounded-b-[13px]"
+              className="block w-full aspect-[3/4] object-cover object-center rounded-t-full rounded-b-[13px]"
             />
           </div>
           <figcaption className="mt-3 text-center font-serif italic text-gold-pale/90">
-            Gauri Shankar, whose blessing every bride asks for
+            Shiv ji took his baraat to Parvati&apos;s door by torchlight too
           </figcaption>
         </motion.figure>
 

@@ -14,6 +14,7 @@ export const wedding = {
     fullName: 'Himanshu Rai',
     relation: 'Elder son of',
     parents: 'Shri Ramshlok Rai & Smt. Asha Devi Rai',
+    grandRelation: 'Grandson of',
     grandparents: 'Smt. Laheshari Devi & Late Shri Ramyatan Rai',
     home: 'Gotri, Vadodara',
     native: 'Kanhenapur, P.O. Lai, Dist. Patna, Bihar 801112',
@@ -27,6 +28,8 @@ export const wedding = {
     fullName: 'Samiksha Yadav',
     relation: 'Daughter of',
     parents: 'Shri Rampukar Yadav & Smt. Mithilesh Yadav',
+    grandRelation: 'Granddaughter of',
+    grandparents: 'Smt. Anika Yadav & Shri Ramavatar Yadav',
     home: 'Gadarwara, Madhya Pradesh',
     native: 'Sankhmohan, Dist. Samastipur, Bihar',
     family: 'Yadav Parivar',
@@ -69,6 +72,8 @@ export const wedding = {
     'मिथिलेश यादव', 'नीरज यादव',
   ],
   vineet: ['आशा देवी राय', 'रामश्लोक राय'],
+  // Maithili welcome, for the Mithila side of the family (worth a check by a Maithili speaker)
+  maithili: 'अपने सभक स्वागत अछि',
   doha: ['आते हैं जिस भाव से, भक्तों के भगवान।', 'उसी भाव से आप भी, दर्शन दें श्रीमान्॥'],
 
   // "Bal Manuhar", the kids' request printed on North Indian wedding cards
@@ -104,7 +109,8 @@ export const wedding = {
   // webp in public/art/.
   art: {
     cover: { src: '/art/shiva-parvati-sunset.webp', alt: 'Mahadev and Parvati as silhouettes against the setting sun' },
-    night: { src: '/art/shiva-parvati-temple.webp', alt: 'Mahadev and Parvati in a lamp-lit temple at night' },
+    week: { src: '/art/gauri-shankar.webp', alt: 'Mahadev and Parvati with Nandi, a Raja Ravi Varma oleograph' },
+    night: { src: '/art/shiv-baraat.webp', alt: "Mahadev and Parvati riding Nandi in Shiv ji's torchlit wedding procession" },
     nandi: { src: '/art/shiva-nandi.webp', alt: 'Mahadev and Nandi on the misty hills' },
   },
 
@@ -150,16 +156,16 @@ export const wedding = {
       about: "Samiksha's family comes over to put tilak on Himanshu and bless him. Then we all sit down to lunch together.",
     },
     {
-      key: 'sangeet',
-      name: 'Sangeet',
-      short: 'Sangeet',
-      hindi: 'संगीत',
+      key: 'garba',
+      name: 'Garba Night',
+      short: 'Garba Night',
+      hindi: 'गरबा नाइट',
       date: '2026-11-24',
       tithi: 'कार्तिक पूर्णिमा',
-      time: '7:00 PM onwards',
+      time: '8:00 PM onwards',
       venue: home.label,
       mapsQuery: home.mapsQuery,
-      about: 'Songs, dholak and a lot of dancing on the evening before the wedding. Come ready to join in!',
+      about: 'Garba and dandiya on the evening before the wedding, the Gujarati way, since we are in Vadodara! Come ready to twirl.',
     },
     {
       key: 'baraat',
@@ -204,7 +210,7 @@ export const wedding = {
     { event: 'Haldi', label: 'Haldi Yellow', note: "Yellow, obviously. Pick something you won't mind getting haldi on.", chips: ['#f2b705', '#fcd34d', '#fde68a', '#fdba74', '#fef3c7'], tone: 'haldi' },
     { event: 'Mehendi', label: 'Shades of Green', note: 'Greens, with a bit of gold or mirror work if you like.', chips: ['#3f6212', '#65a30d', '#a3e635', '#d9f99d', '#c9a24b'], tone: 'mehendi' },
     { event: 'Tilak', label: 'Light Pastels', note: "It's a daytime puja, so something light and comfortable.", chips: ['#fcd5b5', '#f8d1d1', '#cde7c6', '#fbe7a6', '#d7d3f0'], tone: 'pastel' },
-    { event: 'Sangeet', label: 'Shimmer & Glitter', note: 'Sequins, mirror work, anything that catches the light. You will be dancing.', chips: ['#7e22ce', '#db2777', '#c9a24b', '#f472b6', '#1e1b4b'], tone: 'sangeet' },
+    { event: 'Garba Night', label: 'Colourful & Twirly', note: 'Chaniya choli, mirror work, kurtas in bright colours. Wear something you can dance garba in, and comfortable footwear!', chips: ['#7e22ce', '#db2777', '#c9a24b', '#f472b6', '#1e1b4b'], tone: 'sangeet' },
     { event: 'Shubh Vivah', label: 'Traditional', note: 'Sarees, lehengas, sherwanis, kurtas. A Bhagalpuri silk would be perfect.', chips: ['#7b1e2b', '#b91c1c', '#c9a24b', '#e8821e', '#f7e2a8'], tone: 'vivah' },
   ],
 };

@@ -1,10 +1,31 @@
 import { useId } from 'react';
 
-// Small ornaments: lotus, kalash, diya, the toran and a gold divider. Every motif spreads
+// Small ornaments: the Mithila fish and Madhubani band, lotus, kalash, diya, the toran and a gold divider. Every motif spreads
 // extra props onto its <svg>, so it works both as a standalone element and nested inside
 // a larger illustration (pass x / y / width / height).
 
 const flame = { transformBox: 'fill-box', transformOrigin: 'center bottom' };
+
+// Machhli: in Mithila art a pair of fish stands for marriage and fertility
+export const Fish = ({ body = '#e8821e', line = '#5c1420', flip = false, ...props }) => (
+  <svg viewBox="0 0 120 60" aria-hidden="true" {...props}>
+    <g transform={flip ? 'translate(120 0) scale(-1 1)' : undefined} stroke={line} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M26 30 L7 12 Q15 30 7 48 Z" fill={body} />
+      <path d="M11 22 L24 30 M9 30 H24 M11 38 L24 30" fill="none" strokeWidth="1.4" />
+      <path d="M26 30 C46 6 88 8 110 30 C88 52 46 54 26 30 Z" fill={body} />
+      <path d="M58 13 Q64 2 75 11 M58 47 Q64 58 75 49" fill={body} />
+      <path d="M40 17 Q34 30 40 43 M46 14 Q40 30 46 46" fill="none" />
+      {[22, 30, 38].map((y) =>
+        [52, 60, 68].map((x) => (
+          <path key={`${x}-${y}`} d={`M${x + (y === 30 ? 4 : 0)} ${y - 3} q4 6 8 0`} fill="none" strokeWidth="1.4" />
+        ))
+      )}
+      <path d="M86 16 Q78 30 86 44" fill="none" />
+      <circle cx="96" cy="27" r="4.5" fill="#fffaf0" />
+      <circle cx="96" cy="27" r="1.8" fill={line} stroke="none" />
+    </g>
+  </svg>
+);
 
 export const Lotus = ({ petal = '#f472b6', inner = '#fbcfe8', line = '#9d174d', ...props }) => (
   <svg viewBox="0 0 60 44" aria-hidden="true" {...props}>
@@ -77,6 +98,27 @@ export const Toran = ({ className }) => {
         </pattern>
       </defs>
       <rect width="100%" height="58" fill={`url(#toran-${id})`} />
+    </svg>
+  );
+};
+
+// Madhubani sawtooth border ("dant") framed by double rules
+export const MadhubaniBand = ({ className, color = '#7b1e2b', accent = '#c9a24b' }) => {
+  const id = useId();
+  return (
+    <svg className={className} width="100%" height="24" aria-hidden="true">
+      <defs>
+        <pattern id={`band-${id}`} width="20" height="24" patternUnits="userSpaceOnUse">
+          <path d="M0 19 L5 6 L10 19 Z" fill={color} />
+          <path d="M10 6 L15 19 L20 6" fill="none" stroke={color} strokeWidth="1.2" />
+          <circle cx="15" cy="10" r="1.4" fill={accent} />
+        </pattern>
+      </defs>
+      <rect y="0.5" width="100%" height="1.2" fill={color} />
+      <rect y="3" width="100%" height="0.8" fill={accent} />
+      <rect width="100%" height="24" fill={`url(#band-${id})`} />
+      <rect y="20.2" width="100%" height="0.8" fill={accent} />
+      <rect y="22.3" width="100%" height="1.2" fill={color} />
     </svg>
   );
 };

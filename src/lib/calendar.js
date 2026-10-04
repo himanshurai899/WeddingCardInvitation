@@ -1,4 +1,4 @@
-import { wedding, coupleShort } from '../config/wedding';
+import { wedding, coupleShort } from '../config/wedding.js';
 
 // The address guests opened (the Vercel URL once deployed), written into the event notes
 const siteUrl = () => `${window.location.origin}/`;
@@ -37,8 +37,9 @@ const fold = (line) => {
   return out.join('\r\n');
 };
 
-export const buildIcs = () => {
-  const url = siteUrl();
+// Written to public/wedding.ics at build time (scripts/make-ics.mjs); iOS Safari only offers
+// "Add to Calendar" for a real file at a real URL, not for data: or blob: links.
+export const buildIcs = (url) => {
   const lines = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
@@ -63,26 +64,4 @@ export const buildIcs = () => {
     'END:VCALENDAR',
   ];
   return lines.map(fold).join('\r\n');
-};
-
-const isAppleMobile = () =>
-  /iPad|iPhone|iPod/.test(navigator.userAgent) ||
-  (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-
-// iPhone Safari opens a text/calendar page straight into "Add to Calendar";
-// everywhere else the .ics downloads and opens in the default calendar app.
-export const addToAppleCalendar = () => {
-  const ics = buildIcs();
-  if (isAppleMobile()) {
-    window.location.href = `data:text/calendar;charset=utf-8,${encodeURIComponent(ics)}`;
-    return;
-  }
-  const blobUrl = URL.createObjectURL(new Blob([ics], { type: 'text/calendar;charset=utf-8' }));
-  const a = document.createElement('a');
-  a.href = blobUrl;
-  a.download = 'himanshu-samiksha-shubh-vivah.ics';
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
 };

@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { wedding } from '../config/wedding';
-import { Chandra, Rudraksha } from './art/Shiva';
+import { Chandra } from './art/Shiva';
+import { Fish } from './art/Motifs';
 
 const Person = ({ person, delay }) => (
   <motion.div
@@ -21,7 +22,7 @@ const Person = ({ person, delay }) => (
     )}
     {person.grandparents && (
       <p className="mt-1 font-serif text-base text-ink-soft leading-snug">
-        <span className="italic">Grandson of</span> {person.grandparents}
+        <span className="italic">{person.grandRelation}</span> {person.grandparents}
       </p>
     )}
     {person.home && (
@@ -58,14 +59,14 @@ const CoupleReveal = () => {
             className="my-8 lg:my-0 flex lg:flex-col items-center justify-center gap-3"
             aria-hidden="true"
           >
-            <span className="h-px w-14 lg:w-px lg:h-14 bg-gradient-to-r lg:bg-gradient-to-b from-transparent to-gold" />
-            <Rudraksha className="w-3.5 h-3.5" />
+            <span className="h-px w-10 lg:w-px lg:h-12 bg-gradient-to-r lg:bg-gradient-to-b from-transparent to-gold" />
+            <Fish className="w-14 h-7 lg:rotate-90 lg:my-3" />
             <div className="flex flex-col items-center">
               <Chandra className="w-10 h-7" />
               <span className="deva text-3xl text-sindoor -mt-1">संग</span>
             </div>
-            <Rudraksha className="w-3.5 h-3.5" />
-            <span className="h-px w-14 lg:w-px lg:h-14 bg-gradient-to-l lg:bg-gradient-to-t from-transparent to-gold" />
+            <Fish className="w-14 h-7 lg:rotate-90 lg:my-3" flip />
+            <span className="h-px w-10 lg:w-px lg:h-12 bg-gradient-to-l lg:bg-gradient-to-t from-transparent to-gold" />
           </motion.div>
 
           <Person person={wedding.bride} delay={0.2} />

@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { Navigation, Phone } from 'lucide-react';
 import { wedding, directionsUrl, telUrl } from '../config/wedding';
-import { MalaBand } from './art/Shiva';
+import { MadhubaniBand } from './art/Motifs';
 import BalManuhar from './BalManuhar';
 
 const Side = ({ label, hindi, person, delay }) => (
@@ -71,7 +71,7 @@ const Families = () => {
         <p className="font-serif italic text-ink-soft">Your hosts</p>
       </header>
 
-      <MalaBand className="max-w-md mx-auto block my-6" />
+      <MadhubaniBand className="max-w-md mx-auto block my-6" />
 
       <div className="max-w-md sm:max-w-3xl mx-auto grid sm:grid-cols-2 gap-4">
         <Side label="Groom's family" hindi="वर पक्ष" person={wedding.groom} delay={0} />

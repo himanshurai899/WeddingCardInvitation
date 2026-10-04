@@ -1,0 +1,25 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Himanshu and Samiksha//Shubh Vivah//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:shubh-vivah-20261125@himanshu-samiksha
+DTSTAMP:20261004T010933Z
+DTSTART:20261125T103000Z
+DTEND:20261125T193000Z
+SUMMARY:Shubh Vivah · Himanshu & Samiksha
+LOCATION:Purshottam Party Plot\, Millennium Northway\, opp. Navrachna Uni
+ versity\, behind Kabir Road\, Bhayli\, Vadodara 391410
+DESCRIPTION:Himanshu Rai & Samiksha Yadav are getting married!\nBaraat le
+ aves at 4:00 PM\, dwar puja 6 to 8 PM\, jaimala 9 PM\, dinner from 9:30 
+ PM\, vivah from 11:00 PM.\n\nInvitation: https://himanshu-samiksha-vivah
+ .vercel.app/
+URL:https://himanshu-samiksha-vivah.vercel.app/
+BEGIN:VALARM
+TRIGGER:-P1D
+ACTION:DISPLAY
+DESCRIPTION:Himanshu & Samiksha's wedding is tomorrow
+END:VALARM
+END:VEVENT
+END:VCALENDAR

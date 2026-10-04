@@ -2,6 +2,7 @@ import { useId } from 'react';
 import { motion } from 'framer-motion';
 import { Clock, MapPin } from 'lucide-react';
 import { wedding, formatDate, directionsUrl, routeUrl } from '../config/wedding';
+import { MadhubaniBand } from './art/Motifs';
 
 // The Ganga coming down from Mahadev's jata, winding down the page past each rasam.
 // Drawn in a 100 × 1000 box stretched over the rail; outlines use non-scaling strokes.
@@ -117,9 +118,19 @@ const FunctionsTimeline = () => {
   return (
     <section id="rituals" className="relative py-16 sm:py-20 px-4 paper overflow-hidden">
       <header className="text-center mb-8">
+        <div className="mx-auto mb-5 w-[150px] sm:w-[170px] rounded-t-full rounded-b-xl bg-gradient-to-b from-gold-pale via-gold to-gold-dark p-[3px] shadow-[0_10px_24px_rgba(92,20,32,.22)]">
+          <img
+            src={wedding.art.week.src}
+            alt={wedding.art.week.alt}
+            loading="lazy"
+            decoding="async"
+            className="block w-full aspect-[3/4] object-cover object-[50%_20%] rounded-t-full rounded-b-[10px]"
+          />
+        </div>
         <p className="text-[11px] tracking-[0.35em] uppercase font-extrabold text-sindoor">The wedding week</p>
         <h2 className="deva text-5xl text-maroon-deep mt-2">रस्में</h2>
         <p className="font-serif italic text-lg text-ink-soft mt-1 max-w-md mx-auto">Four busy days at home and then the big night. Come for as many as you can!</p>
+        <MadhubaniBand className="max-w-xs mx-auto mt-5" />
       </header>
 
       <div className="relative max-w-md md:max-w-4xl mx-auto">

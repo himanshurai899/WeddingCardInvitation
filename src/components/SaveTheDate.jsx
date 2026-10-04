@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CalendarPlus } from 'lucide-react';
-import { addToAppleCalendar, googleCalendarUrl } from '../lib/calendar';
+import { googleCalendarUrl } from '../lib/calendar';
 
 const GoogleMark = () => (
   <svg viewBox="0 0 24 24" className="w-5 h-5" aria-hidden="true">
@@ -51,9 +51,9 @@ const SaveTheDate = ({ tone = 'light', className = '' }) => {
             className="overflow-hidden"
           >
             <div className="pt-3 flex flex-col gap-2">
-              <button type="button" className={option} onClick={() => { addToAppleCalendar(); setOpen(false); }}>
+              <a className={option} href="/wedding.ics" download="himanshu-samiksha-shubh-vivah.ics" onClick={() => setOpen(false)}>
                 <AppleMark /> Apple Calendar <span className="ml-auto text-xs font-semibold text-ink-soft">iPhone, Mac</span>
-              </button>
+              </a>
               <a className={option} href={googleCalendarUrl()} target="_blank" rel="noopener noreferrer" onClick={() => setOpen(false)}>
                 <GoogleMark /> Google Calendar <span className="ml-auto text-xs font-semibold text-ink-soft">Android, Gmail</span>
               </a>

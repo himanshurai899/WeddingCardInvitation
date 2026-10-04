@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "ics": "node scripts/make-ics.mjs",
+    "prebuild": "npm run ics",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",

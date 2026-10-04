@@ -80,6 +80,7 @@ function App() {
                 <span key={line} className="block">{line}</span>
               ))}
             </p>
+            <p className="deva text-2xl text-marigold-deep mb-6">{wedding.maithili}</p>
             <p className="text-xl md:text-2xl font-serif text-maroon-deep italic leading-relaxed mb-10">
               With our elders' blessings and God's grace, we can't wait to welcome you.
             </p>

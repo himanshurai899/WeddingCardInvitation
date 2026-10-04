@@ -164,8 +164,8 @@ const ScratchReveal = () => {
       ];
     };
 
-    // The canvas allows vertical panning (touch-action: pan-y), so an up/down swipe
-    // still scrolls the page (the browser sends pointercancel); rubbing sideways scratches.
+    // The canvas has touch-action: none, so a finger drag on the leaf scratches in any direction
+    // and never scrolls the page (pan-y made the browser take over and cancel the stroke).
     const handleStart = (e) => {
       // With a mouse, stop the drag from selecting text and keep the stroke even if it leaves the leaf
       if (e.pointerType === 'mouse') {
@@ -263,7 +263,7 @@ const ScratchReveal = () => {
             <canvas
               ref={canvasRef}
               aria-label="Scratch the paan leaf to reveal the wedding date"
-              className={`absolute inset-0 w-full h-full cursor-pointer touch-pan-y transition-opacity duration-1000 ${isRevealed ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+              className={`absolute inset-0 w-full h-full cursor-pointer touch-none transition-opacity duration-1000 ${isRevealed ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
               style={{ WebkitTapHighlightColor: 'transparent' }}
             />
           </motion.div>
@@ -276,7 +276,7 @@ const ScratchReveal = () => {
         </div>
 
         {!isRevealed && (
-          <p className="mt-5 text-xs font-semibold text-ink-soft">Rub the leaf side to side with your finger</p>
+          <p className="mt-5 text-xs font-semibold text-ink-soft">Rub the leaf with your finger</p>
         )}
 
         {isRevealed && (
