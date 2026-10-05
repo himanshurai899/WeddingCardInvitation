@@ -91,7 +91,9 @@ const Families = () => {
         <div className="text-center">
           <p className="deva text-lg text-sindoor">✻ विनीत ✻</p>
           <p className="text-[10px] tracking-[0.25em] uppercase font-extrabold text-ink-soft">With folded hands</p>
-          <p className="mt-2 font-devaText text-lg text-ink">{wedding.vineet.join(' • ')}</p>
+          {wedding.vineet.map((pair, i) => (
+            <p key={pair[0]} className={`${i ? '' : 'mt-2 '}font-devaText text-lg text-ink`}>{pair.join(' • ')}</p>
+          ))}
           <div className="mt-3 flex flex-wrap justify-center gap-2">
             {wedding.phones.map((phone) => (
               <a

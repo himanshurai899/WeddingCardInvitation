@@ -115,14 +115,14 @@ export const wedding = {
   phones: ['94283 00002', '94298 30002'],
 
   // Printed on the card, in the card's own words
-  swagatatur: ['रामअयोध्या यादव', 'गणेश सिंह यादव', 'रणजीत सिंह यादव', 'रणवीर सिंह यादव'],
+  swagatatur: ['रामअयोध्या यादव', 'गणेश सिंह यादव', 'मदन सिंह यादव', 'रणजीत सिंह यादव', 'रणवीर सिंह यादव'],
   darshanabhilashi: [
     'हरेन्द्र सिंह', 'अर्जुन सिंह', 'अखिलेश यादव', 'केशव सिंह',
     'हितेष राय', 'कृष्ण यादव', 'जीत यादव',
     'आरुष लय', // VERIFY: printed as "लय"; probably meant "राय"
     'मिथिलेश यादव', 'नीरज यादव',
   ],
-  vineet: ['आशा देवी राय', 'रामश्लोक राय'],
+  vineet: [['आशा देवी राय', 'रामश्लोक राय'], ['मिथिलेश यादव', 'रमपुकार यादव']],
   // Maithili welcome, for the Mithila side of the family (worth a check by a Maithili speaker)
   maithili: 'अपने सभक स्वागत अछि',
   doha: ['आते हैं जिस भाव से, भक्तों के भगवान।', 'उसी भाव से आप भी, दर्शन दें श्रीमान्॥'],
@@ -250,7 +250,7 @@ export const wedding = {
     { time: 'During the vivah', name: 'Kanyadaan', hindi: 'कन्यादान', about: "Samiksha's parents place her hand in Himanshu's. Keep a hanky ready for this one." },
     { time: 'During the vivah', name: 'Saat Phere', hindi: 'सात फेरे', about: 'Seven rounds around the agni, and a promise with every round.', highlight: true },
     { time: 'During the vivah', name: 'Sindoor Daan', hindi: 'सिंदूर दान', about: "Himanshu fills Samiksha's maang with sindoor. In Bihar, this is the moment they're married.", highlight: true },
-    { time: '6:00 AM, Thu 26 Nov', name: 'Bidaai', hindi: 'बिदाई', about: "At first light Samiksha leaves for her new home in Yogi Nagar, throwing rice back over her head to wish her parents' home well. Everyone cries." },
+    { time: '6:00 AM, Thu 26 Nov', name: 'Bidaai', hindi: 'बिदाई', tithi: 'मार्गशीर्ष कृष्ण द्वितीया', about: "At first light Samiksha leaves for her new home in Yogi Nagar, throwing rice back over her head to wish her parents' home well. Everyone cries." },
   ],
 
   // Suggestions only, change them freely. `tone` picks the card colour.

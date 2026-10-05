@@ -129,6 +129,12 @@ const invitationBlocks = () => {
     },
     family(w.groom, 'Family of the Groom'),
     family(w.bride, 'Family of the Bride'),
+    {
+      section: 'FAMILY',
+      title: 'With Folded Hands',
+      primaryText: `विनीत: ${w.vineet.map((p) => p.join(', ')).join(' | ')}`,
+      description: `स्वागतातुर: ${w.swagatatur.join(', ')}\nदर्शनाभिलाषी: ${w.darshanabhilashi.join(', ')} एवं समस्त ${w.groom.familyHindi} परिवार\n\n${w.doha.join('\n')}`,
+    },
     ...w.functions.map((f) => ({
       section: 'EVENT',
       title: f.name,
@@ -146,6 +152,8 @@ const invitationBlocks = () => {
     },
   ].map((b, i) => ({ ...b, sortOrder: i + 1 }));
 };
+
+export const printNotes = '300 cards, maroon printing (Anokhi Kankotri, +91 95862 64912). Dispatch by Diwali.';
 
 // The two numbers printed on the card, in the order the card names Ramshlok Rai and Asha Devi Rai
 const familyContacts = [
@@ -197,6 +205,12 @@ export async function syncCardData() {
   });
   await prisma.invitationBlock.createMany({
     data: invitationBlocks().map((b) => ({ ...b, id: `card-inv-${b.sortOrder}`, weddingId })),
+  });
+
+  // Card order on the printer's proof
+  await prisma.task.updateMany({
+    where: { weddingId, id: 'task-print-and-dispatch-wedding-cards' },
+    data: { notes: printNotes },
   });
 
   // WhatsApp: the card has a Garba Night, not a Sangeet

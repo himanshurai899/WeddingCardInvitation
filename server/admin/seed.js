@@ -1,5 +1,5 @@
 import { prisma } from './db.js';
-import { syncCardData, upsertWedding } from './card-sync.js';
+import { printNotes, syncCardData, upsertWedding } from './card-sync.js';
 const slugify = (s) =>
   s
     .toLowerCase()
@@ -500,7 +500,7 @@ export async function seedDatabase() {
       status: 'PENDING',
       owner: 'Asha Devi Rai',
       deadline: new Date('2026-10-01'),
-      notes: 'Design finalised. 1500 cards to print. Dispatch by Diwali.',
+      notes: printNotes,
     },
     {
       name: 'Book accommodation for outstation guests (150+ rooms)',
