@@ -13,6 +13,7 @@ import Families from './components/Families';
 import Rsvp from './components/Rsvp';
 import MusicPlayer from './components/MusicPlayer';
 import WelcomeOverlay from './components/WelcomeOverlay';
+import PersonalInvite from './components/PersonalInvite';
 import SectionNav from './components/SectionNav';
 import ScrollProgress from './components/ScrollProgress';
 import { Diya } from './components/art/Motifs';
@@ -27,6 +28,7 @@ function App() {
     <MotionConfig reducedMotion="user">
       <main className="relative selection:bg-marigold/30 w-full overflow-x-clip">
         <WelcomeOverlay onOpen={() => setOpened(true)} />
+        <PersonalInvite opened={opened} />
         <ScrollProgress visible={opened} />
         <MusicPlayer src={wedding.music} />
         <SectionNav visible={opened} />

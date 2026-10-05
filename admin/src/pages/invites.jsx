@@ -3,7 +3,7 @@ import { Send, Link as LinkIcon, Trash2, Upload, Contact } from 'lucide-react';
 import { Button } from '@admin/components/ui/Button';
 import { Select } from '@admin/components/ui/Select';
 import { wedding, mapsUrl } from '../../../src/config/wedding';
-import { inviteUrl, parseContacts, normalizePhone, PARTIES } from '../../../src/lib/guests';
+import { inviteUrl, invitedAs, parseContacts, normalizePhone, PARTIES } from '../../../src/lib/guests';
 
 const DEFAULT_MESSAGE = `🙏 नमस्ते {hname},
 
@@ -79,19 +79,19 @@ const Admin = () => {
     e.currentTarget.reset();
   };
 
-  const text = (g) => {
-    const p = PARTIES[g.party] ?? PARTIES.solo;
-    return message
-      .replaceAll('{name}', g.name + p.en)
-      .replaceAll('{hname}', g.name + p.hi)
+  const link = (g) => inviteUrl(g.name, g.party, g.plusOne);
+  const text = (g) =>
+    message
+      .replaceAll('{name}', invitedAs(g.name, g.party, g.plusOne))
+      .replaceAll('{hname}', invitedAs(g.name, g.party, g.plusOne, 'hi'))
       .replaceAll('{venue}', venue)
       .replaceAll('{map}', mapsUrl)
-      .replaceAll('{link}', inviteUrl(g.name, g.party));
-  };
-  const setParty = (phone, party) => setGuests(guests.map((g) => (g.phone === phone ? { ...g, party } : g)));
+      .replaceAll('{link}', link(g));
+  const update = (phone, change) => setGuests(guests.map((g) => (g.phone === phone ? { ...g, ...change } : g)));
+  const setParty = (phone, party) => update(phone, { party });
   const mark = (phone, sent) => setGuests(guests.map((g) => (g.phone === phone ? { ...g, sent } : g)));
   const copy = async (g) => {
-    await navigator.clipboard.writeText(inviteUrl(g.name, g.party));
+    await navigator.clipboard.writeText(link(g));
     setCopied(g.phone);
     setTimeout(() => setCopied(''), 1500);
   };
@@ -191,6 +191,15 @@ const Admin = () => {
                 </option>
               ))}
             </select>
+            {g.party === 'plusone' && (
+              <input
+                value={g.plusOne ?? ''}
+                onChange={(e) => update(g.phone, { plusOne: e.target.value })}
+                placeholder="Plus one's name (optional)"
+                aria-label={`Plus one's name for ${g.name}`}
+                className={`${box} w-48`}
+              />
+            )}
             <a
               href={`https://wa.me/${g.phone}?text=${encodeURIComponent(text(g))}`}
               target="_blank"

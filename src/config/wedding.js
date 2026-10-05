@@ -130,6 +130,30 @@ export const content = {
   doha: ['आते हैं जिस भाव से, भक्तों के भगवान।', 'उसी भाव से आप भी, दर्शन दें श्रीमान्॥'],
 
   // "Bal Manuhar", the kids' request printed on North Indian wedding cards
+  // The personal card that opens after the gates on a guest's own link (made in /admin, Invite Links).
+  // Which line they get depends on how they were invited.
+  invite: {
+    heading: '॥ सादर आमंत्रण ॥',
+    solo: {
+      en: 'With the blessings of our elders, we warmly invite you to the wedding of Himanshu and Samiksha. It would mean so much to have you with us.',
+      hi: 'हिमांशु और समीक्षा के शुभ विवाह में आप सादर आमंत्रित हैं।',
+    },
+    plusone: {
+      en: 'With the blessings of our elders, we warmly invite you both to the wedding of Himanshu and Samiksha. It would mean so much to have the two of you with us.',
+      hi: 'हिमांशु और समीक्षा के शुभ विवाह में आप दोनों सादर आमंत्रित हैं।',
+    },
+    // A plus one whose name we don't know
+    plusoneOpen: {
+      en: 'With the blessings of our elders, we warmly invite you to the wedding of Himanshu and Samiksha. Do bring your better half or a plus one along to share the day with us.',
+      hi: 'हिमांशु और समीक्षा के शुभ विवाह में आप अपने जीवनसाथी या किसी अपने के साथ सादर आमंत्रित हैं।',
+    },
+    family: {
+      en: 'With the blessings of our elders, we warmly invite you and your whole family, the elders and the little ones too, to the wedding of Himanshu and Samiksha. Please come together, all of you.',
+      hi: 'हिमांशु और समीक्षा के शुभ विवाह में आप सपरिवार सादर आमंत्रित हैं।',
+    },
+    button: 'View the invitation',
+  },
+
   balManuhar: {
     title: 'बाल मनुहार',
     // Written by the kids of both homes: Himanshu is bhaiya to some and mama to others, Samiksha is mausi

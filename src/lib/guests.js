@@ -8,14 +8,20 @@ export const PARTIES = {
   family: { label: 'Family', en: ' & Family', hi: ' सपरिवार', seats: 4 },
 };
 
+// How the invitation addresses them: "Sharma Ji & Family", "Rahul & Priya" (a named plus one) or "Rahul & Guest"
+export const invitedAs = (name, p = 'solo', plusOne = '', lang = 'en') =>
+  p === 'plusone' && plusOne ? `${name} ${lang === 'hi' ? 'एवं' : '&'} ${plusOne}` : name + (PARTIES[p] ?? PARTIES.solo)[lang];
+
 const query = typeof window === 'undefined' ? new URLSearchParams() : new URLSearchParams(window.location.search);
 export const guestName = query.get('guest')?.trim().slice(0, 40) ?? '';
 export const party = query.get('party') in PARTIES ? query.get('party') : 'solo';
-// What the card says: "Sharma Ji & Family"
-export const guest = guestName && guestName + PARTIES[party].en;
+// The plus one's name, when the host knows it (?with=Priya)
+export const plusOne = party === 'plusone' ? (query.get('with')?.trim().slice(0, 40) ?? '') : '';
+export const guest = guestName && invitedAs(guestName, party, plusOne);
 
-export const inviteUrl = (name, p = 'solo') =>
-  `${wedding.siteUrl}/?guest=${encodeURIComponent(name.trim())}${p === 'solo' ? '' : `&party=${p}`}`;
+export const inviteUrl = (name, p = 'solo', withName = '') =>
+  `${wedding.siteUrl}/?guest=${encodeURIComponent(name.trim())}${p === 'solo' ? '' : `&party=${p}`}` +
+  (p === 'plusone' && withName.trim() ? `&with=${encodeURIComponent(withName.trim())}` : '');
 
 // Digits only, with country code. A bare 10-digit number is taken as Indian. Returns '' if it can't be a phone.
 export const normalizePhone = (raw) => {
