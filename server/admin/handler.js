@@ -3,6 +3,9 @@ import { prisma } from './db.js';
 import { WEDDING_ID } from './http.js';
 import { routes } from './routes/index.js';
 import { seedDatabase } from './seed.js';
+import { defaults, loadContent } from './card-content.js';
+import { applyContent } from '../../src/config/wedding.js';
+import { buildIcs } from '../../src/lib/calendar.js';
 
 const json = (res, status, body, headers = {}) => {
   res.statusCode = status;
@@ -49,6 +52,20 @@ export default async function handler(req, res) {
   // Cookies are SameSite=Strict; also refuse cross-site writes outright
   const origin = req.headers.origin;
   if (method !== 'GET' && origin && origin.replace(/^https?:\/\//, '') !== req.headers.host) return json(res, 403, { error: 'Forbidden' });
+
+  // Public: what the invitation card shows. Never fails; without the database it is the proof copy.
+  // The CDN keeps it for a minute, so a save shows up for guests within about that long.
+  if (path === 'public/card' || path === 'public/ics') {
+    const content = process.env.DATABASE_URL ? await loadContent().catch((e) => (console.error(e), defaults())) : defaults();
+    const cache = { 'Cache-Control': 'public, max-age=0, s-maxage=60, stale-while-revalidate=86400' };
+    if (path === 'public/card') return json(res, 200, content, cache);
+    applyContent(content);
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'text/calendar; charset=utf-8');
+    res.setHeader('Content-Disposition', 'attachment; filename="himanshu-samiksha-shubh-vivah.ics"');
+    res.setHeader('Cache-Control', cache['Cache-Control']);
+    return res.end(buildIcs(`https://${req.headers.host}/`));
+  }
 
   if (path === 'auth/session') {
     return json(res, 200, { authenticated: Boolean(readSession(req)), configured: authConfigured() });

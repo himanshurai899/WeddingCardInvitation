@@ -1,4 +1,5 @@
 import { prisma } from './db.js';
+import { loadContent } from './card-content.js';
 import { printNotes, syncCardData, upsertWedding } from './card-sync.js';
 const slugify = (s) =>
   s
@@ -846,5 +847,5 @@ export async function seedDatabase() {
       active: true,
     },
   });
-  await syncCardData();
+  await syncCardData(await loadContent());
 }

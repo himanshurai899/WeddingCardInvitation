@@ -1,5 +1,7 @@
 {
   "rewrites": [
+    { "source": "/api/card", "destination": "/api/admin?__path=public/card" },
+    { "source": "/api/wedding.ics", "destination": "/api/admin?__path=public/ics" },
     { "source": "/api/admin/:path*", "destination": "/api/admin?__path=:path*" },
     { "source": "/admin/:path*", "destination": "/admin/index.html" }
   ],

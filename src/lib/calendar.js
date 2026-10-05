@@ -3,8 +3,8 @@ import { wedding, coupleShort } from '../config/wedding.js';
 // The address guests opened (the Vercel URL once deployed), written into the event notes
 const siteUrl = () => `${window.location.origin}/`;
 
-const title = `Shubh Vivah · ${coupleShort}`;
-const location = `${wedding.venue.name}, ${wedding.venue.address}`;
+const title = () => `Shubh Vivah · ${coupleShort}`;
+const location = () => `${wedding.venue.name}, ${wedding.venue.address}`;
 const details = (url) =>
   `${wedding.groom.fullName} & ${wedding.bride.fullName} are getting married!\n` +
   `${wedding.calendar.summary}\n\n` +
@@ -15,9 +15,9 @@ const utcStamp = (date) => date.toISOString().replace(/[-:]/g, '').replace(/\.\d
 export const googleCalendarUrl = () => {
   const params = new URLSearchParams({
     action: 'TEMPLATE',
-    text: title,
+    text: title(),
     dates: `${utcStamp(new Date(wedding.calendar.start))}/${utcStamp(new Date(wedding.calendar.end))}`,
-    location,
+    location: location(),
     details: details(siteUrl()),
     ctz: 'Asia/Kolkata',
   });
@@ -51,8 +51,8 @@ export const buildIcs = (url) => {
     `DTSTAMP:${utcStamp(new Date())}`,
     `DTSTART:${utcStamp(new Date(wedding.calendar.start))}`,
     `DTEND:${utcStamp(new Date(wedding.calendar.end))}`,
-    `SUMMARY:${escapeText(title)}`,
-    `LOCATION:${escapeText(location)}`,
+    `SUMMARY:${escapeText(title())}`,
+    `LOCATION:${escapeText(location())}`,
     `DESCRIPTION:${escapeText(details(url))}`,
     `URL:${url}`,
     'BEGIN:VALARM',

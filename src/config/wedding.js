@@ -58,7 +58,9 @@ const themes = {
 const asked = typeof window === 'undefined' ? null : new URLSearchParams(window.location.search).get('theme');
 const themeKey = asked in themes ? asked : DEFAULT_THEME;
 
-export const wedding = {
+// The proof copy of everything guests read. The admin portal (/admin, Invitation Card) keeps an editable copy in
+// the database, seeded from this; the card loads that copy and falls back to this one if it can't.
+export const content = {
   groom: {
     name: 'Himanshu',
     nameHindi: 'चि. हिमांशु',
@@ -166,10 +168,6 @@ export const wedding = {
     couple: '/art/couple.webp',
   },
 
-  // Everything the theme changes: gate words, pictures, the opening verse and the footer credit
-  theme: themeKey,
-  ...themes[themeKey],
-
   // Guest functions in order, as printed under "मांगलिक कार्यक्रम". Empty `time` or `venue` hides
   // that line. `mapsQuery` turns the venue into a directions link (`route` into a route from home
   // to the venue); `rituals` lists everything in the block.
@@ -275,8 +273,6 @@ export const wedding = {
 export const formatDate = (isoDay, options) =>
   new Date(`${isoDay}T12:00:00+05:30`).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', ...options });
 
-export const coupleShort = `${wedding.groom.name} & ${wedding.bride.name}`;
-
 export const directionsUrl = (query) =>
   `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(query)}`;
 
@@ -285,5 +281,16 @@ export const routeUrl = ({ from, to }) =>
 
 export const telUrl = (phone) => `tel:+91${phone.replace(/\D/g, '')}`;
 
-export const mapsUrl = directionsUrl(wedding.venue.mapsQuery);
-export const mapsEmbedUrl = `https://maps.google.com/maps?q=${encodeURIComponent(wedding.venue.mapsQuery)}&z=15&output=embed`;
+// What the card renders: the content plus everything the theme changes (gate words, pictures, the opening verse,
+// the footer credit). Filled in by applyContent below.
+export const wedding = {};
+export let coupleShort, mapsUrl, mapsEmbedUrl;
+
+// Swaps in the admin's saved content. The derived exports above are live bindings, so every importer sees the update.
+export const applyContent = (saved) => {
+  Object.assign(wedding, content, saved, { theme: themeKey, ...themes[themeKey] });
+  coupleShort = `${wedding.groom.name} & ${wedding.bride.name}`;
+  mapsUrl = directionsUrl(wedding.venue.mapsQuery);
+  mapsEmbedUrl = `https://maps.google.com/maps?q=${encodeURIComponent(wedding.venue.mapsQuery)}&z=15&output=embed`;
+};
+applyContent({});

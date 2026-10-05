@@ -53,7 +53,12 @@ emergency contacts and settings. Everything is behind one login.
 - **Database:** PostgreSQL through Prisma. Set `DATABASE_URL` (and `WEDDING_ID`, default `vivah-2026`). Locally that is the Vivah Docker
   Postgres; on Vercel it must be a hosted Postgres such as Neon, since Vercel cannot reach `localhost`. Create the tables once with
   `npm run db:push`. An empty database is filled with the planner's sample data on the first request.
-- **Card data:** the wedding row, functions, ritual timings, invitation text and family contacts come from `src/config/wedding.js`.
+- **Invitation Card (edit the card from the admin):** everything guests read (names, families, venue, functions, the wedding
+  night, dress code, phones, Bal Manuhar...) is editable under **Management, Invitation Card**. Saving updates the card for guests
+  within about a minute and carries the details into the planner (wedding row, functions, ritual timings, invitation text, family
+  contacts). `src/config/wedding.js` stays the proof copy: it seeds the editor, the card falls back to it if the API is down, and
+  **Reset to card file** goes back to it. The Shiv/Ram theme and the pictures are still set in the file.
+  `node server/admin/card-content.check.js` checks that a bad save can't break the card.
   Run **Settings, Update from invitation card** after changing the config to copy it into the admin data again.
 - **API:** `/api/admin/*` is a single Vercel function (`api/admin.js` behind a rewrite in `vercel.json`, code in `server/admin/`); `npm run dev` serves the same handler.
 - **Invite Links** stores its list in the browser only, as before.

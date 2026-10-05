@@ -376,3 +376,12 @@ model EmergencyContact {
   @@map("emergency_contacts")
 }
 
+// The invitation card's text (names, families, venue, functions, schedule, dress code...), edited in the admin.
+// One row; src/config/wedding.js is the proof copy it starts from.
+model CardContent {
+  id        String   @id @default("card")
+  data      Json
+  updatedAt DateTime @updatedAt
+
+  @@map("card_content")
+}

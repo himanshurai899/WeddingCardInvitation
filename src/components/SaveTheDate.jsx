@@ -51,7 +51,7 @@ const SaveTheDate = ({ tone = 'light', className = '' }) => {
             className="overflow-hidden"
           >
             <div className="pt-3 flex flex-col gap-2">
-              <a className={option} href="/wedding.ics" download="himanshu-samiksha-shubh-vivah.ics" onClick={() => setOpen(false)}>
+              <a className={option} href="/api/wedding.ics" download="himanshu-samiksha-shubh-vivah.ics" onClick={() => setOpen(false)}>
                 <AppleMark /> Apple Calendar <span className="ml-auto text-xs font-semibold text-ink-soft">iPhone, Mac</span>
               </a>
               <a className={option} href={googleCalendarUrl()} target="_blank" rel="noopener noreferrer" onClick={() => setOpen(false)}>

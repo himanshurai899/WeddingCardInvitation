@@ -36,6 +36,8 @@ import * as r33 from './travel/[id]/route.js';
 import * as r34 from './vendors/[id]/route.js';
 import * as r35 from './whatsapp/[id]/route.js';
 import * as r36 from './card-sync/route.js';
+import * as r37 from './card/route.js';
+import * as r38 from './card/reset/route.js';
 
 export const routes = [
   ['accommodation', r0],
@@ -54,6 +56,8 @@ export const routes = [
   ['rituals', r13],
   ['seed', r14],
   ['card-sync', r36],
+  ['card', r37],
+  ['card/reset', r38],
   ['tasks', r15],
   ['travel', r16],
   ['vendors', r17],

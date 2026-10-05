@@ -2,10 +2,8 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { wedding } from '../config/wedding';
 
-const target = new Date(wedding.muhurat).getTime();
-
 const remaining = (now) => {
-  const distance = Math.max(0, target - now);
+  const distance = Math.max(0, new Date(wedding.muhurat).getTime() - now);
   return {
     done: distance === 0,
     days: Math.floor(distance / (1000 * 60 * 60 * 24)),

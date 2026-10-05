@@ -10,6 +10,9 @@ const adminDev = () => {
     const env = loadEnv(server.config.mode, process.cwd(), '')
     for (const [k, v] of Object.entries(env)) process.env[k] ??= v
     server.middlewares.use(async (req, res, next) => {
+      // The card's public routes are served by the admin function too (see vercel.json)
+      const publicPath = { '/api/card': 'public/card', '/api/wedding.ics': 'public/ics' }[req.url.split('?')[0]]
+      if (publicPath) req.url = `/api/admin/${publicPath}`
       const path = req.url.split('?')[0]
       if (path.startsWith('/api/admin/')) {
         try {

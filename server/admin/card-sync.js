@@ -1,9 +1,12 @@
 // The invitation card (src/config/wedding.js) holds the correct wedding details. This copies them into the admin
 // database: the wedding row, the functions, the ritual timings, the invitation text and the family contacts.
 // Records the host added by hand are left alone; only the sample records the old Vivah seed made are replaced.
-import { wedding as w } from '../../src/config/wedding.js';
+import { content as fileContent } from '../../src/config/wedding.js';
 import { prisma } from './db.js';
 import { WEDDING_ID } from './http.js';
+
+// The card content being synced: the admin's saved copy when called from there, the proof file otherwise
+let w = fileContent;
 
 const day = (iso) => new Date(`${iso}T12:00:00+05:30`);
 const slug = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
@@ -161,7 +164,8 @@ const familyContacts = [
   { name: 'Asha Devi Rai (Mother, Groom)', phone: `+91 ${w.phones[1]}` },
 ];
 
-export async function syncCardData() {
+export async function syncCardData(content = fileContent) {
+  w = content;
   const { id: weddingId } = await upsertWedding();
 
   // Functions
