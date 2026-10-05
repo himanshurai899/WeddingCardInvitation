@@ -39,7 +39,24 @@ lives in **`src/config/wedding.js`**. Lines marked `VERIFY` still need your conf
   Drop a new webp into `public/art/` and point the entry at it to swap one.
 - **Save the Date:** adds the wedding to Apple or Google Calendar, with the site link in the event notes.
 - **Personal links:** `https://your-site.vercel.app/?guest=Sharma%20Ji` greets that guest by name on the cover and in the closing blessing, and pre-fills their name in the RSVP.
-- **Guest list (`/admin`):** import a CSV or a contacts `.vcf` (iPhone: share contacts from the Contacts app; Google Contacts: export as CSV), or on Android Chrome pick from phone contacts. Each guest is invited as just them, plus one, or family (the card then reads "Sharma Ji & Family" and the RSVP guest count starts at 4), and gets a personal link plus a WhatsApp button with a Hindi and English message that includes the venue and a Maps link (edit it on the page). The list is stored in that browser only. Set `siteUrl` in the config to your final address first.
+- **Admin (`/admin`):** the wedding planner, see below. The personal invite links live under **Invite Links** there.
+
+## Admin portal (`/admin`)
+
+The full Vivah wedding planner lives at `/admin`, separate from the invitation (its own bundle, so guests never download it):
+dashboard, functions, guests, vendors, accommodation, travel, rituals, responsibilities, finance, tasks, reports,
+invitation builder, invite links, command center, alerts, check-in, WhatsApp templates, guest sorter, gallery,
+emergency contacts and settings. Everything is behind one login.
+
+- **Login:** `Login_UserName` and `Login_Password` in `.env` (locally) and in the Vercel project's environment variables. Same names in both.
+  Without them nobody can sign in. Optional `ADMIN_SESSION_SECRET` signs the session cookie; otherwise it is derived from the login.
+- **Database:** PostgreSQL through Prisma. Set `DATABASE_URL` (and `WEDDING_ID`, default `vivah-2026`). Locally that is the Vivah Docker
+  Postgres; on Vercel it must be a hosted Postgres such as Neon, since Vercel cannot reach `localhost`. Create the tables once with
+  `npm run db:push`. An empty database is filled with the planner's sample data on the first request.
+- **Card data:** the wedding row, functions, ritual timings, invitation text and family contacts come from `src/config/wedding.js`.
+  Run **Settings, Update from invitation card** after changing the config to copy it into the admin data again.
+- **API:** `/api/admin/*` is a single Vercel function (`api/admin/[...path].js`, code in `server/admin/`); `npm run dev` serves the same handler.
+- **Invite Links** stores its list in the browser only, as before.
 
 ## Run locally
 

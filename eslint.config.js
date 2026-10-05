@@ -18,4 +18,19 @@ export default defineConfig([
       parserOptions: { ecmaFeatures: { jsx: true } },
     },
   },
+  // Server code (the /api function and the code it loads) runs on Node
+  {
+    files: ['api/**', 'server/**', 'vite.config.js'],
+    languageOptions: { globals: globals.node },
+  },
+  // The admin portal is ported from the Vivah planner, which predates these newer React rules
+  {
+    files: ['admin/**'],
+    rules: {
+      'react-hooks/set-state-in-effect': 'off',
+      'react-hooks/purity': 'off',
+      'react-refresh/only-export-components': 'off',
+      'react-hooks/exhaustive-deps': 'off',
+    },
+  },
 ])
