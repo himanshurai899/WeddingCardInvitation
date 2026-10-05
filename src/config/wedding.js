@@ -130,18 +130,23 @@ export const wedding = {
   // "Bal Manuhar", the kids' request printed on North Indian wedding cards
   balManuhar: {
     title: 'बाल मनुहार',
+    // Written by the kids of both homes: Himanshu is bhaiya to some and mama to others, Samiksha is mausi
     lines: [
-      'हमारे भैया की शादी में धूम मचाएँगे,',
-      'ढोल पे नाचेंगे, जी भर मिठाई खाएँगे।',
-      'आप ज़रूर-ज़रूर आना, बहाना नहीं चलेगा,',
-      'वरना हम सब रूठ जाएँगे!',
+      'भैया-मामा घोड़ी चढ़ेंगे,',
+      'मौसी दुल्हन बन आएँगी,',
+      'दो घरों की नन्ही टोली',
+      'मिलकर धूम मचाएगी।',
+      'ढोल पे नाचेंगे, जी भर मिठाई खाएँगे,',
+      'आप न आए तो हम सब रूठ जाएँगे!',
     ],
-    english: "We're going to dance to the dhol and eat all the mithai at bhaiya's wedding. You have to come. No excuses, or we're all going to sulk!",
-    fromHindi: ['आपके इंतज़ार में,', 'भैया के छोटे भाई-बहन'],
-    // The little ones from both sides, marked with a highlighter under the signature:
-    // Himanshu's bhanja and bhanji, then the three who call Samiksha mausi
-    highlight: [['धृशिव यादव', 'भांजा'], ['दुर्गा ठाकुर', 'भांजी'], ['अदु, रहिनी, देव', 'समीक्षा मौसी के']],
-    from: "Bhaiya's little brothers and sisters, and Samiksha mausi's three",
+    english: "Bhaiya, our mama too, rides in on the ghodi and mausi comes as the bride. The kids of both homes are one gang, ready to dance and eat all the mithai. Come, or we'll sulk!",
+    fromHindi: ['आपके इंतज़ार में,', 'भैया के छोटे भाई-बहन,'],
+    // The little ones from both sides, each name marked with a highlighter under the signature
+    highlight: [
+      { label: 'मामा के', names: ['धृशिव यादव', 'दुर्गा ठाकुर'] },
+      { label: 'मौसी के', names: ['अदु', 'रहिनी', 'देव'] },
+    ],
+    from: 'The little ones of both homes',
   },
 
   // The live address, used by the admin page (/admin) to build each guest's invitation link

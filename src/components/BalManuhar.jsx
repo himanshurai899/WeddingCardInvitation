@@ -15,6 +15,8 @@ if (typeof document !== 'undefined' && !document.querySelector(`link[href="${FON
 const hand = { fontFamily: "'Kalam', 'Tiro Devanagari Hindi', cursive" };
 const LINE = 30; // px between ruled lines; the poem's line-height matches it
 const inkBlue = '#1f3b8f';
+// A yellow highlighter stroke across the lower half of the text
+const marker = { background: 'linear-gradient(transparent 50%, rgba(250,204,21,.6) 50%, rgba(250,204,21,.6) 90%, transparent 90%)' };
 
 // Wobbly crayon strokes: a little turbulence pushes every edge off true
 const Crayon = ({ id }) => (
@@ -72,7 +74,7 @@ const Kids = ({ className }) => {
   );
 };
 
-// A little request from bhaiya's younger brothers and sisters, on a page from a school notebook
+// A little request from the kids on both sides, on a page from a school notebook
 const BalManuhar = () => {
   const note = wedding.balManuhar;
   if (!note) return null;
@@ -122,15 +124,15 @@ const BalManuhar = () => {
           {note.fromHindi.map((line) => (
             <p key={line} className="text-maroon text-lg whitespace-nowrap">{line}</p>
           ))}
-          {note.highlight?.map(([name, relation]) => (
-            <p key={name} className="whitespace-nowrap">
-              <span
-                className="text-maroon text-lg font-bold px-1"
-                style={{ background: 'linear-gradient(transparent 50%, rgba(250,204,21,.6) 50%, rgba(250,204,21,.6) 90%, transparent 90%)' }}
-              >
-                {name}
-              </span>{' '}
-              <span className="text-ink-soft text-sm">({relation})</span>
+          {note.highlight?.map(({ label, names }) => (
+            <p key={label} className="text-maroon text-lg">
+              {label}{' '}
+              {names.map((name, i) => (
+                <span key={name}>
+                  {i > 0 && (i === names.length - 1 ? ' और ' : ', ')}
+                  <span className="font-bold px-0.5 whitespace-nowrap" style={marker}>{name}</span>
+                </span>
+              ))}
             </p>
           ))}
           <p className="text-ink-soft text-sm">
