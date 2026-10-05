@@ -122,6 +122,17 @@ const BalManuhar = () => {
           {note.fromHindi.map((line) => (
             <p key={line} className="text-maroon text-lg whitespace-nowrap">{line}</p>
           ))}
+          {note.highlight?.map(([name, relation]) => (
+            <p key={name} className="whitespace-nowrap">
+              <span
+                className="text-maroon text-lg font-bold px-1"
+                style={{ background: 'linear-gradient(transparent 50%, rgba(250,204,21,.6) 50%, rgba(250,204,21,.6) 90%, transparent 90%)' }}
+              >
+                {name}
+              </span>{' '}
+              <span className="text-ink-soft text-sm">({relation})</span>
+            </p>
+          ))}
           <p className="text-ink-soft text-sm">
             {note.from} <Heart className="inline w-4 h-4 -mt-1" />
           </p>

@@ -115,11 +115,11 @@ export const wedding = {
   phones: ['94283 00002', '94298 30002'],
 
   // Printed on the card, in the card's own words
-  swagatatur: ['रामअयोध्या यादव', 'गणेश सिंह यादव', 'मदन सिंह यादव', 'रणजीत सिंह यादव', 'रणवीर सिंह यादव'],
+  swagatatur: ['रामअयोध्या यादव', 'गणेश सिंह यादव', 'रणजीत सिंह यादव', 'मदन सिंह यादव', 'रणवीर सिंह यादव'],
   darshanabhilashi: [
     'हरेन्द्र सिंह', 'अर्जुन सिंह', 'अखिलेश यादव', 'केशव सिंह',
     'हितेष राय', 'कृष्ण यादव', 'जीत यादव',
-    'आरुष', 'लय',
+    'आरुष कुमार', 'लय कुमार',
     'मिथिलेश यादव', 'नीरज यादव',
   ],
   vineet: [['आशा देवी राय', 'रामश्लोक राय'], ['मिथिलेश यादव', 'रमपुकार यादव']],
@@ -138,6 +138,8 @@ export const wedding = {
     ],
     english: "We're going to dance to the dhol and eat all the mithai at bhaiya's wedding. You have to come. No excuses, or we're all going to sulk!",
     fromHindi: ['आपके इंतज़ार में,', 'भैया के छोटे भाई-बहन'],
+    // Himanshu's bhanja and bhanji, marked with a highlighter under the signature
+    highlight: [['धृशिव यादव', 'भांजा'], ['दुर्गा ठाकुर', 'भांजी']],
     from: "Bhaiya's little brothers and sisters",
   },
 
