@@ -138,9 +138,10 @@ export const wedding = {
     ],
     english: "We're going to dance to the dhol and eat all the mithai at bhaiya's wedding. You have to come. No excuses, or we're all going to sulk!",
     fromHindi: ['आपके इंतज़ार में,', 'भैया के छोटे भाई-बहन'],
-    // Himanshu's bhanja and bhanji, marked with a highlighter under the signature
-    highlight: [['धृशिव यादव', 'भांजा'], ['दुर्गा ठाकुर', 'भांजी']],
-    from: "Bhaiya's little brothers and sisters",
+    // The little ones from both sides, marked with a highlighter under the signature:
+    // Himanshu's bhanja and bhanji, then the three who call Samiksha mausi
+    highlight: [['धृशिव यादव', 'भांजा'], ['दुर्गा ठाकुर', 'भांजी'], ['अदु, रहिनी, देव', 'समीक्षा मौसी के']],
+    from: "Bhaiya's little brothers and sisters, and Samiksha mausi's three",
   },
 
   // The live address, used by the admin page (/admin) to build each guest's invitation link
