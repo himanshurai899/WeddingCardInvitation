@@ -41,7 +41,9 @@ const ensureSeeded = () => (seeded ??= prisma.wedding.findUnique({ where: { id: 
 
 export default async function handler(req, res) {
   const url = new URL(req.url, 'http://localhost');
-  const path = url.pathname.replace(/^\/api\/admin\/?/, '').replace(/\/$/, '');
+  // On Vercel, vercel.json rewrites /api/admin/<path> to this one function as ?__path=<path>
+  const path = (url.searchParams.get('__path') ?? url.pathname.replace(/^\/api\/admin\/?/, '')).replace(/\/$/, '');
+  url.searchParams.delete('__path');
   const method = req.method ?? 'GET';
 
   // Cookies are SameSite=Strict; also refuse cross-site writes outright

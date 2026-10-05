@@ -2,7 +2,7 @@ import { fileURLToPath } from 'node:url'
 import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 
-// The admin portal lives at /admin (admin/index.html) and its API at /api/admin (api/admin/[...path].js).
+// The admin portal lives at /admin (admin/index.html) and its API at /api/admin (api/admin.js).
 // On Vercel the API is a function; here the same handler is mounted on the dev and preview servers.
 const adminDev = () => {
   const mount = (server, load) => {
@@ -28,8 +28,8 @@ const adminDev = () => {
   }
   return {
     name: 'admin-dev',
-    configureServer: (server) => mount(server, () => server.ssrLoadModule('/api/admin/[...path].js')),
-    configurePreviewServer: (server) => mount(server, () => import('./api/admin/[...path].js')),
+    configureServer: (server) => mount(server, () => server.ssrLoadModule('/api/admin.js')),
+    configurePreviewServer: (server) => mount(server, () => import('./api/admin.js')),
   }
 }
 

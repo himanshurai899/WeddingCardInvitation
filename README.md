@@ -55,7 +55,7 @@ emergency contacts and settings. Everything is behind one login.
   `npm run db:push`. An empty database is filled with the planner's sample data on the first request.
 - **Card data:** the wedding row, functions, ritual timings, invitation text and family contacts come from `src/config/wedding.js`.
   Run **Settings, Update from invitation card** after changing the config to copy it into the admin data again.
-- **API:** `/api/admin/*` is a single Vercel function (`api/admin/[...path].js`, code in `server/admin/`); `npm run dev` serves the same handler.
+- **API:** `/api/admin/*` is a single Vercel function (`api/admin.js` behind a rewrite in `vercel.json`, code in `server/admin/`); `npm run dev` serves the same handler.
 - **Invite Links** stores its list in the browser only, as before.
 
 ## Run locally
