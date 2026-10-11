@@ -182,6 +182,9 @@ export const content = {
   // The live address, used by the admin page (/admin) to build each guest's invitation link
   siteUrl: 'https://himanshu-samiksha-vivah.vercel.app',
 
+  // The photo gallery: a Google Drive folder shared as "Anyone with the link" (Viewer). Each subfolder is an album.
+  galleryFolder: '1rY9I-BWErqrxWMPukw7LcrYM_uUghYdU',
+
   // RSVPs arrive on this WhatsApp number (digits only, with country code)
   rsvpWhatsApp: '919408101002',
 
