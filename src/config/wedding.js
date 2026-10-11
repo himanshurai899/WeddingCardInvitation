@@ -173,7 +173,7 @@ export const content = {
     fromHindi: ['आपके इंतज़ार में,', 'भैया के छोटे भाई-बहन,'],
     // The little ones from both sides, each name marked with a highlighter under the signature
     highlight: [
-      { label: 'मामा के', names: ['धृशिव', 'दुर्गा'] },
+      { label: 'मामा के', names: ['धृशिव', 'उन्नति'] },
       { label: 'मौसी के', names: ['अदु', 'राहिनी', 'देव'] },
     ],
     from: 'The little ones of both homes',
