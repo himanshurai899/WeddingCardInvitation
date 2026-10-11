@@ -9,20 +9,32 @@ export const PARTIES = {
   friends: { label: 'Friends', en: ' & Friends', hi: ' एवं मित्रगण', seats: 4 },
 };
 
-// How the invitation addresses them: "Sharma Ji & Family", "Rahul & Priya" (a named plus one) or "Rahul & Guest"
-export const invitedAs = (name, p = 'solo', plusOne = '', lang = 'en') =>
-  p === 'plusone' && plusOne ? `${name} ${lang === 'hi' ? 'एवं' : '&'} ${plusOne}` : name + (PARTIES[p] ?? PARTIES.solo)[lang];
+// Parties that can name who comes along: one plus one, or any number of friends
+const NAMED = ['plusone', 'friends'];
+const cleanNames = (names) => [names ?? []].flat().map((n) => n.replaceAll(',', ' ').trim()).filter(Boolean);
+
+// How the invitation addresses them: "Sharma Ji & Family", "Rahul & Priya" (a named plus one),
+// "Rahul, Amit & Riya" (named friends), or "Rahul & Guest" / "Rahul & Friends" when no names are given
+export const invitedAs = (name, p = 'solo', others = '', lang = 'en') => {
+  const all = [name, ...(NAMED.includes(p) ? cleanNames(others) : [])];
+  if (all.length === 1) return name + (PARTIES[p] ?? PARTIES.solo)[lang];
+  return `${all.slice(0, -1).join(', ')} ${lang === 'hi' ? 'एवं' : '&'} ${all.at(-1)}`;
+};
 
 const query = typeof window === 'undefined' ? new URLSearchParams() : new URLSearchParams(window.location.search);
 export const guestName = query.get('guest')?.trim().slice(0, 40) ?? '';
 export const party = query.get('party') in PARTIES ? query.get('party') : 'solo';
-// The plus one's name, when the host knows it (?with=Priya)
-export const plusOne = party === 'plusone' ? (query.get('with')?.trim().slice(0, 40) ?? '') : '';
-export const guest = guestName && invitedAs(guestName, party, plusOne);
+// Who comes along, when the host knows (?with=Priya, or ?with=Amit,Riya,Neha for friends)
+const withNames = (query.get('with') ?? '').split(',').map((n) => n.trim().slice(0, 40)).filter(Boolean);
+export const plusOne = party === 'plusone' ? (withNames[0] ?? '') : '';
+export const friends = party === 'friends' ? withNames : [];
+export const guest = guestName && invitedAs(guestName, party, party === 'friends' ? friends : plusOne);
 
-export const inviteUrl = (name, p = 'solo', withName = '') =>
-  `${wedding.siteUrl}/?guest=${encodeURIComponent(name.trim())}${p === 'solo' ? '' : `&party=${p}`}` +
-  (p === 'plusone' && withName.trim() ? `&with=${encodeURIComponent(withName.trim())}` : '');
+export const inviteUrl = (name, p = 'solo', withNames = '') => {
+  const others = NAMED.includes(p) ? cleanNames(withNames) : [];
+  return `${wedding.siteUrl}/?guest=${encodeURIComponent(name.trim())}${p === 'solo' ? '' : `&party=${p}`}` +
+    (others.length ? `&with=${encodeURIComponent(others.join(','))}` : '');
+};
 
 // Digits only, with country code. A bare 10-digit number is taken as Indian. Returns '' if it can't be a phone.
 export const normalizePhone = (raw) => {

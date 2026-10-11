@@ -5,7 +5,7 @@ import { guest, guestName, party, plusOne } from '../lib/guests';
 import { Crest, ThemeDivider } from './art/Symbols';
 
 // On a guest's own link, a card with their name opens once the gates have swung apart.
-// The words depend on how they were invited (just them, a plus one, or the whole family) and live in the config,
+// The words depend on how they were invited (just them, a plus one, the whole family, or a friend circle) and live in the config,
 // so they can be edited from the admin.
 const PersonalInvite = ({ opened }) => {
   const reduce = useReducedMotion();
@@ -57,7 +57,7 @@ const PersonalInvite = ({ opened }) => {
               <p className="deva text-marigold-deep text-lg mt-1">{text.heading}</p>
 
               <p className="font-serif italic text-ink-soft text-lg mt-3 [@media(max-height:700px)]:mt-1">Dear</p>
-              <h2 id="personal-invite-name" className="script-font text-maroon text-[clamp(2.1rem,10vw,2.75rem)] leading-tight break-words">
+              <h2 id="personal-invite-name" className={`script-font text-maroon leading-tight break-words ${guest.length > 30 ? 'text-[clamp(1.5rem,7vw,1.9rem)]' : 'text-[clamp(2.1rem,10vw,2.75rem)]'}`}>
                 {guest}
               </h2>
 

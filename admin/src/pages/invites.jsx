@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Send, Link as LinkIcon, Trash2, Upload, Contact } from 'lucide-react';
+import { Send, Link as LinkIcon, Trash2, Upload, Contact, Plus, X } from 'lucide-react';
 import { Button } from '@admin/components/ui/Button';
 import { Select } from '@admin/components/ui/Select';
 import { wedding, mapsUrl } from '../../../src/config/wedding';
@@ -79,16 +79,19 @@ const Admin = () => {
     e.currentTarget.reset();
   };
 
-  const link = (g) => inviteUrl(g.name, g.party, g.plusOne);
+  // Who comes along: the plus one's name, or the list of friends
+  const others = (g) => (g.party === 'friends' ? g.friends : g.plusOne);
+  const link = (g) => inviteUrl(g.name, g.party, others(g));
   const text = (g) =>
     message
-      .replaceAll('{name}', invitedAs(g.name, g.party, g.plusOne))
-      .replaceAll('{hname}', invitedAs(g.name, g.party, g.plusOne, 'hi'))
+      .replaceAll('{name}', invitedAs(g.name, g.party, others(g)))
+      .replaceAll('{hname}', invitedAs(g.name, g.party, others(g), 'hi'))
       .replaceAll('{venue}', venue)
       .replaceAll('{map}', mapsUrl)
       .replaceAll('{link}', link(g));
   const update = (phone, change) => setGuests(guests.map((g) => (g.phone === phone ? { ...g, ...change } : g)));
   const setParty = (phone, party) => update(phone, { party });
+  const setFriends = (g, friends) => update(g.phone, { friends });
   const mark = (phone, sent) => setGuests(guests.map((g) => (g.phone === phone ? { ...g, sent } : g)));
   const copy = async (g) => {
     await navigator.clipboard.writeText(link(g));
@@ -199,6 +202,31 @@ const Admin = () => {
                 aria-label={`Plus one's name for ${g.name}`}
                 className={`${box} w-48`}
               />
+            )}
+            {g.party === 'friends' && (
+              <div className="basis-full order-last flex flex-wrap items-center gap-2">
+                {(g.friends ?? []).map((f, i) => (
+                  <span key={i} className="inline-flex items-center gap-1">
+                    <input
+                      value={f}
+                      onChange={(e) => setFriends(g, g.friends.map((x, j) => (j === i ? e.target.value : x)))}
+                      placeholder="Friend's name"
+                      aria-label={`Friend ${i + 1} of ${g.name}`}
+                      className={`${box} w-40`}
+                    />
+                    <Button
+                      variant="ghost"
+                      aria-label={`Remove friend ${i + 1} of ${g.name}`}
+                      onClick={() => setFriends(g, g.friends.filter((_, j) => j !== i))}
+                    >
+                      <X size={14} />
+                    </Button>
+                  </span>
+                ))}
+                <Button variant="outline" onClick={() => setFriends(g, [...(g.friends ?? []), ''])}>
+                  <Plus size={16} /> Add friend
+                </Button>
+              </div>
             )}
             <a
               href={`https://wa.me/${g.phone}?text=${encodeURIComponent(text(g))}`}
