@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Image, ExternalLink, Play, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Image, ExternalLink, Play, X, ChevronLeft, ChevronRight, RefreshCw } from 'lucide-react';
 import { PageLoader } from '@admin/components/ui/Spinner';
 import { cn } from '@admin/lib/utils/cn';
 
@@ -9,17 +9,33 @@ const thumb = (id, width) => `https://drive.google.com/thumbnail?id=${id}&sz=w${
 const fileUrl = (id) => `https://drive.google.com/file/d/${id}/view`;
 const folderUrl = (id) => `https://drive.google.com/drive/folders/${id}`;
 
+// A page visit takes the kept copy (re-read from Drive every 6 hours); Sync asks Drive directly and updates it
+const fetchGallery = (fresh) =>
+  fetch(fresh ? `/api/gallery?fresh=${Date.now()}` : '/api/gallery')
+    .then((r) => r.json())
+    .catch((e) => ({ albums: [], error: String(e.message ?? e) }));
+
 export default function GalleryPage() {
   const [data, setData] = useState(null);
   const [album, setAlbum] = useState(0);
   const [open, setOpen] = useState(null); // index of the photo shown large
+  const [syncedAt, setSyncedAt] = useState(null);
+  const [syncing, setSyncing] = useState(false);
 
+  const show = (d) => {
+    setData(d);
+    setAlbum((a) => Math.min(a, Math.max(0, d.albums.length - 1))); // an album may have gone
+    setSyncedAt(d.syncedAt ? new Date(d.syncedAt) : null);
+  };
   useEffect(() => {
-    fetch('/api/gallery')
-      .then((r) => r.json())
-      .then(setData)
-      .catch((e) => setData({ albums: [], error: String(e.message ?? e) }));
+    fetchGallery().then(show);
   }, []);
+  const sync = () => {
+    setSyncing(true);
+    fetchGallery(true)
+      .then(show)
+      .finally(() => setSyncing(false));
+  };
 
   const photos = data?.albums[album]?.photos ?? [];
   const shown = open === null ? null : photos[open];
@@ -47,19 +63,34 @@ export default function GalleryPage() {
             <Image size={20} className="text-violet-600" /> Photo Gallery
           </h1>
           <p className="text-sm text-gray-500">
-            Photos from the wedding folder on Google Drive. Add them there; they show up here within about 5 minutes.
+            Photos from the wedding folder on Google Drive. Add them there, then press Sync.
           </p>
         </div>
-        {data.folder && (
-          <a
-            href={folderUrl(data.folder)}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-lg border border-violet-300 px-3 py-2 text-sm font-medium text-violet-700 hover:bg-violet-50"
+        <div className="flex flex-wrap items-center gap-2">
+          {syncedAt && (
+            <span className="text-xs text-gray-500">
+              Synced {syncedAt.toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' })}
+            </span>
+          )}
+          <button
+            type="button"
+            onClick={sync}
+            disabled={syncing}
+            className="inline-flex items-center gap-2 rounded-lg bg-violet-600 px-3 py-2 text-sm font-medium text-white hover:bg-violet-700 disabled:opacity-60 cursor-pointer"
           >
-            <ExternalLink size={15} /> Open Drive folder
-          </a>
-        )}
+            <RefreshCw size={15} className={cn(syncing && 'animate-spin')} /> {syncing ? 'Syncing…' : 'Sync'}
+          </button>
+          {data.folder && (
+            <a
+              href={folderUrl(data.folder)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-lg border border-violet-300 px-3 py-2 text-sm font-medium text-violet-700 hover:bg-violet-50"
+            >
+              <ExternalLink size={15} /> Open Drive folder
+            </a>
+          )}
+        </div>
       </div>
 
       {data.configured === false && (

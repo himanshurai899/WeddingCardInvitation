@@ -1,6 +1,8 @@
 // The photo gallery is a public Google Drive folder ("Anyone with the link", Viewer). Each subfolder is an album
 // (Haldi, Garba, Wedding...); photos straight in the main folder make an album of their own.
 // Reading it needs GOOGLE_DRIVE_API_KEY: a Google Cloud API key restricted to the Drive API.
+import { prisma } from './db.js';
+
 const API = 'https://www.googleapis.com/drive/v3/files';
 const FOLDER = 'application/vnd.google-apps.folder';
 
@@ -45,4 +47,19 @@ export async function loadGallery(folderId, key) {
   const loose = media(top);
   if (loose.length) albums.unshift({ id: folderId, name: 'Photos', photos: loose });
   return albums;
+}
+
+// The last read of the folder is kept in the database (the card_content row 'gallery') and reused for 6 hours.
+// Sync (fresh) reads Drive straight away and replaces the kept copy, so everyone sees the new photos.
+const KEEP_MS = 6 * 60 * 60 * 1000;
+export async function cachedGallery(folderId, key, fresh) {
+  if (!process.env.DATABASE_URL) return { albums: await loadGallery(folderId, key), syncedAt: new Date() };
+  const row = fresh ? null : await prisma.cardContent.findUnique({ where: { id: 'gallery' } });
+  if (row && row.data.folder === folderId && Date.now() - row.updatedAt.getTime() < KEEP_MS) {
+    return { albums: row.data.albums, syncedAt: row.updatedAt };
+  }
+  const albums = await loadGallery(folderId, key);
+  const data = { folder: folderId, albums };
+  const saved = await prisma.cardContent.upsert({ where: { id: 'gallery' }, create: { id: 'gallery', data }, update: { data } });
+  return { albums, syncedAt: saved.updatedAt };
 }

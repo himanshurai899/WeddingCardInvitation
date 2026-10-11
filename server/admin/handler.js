@@ -5,7 +5,7 @@ import { routes } from './routes/index.js';
 import { seedDatabase } from './seed.js';
 import { defaults, loadContent } from './card-content.js';
 import { applyContent, wedding } from '../../src/config/wedding.js';
-import { loadGallery } from './drive.js';
+import { cachedGallery } from './drive.js';
 import { buildIcs } from '../../src/lib/calendar.js';
 
 const json = (res, status, body, headers = {}) => {
@@ -68,15 +68,17 @@ export default async function handler(req, res) {
     return res.end(buildIcs(`https://${req.headers.host}/`));
   }
 
-  // Public: the photo gallery, read from the Google Drive folder. The CDN keeps it for 5 minutes,
-  // so photos added to Drive show up within about that long.
+  // Public: the photo gallery from the Google Drive folder, re-read every 6 hours or when the admin presses Sync
+  // (?fresh). The CDN keeps each answer for a minute, so a Sync reaches everyone within about that long.
   if (path === 'public/gallery') {
     const folder = wedding.galleryFolder;
     const key = process.env.GOOGLE_DRIVE_API_KEY;
     if (!key) return json(res, 200, { configured: false, folder, albums: [] });
     try {
-      const albums = await loadGallery(folder, key);
-      return json(res, 200, { configured: true, folder, albums }, { 'Cache-Control': 'public, max-age=0, s-maxage=300, stale-while-revalidate=86400' });
+      const fresh = url.searchParams.has('fresh');
+      const { albums, syncedAt } = await cachedGallery(folder, key, fresh);
+      const cache = fresh ? {} : { 'Cache-Control': 'public, max-age=0, s-maxage=60' };
+      return json(res, 200, { configured: true, folder, albums, syncedAt }, cache);
     } catch (e) {
       console.error(e);
       return json(res, 502, { configured: true, folder, albums: [], error: e.message });
