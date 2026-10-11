@@ -9,29 +9,31 @@ export const PARTIES = {
   friends: { label: 'Friends', en: ' & Friends', hi: ' एवं मित्रगण', seats: 4 },
 };
 
-// Parties that can name who comes along: one plus one, or any number of friends
-const NAMED = ['plusone', 'friends'];
+// Parties that can name who comes along: one plus one, or any number of family or friends
+export const NAMED = ['plusone', 'family', 'friends'];
 const cleanNames = (names) => [names ?? []].flat().map((n) => n.replaceAll(',', ' ').trim()).filter(Boolean);
 
 // How the invitation addresses them: "Sharma Ji & Family", "Rahul & Priya" (a named plus one),
-// "Nidhi, Ashok, Harshil & Khevana" (named friends, first names so the whole circle fits),
-// or "Rahul & Guest" / "Rahul & Friends" when no names are given
+// "Nidhi, Ashok, Harshil & Khevana" (named friends), "Hit, Sneha & Family" / "Hit एवं Sneha सपरिवार"
+// (named family; first names for both, so everyone fits), or "Rahul & Guest" / "Rahul & Friends" when no names are given
 export const invitedAs = (name, p = 'solo', others = '', lang = 'en') => {
   let all = [name, ...(NAMED.includes(p) ? cleanNames(others) : [])];
   if (all.length === 1) return name + (PARTIES[p] ?? PARTIES.solo)[lang];
-  if (p === 'friends') all = all.map((n) => n.trim().split(/\s+/)[0]);
-  return `${all.slice(0, -1).join(', ')} ${lang === 'hi' ? 'एवं' : '&'} ${all.at(-1)}`;
+  if (p !== 'plusone') all = all.map((n) => n.trim().split(/\s+/)[0]);
+  if (p === 'family' && lang === 'en') return `${all.join(', ')} & Family`;
+  const list = `${all.slice(0, -1).join(', ')} ${lang === 'hi' ? 'एवं' : '&'} ${all.at(-1)}`;
+  return p === 'family' ? `${list} सपरिवार` : list;
 };
 
 const query = typeof window === 'undefined' ? new URLSearchParams() : new URLSearchParams(window.location.search);
 export const guestName = query.get('guest')?.trim().slice(0, 40) ?? '';
 export const party = query.get('party') in PARTIES ? query.get('party') : 'solo';
-// Who comes along, when the host knows: ?with=Priya, or one ?with= per friend.
+// Who comes along, when the host knows: ?with=Priya, or one ?with= per family member or friend.
 // Links sent earlier put friends in one comma list (?with=Amit,Riya), still read here.
-const withNames = query.getAll('with').flatMap((v) => v.split(',')).map((n) => n.trim().slice(0, 40)).filter(Boolean);
+const withAll = query.getAll('with').flatMap((v) => v.split(',')).map((n) => n.trim().slice(0, 40)).filter(Boolean);
+export const withNames = party === 'plusone' ? withAll.slice(0, 1) : NAMED.includes(party) ? withAll : [];
 export const plusOne = party === 'plusone' ? (withNames[0] ?? '') : '';
-export const friends = party === 'friends' ? withNames : [];
-export const guest = guestName && invitedAs(guestName, party, party === 'friends' ? friends : plusOne);
+export const guest = guestName && invitedAs(guestName, party, withNames);
 
 export const inviteUrl = (name, p = 'solo', withNames = '') => {
   const others = NAMED.includes(p) ? cleanNames(withNames) : [];

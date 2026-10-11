@@ -39,7 +39,7 @@ function BatchSendModal({ template, guests, onClose }) {
     }
     const message = encodeURIComponent(substituteVars(template.message, vars));
     const phone = normalizePhone(guest.mobile);
-    window.open(`https://wa.me/${phone}?text=${message}`, '_blank');
+    window.open(`https://api.whatsapp.com/send?phone=${phone}&text=${message}`, '_blank');
     setSent((s) => new Set([...s, guest.id]));
   };
   return (
@@ -127,7 +127,7 @@ function SendModal({ template, onClose }) {
   const [vars, setVars] = useState(() => Object.fromEntries(template.variables.map((v) => [v, ''])));
   const preview = substituteVars(template.message, vars);
   const sendWhatsApp = () => {
-    window.open(`https://wa.me/${normalizePhone(phone)}?text=${encodeURIComponent(preview)}`, '_blank');
+    window.open(`https://api.whatsapp.com/send?phone=${normalizePhone(phone)}&text=${encodeURIComponent(preview)}`, '_blank');
   };
   const copyMessage = () => navigator.clipboard.writeText(preview);
   return (

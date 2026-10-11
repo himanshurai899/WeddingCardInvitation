@@ -21,5 +21,10 @@ assert.equal(
 assert.equal(invitedAs('Rahul Sharma', 'plusone', 'Priya Verma'), 'Rahul Sharma & Priya Verma');
 assert.equal(invitedAs('Rahul', 'friends', ['Amit'], 'hi'), 'Rahul एवं Amit');
 assert.equal(invitedAs('Rahul', 'friends', []), 'Rahul & Friends');
-assert.equal(invitedAs('Rahul', 'family', ['ignored']), 'Rahul & Family');
+assert.equal(invitedAs('Rahul', 'family'), 'Rahul & Family');
+assert.equal(invitedAs('Hit Mehta', 'family', ['Sneha Mehta']), 'Hit, Sneha & Family');
+assert.equal(invitedAs('Hit Mehta', 'family', ['Sneha Mehta', 'Aarav']), 'Hit, Sneha, Aarav & Family');
+assert.equal(invitedAs('Hit Mehta', 'family', ['Sneha Mehta'], 'hi'), 'Hit एवं Sneha सपरिवार');
+assert.match(inviteUrl('Hit Mehta', 'family', ['Sneha Mehta']), /&party=family&with=Sneha%20Mehta$/);
+assert.equal(invitedAs('Rahul', 'solo', ['ignored']), 'Rahul');
 console.log('guests ok');

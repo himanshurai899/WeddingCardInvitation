@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Send } from 'lucide-react';
 import { wedding, coupleShort } from '../config/wedding';
 import { Divider } from './art/Motifs';
-import { guestName, party, PARTIES } from '../lib/guests';
+import { guestName, party, PARTIES, withNames } from '../lib/guests';
 
 const field = 'w-full rounded-xl border-[1.5px] border-maroon/25 bg-white px-4 py-3 text-[15px] text-ink placeholder:text-ink-soft/80 outline-none transition focus:border-gold focus:ring-4 focus:ring-gold/25';
 const label = 'text-[11px] font-extrabold tracking-[0.16em] uppercase text-maroon';
@@ -30,7 +30,7 @@ const Rsvp = () => {
     ].filter((l) => l !== null);
 
     const to = wedding.rsvpWhatsApp.replace(/\D/g, '');
-    window.open(`https://wa.me/${to}?text=${encodeURIComponent(lines.join('\n'))}`, '_blank', 'noopener');
+    window.open(`https://api.whatsapp.com/send?phone=${to}&text=${encodeURIComponent(lines.join('\n'))}`, '_blank', 'noopener');
     setSent(true);
   };
 
@@ -74,7 +74,7 @@ const Rsvp = () => {
 
           <label className="flex flex-col gap-2">
             <span className={label}>Number of guests</span>
-            <select name="guests" defaultValue={guestName ? PARTIES[party].seats : 2} className={field}>
+            <select name="guests" defaultValue={guestName ? Math.min(10, Math.max(PARTIES[party].seats, 1 + withNames.length)) : 2} className={field}>
               {Array.from({ length: 10 }, (_, i) => (
                 <option key={i + 1} value={i + 1}>{i + 1}</option>
               ))}

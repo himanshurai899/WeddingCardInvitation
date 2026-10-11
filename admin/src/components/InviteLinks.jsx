@@ -45,6 +45,7 @@ const putSent = (ids) =>
     }).catch(() => {}),
   );
 const nameKey = (n) => (n ?? '').trim().toLowerCase();
+const ADD = { plusone: 'plus one', family: 'family member', friends: 'friend' };
 
 const box =
   'rounded-lg border px-3 py-2 text-sm outline-none bg-[#F5F3F8] border-[rgba(15,6,18,0.10)] text-[#0F0612] dark:bg-[#2A1842] dark:border-[rgba(201,168,76,0.16)] dark:text-[#F0EBF7] focus:ring-2 focus:ring-violet-500';
@@ -90,13 +91,18 @@ const InviteLinks = () => {
     };
   });
 
-  // Friend circles: a friend picked or typed with the same name as someone in the Guest List folds that
-  // guest into the circle, so the whole circle gets one invite. Hosts never fold into another circle.
-  const isHost = (g) => g.party === 'friends' && (g.friends ?? []).some((f) => f.trim());
+  // Who comes along, by name: the plus one, family members or friends. One list per guest, kept when the type
+  // changes; a plus one saved before this as a single name still counts.
+  const names = (g) =>
+    g.party === 'solo' ? [] : (g.friends ?? (g.plusOne ? [g.plusOne] : [])).slice(0, g.party === 'plusone' ? 1 : undefined);
+
+  // Circles: a name picked or typed that matches someone in the Guest List folds that guest into the host's
+  // invite, so the whole family or friend circle gets one invite. Hosts never fold into another circle.
+  const isHost = (g) => names(g).some((f) => f.trim());
   const byName = new Map(guests.filter((g) => !isHost(g)).map((g) => [nameKey(g.name), g]));
   const hostOf = {};
   guests.filter(isHost).forEach((h) =>
-    h.friends.forEach((f) => {
+    names(h).forEach((f) => {
       const m = byName.get(nameKey(f));
       if (m && !hostOf[m.id]) hostOf[m.id] = h;
     }),
@@ -118,19 +124,17 @@ const InviteLinks = () => {
     putSent(ids);
   }, [unsynced]);
 
-  // Who comes along: the plus one's name, or the list of friends
-  const others = (g) => (g.party === 'friends' ? g.friends : g.plusOne);
-  const link = (g) => inviteUrl(g.name, g.party, others(g));
+  const link = (g) => inviteUrl(g.name, g.party, names(g));
   const text = (g) =>
     message
-      .replaceAll('{name}', invitedAs(g.name, g.party, others(g)))
-      .replaceAll('{hname}', invitedAs(g.name, g.party, others(g), 'hi'))
+      .replaceAll('{name}', invitedAs(g.name, g.party, names(g)))
+      .replaceAll('{hname}', invitedAs(g.name, g.party, names(g), 'hi'))
       .replaceAll('{venue}', venue)
       .replaceAll('{map}', mapsUrl)
       .replaceAll('{link}', link(g));
   const update = (id, change) => setSettings({ ...settings, [id]: { ...settings[id], ...change } });
-  const setFriends = (g, friends) => update(g.id, { friends });
-  // Sending marks the guest and everyone in their friend circle as invited
+  const setNames = (g, friends) => update(g.id, { friends });
+  // Sending marks the guest and everyone in their circle as invited
   const markSent = (g) => tick([g, ...membersOf(g)].filter((x) => !x.sent).map((x) => x.id));
   const copy = async (g) => {
     await navigator.clipboard.writeText(link(g));
@@ -236,40 +240,33 @@ const InviteLinks = () => {
                 </option>
               ))}
             </select>
-            {g.party === 'plusone' && (
-              <input
-                value={g.plusOne ?? ''}
-                onChange={(e) => update(g.id, { plusOne: e.target.value })}
-                placeholder="Plus one's name (optional)"
-                aria-label={`Plus one's name for ${g.name}`}
-                className={`${box} w-48`}
-              />
-            )}
-            {g.party === 'friends' && (
+            {g.party !== 'solo' && (
               <div className="basis-full order-last flex flex-wrap items-center gap-2">
-                {(g.friends ?? []).map((f, i) => (
+                {names(g).map((f, i) => (
                   <span key={i} className="inline-flex items-center gap-1">
                     <input
                       value={f}
-                      onChange={(e) => setFriends(g, g.friends.map((x, j) => (j === i ? e.target.value : x)))}
+                      onChange={(e) => setNames(g, names(g).map((x, j) => (j === i ? e.target.value : x)))}
                       autoFocus={!f}
                       list="invite-guest-names"
                       placeholder="Pick or type a name"
-                      aria-label={`Friend ${i + 1} of ${g.name}`}
+                      aria-label={`${ADD[g.party]} ${i + 1} for ${g.name}`}
                       className={cn(box, 'w-44', byName.has(nameKey(f)) && 'border-emerald-500 dark:border-emerald-500')}
                     />
                     <Button
                       variant="ghost"
-                      aria-label={`Remove friend ${i + 1} of ${g.name}`}
-                      onClick={() => setFriends(g, g.friends.filter((_, j) => j !== i))}
+                      aria-label={`Remove ${f || 'this name'} from ${g.name}'s invite`}
+                      onClick={() => setNames(g, names(g).filter((_, j) => j !== i))}
                     >
                       <X size={14} />
                     </Button>
                   </span>
                 ))}
-                <Button variant="outline" onClick={() => setFriends(g, [...(g.friends ?? []), ''])}>
-                  <Plus size={16} /> Add friend
-                </Button>
+                {!(g.party === 'plusone' && names(g).length) && (
+                  <Button variant="outline" onClick={() => setNames(g, [...names(g), ''])}>
+                    <Plus size={16} /> Add {ADD[g.party]}
+                  </Button>
+                )}
                 {membersOf(g).length > 0 && (
                   <p className="basis-full text-xs" style={{ color: 'var(--text-muted)' }}>
                     From the Guest List, invited with {g.name}: {membersOf(g).map((m) => m.name).join(', ')}
@@ -279,7 +276,7 @@ const InviteLinks = () => {
             )}
             {g.phone && (
               <a
-                href={`https://wa.me/${g.phone}?text=${encodeURIComponent(text(g))}`}
+                href={`https://api.whatsapp.com/send?phone=${g.phone}&text=${encodeURIComponent(text(g))}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => markSent(g)}
