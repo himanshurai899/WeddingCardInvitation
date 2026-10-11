@@ -9,6 +9,7 @@ import { PageLoader } from '@admin/components/ui/Spinner';
 import { formatINR, utilization, calcOverrunPct } from '@admin/lib/utils/currency';
 import { formatDate } from '@admin/lib/utils/date';
 import { BUDGET_CATEGORIES } from '@admin/lib/constants';
+import Link from '@admin/lib/router';
 const paymentModes = [
   { value: 'CASH', label: 'Cash' },
   { value: 'UPI', label: 'UPI' },
@@ -239,23 +240,29 @@ export default function FinancePage() {
                     <td className="px-4 py-3 text-gray-600">{e.paidTo ?? '—'}</td>
                     <td className="px-4 py-3 text-gray-900 font-medium">{formatINR(e.amount)}</td>
                     <td className="px-4 py-3 text-green-700">{formatINR(e.paidAmount)}</td>
-                    <td className="px-4 py-3 text-gray-500">{e.paymentMode}</td>
+                    <td className="px-4 py-3 text-gray-500">{e.vendorId ? 'Vendor' : e.paymentMode}</td>
                     <td className="px-4 py-3">
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => {
-                            setExpForm({ ...e });
-                            setEditExpId(e.id);
-                            setShowExpForm(true);
-                          }}
-                          className="text-xs text-violet-600 hover:underline"
-                        >
-                          Edit
-                        </button>
-                        <button onClick={() => setDeleteExpId(e.id)} className="text-xs text-red-500 hover:underline">
-                          Del
-                        </button>
-                      </div>
+                      {e.vendorId ? (
+                        <Link href="/vendors" className="text-xs text-violet-600 hover:underline whitespace-nowrap">
+                          Edit in Vendors
+                        </Link>
+                      ) : (
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => {
+                              setExpForm({ ...e });
+                              setEditExpId(e.id);
+                              setShowExpForm(true);
+                            }}
+                            className="text-xs text-violet-600 hover:underline"
+                          >
+                            Edit
+                          </button>
+                          <button onClick={() => setDeleteExpId(e.id)} className="text-xs text-red-500 hover:underline">
+                            Del
+                          </button>
+                        </div>
+                      )}
                     </td>
                   </tr>
                 ))

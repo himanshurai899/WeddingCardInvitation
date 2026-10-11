@@ -18,16 +18,36 @@ export const VENDOR_BUDGET = {
   OTHER: 'Miscellaneous',
 };
 
-// Each category's share of the vendors: the final amount is its cost and the advance is paid.
-// A finalized vendor with no final amount yet counts its negotiated amount or quotation, as on the Vendors page.
+// A vendor's cost is its final amount. A finalized vendor with no final amount yet counts its negotiated
+// amount or quotation, as on the Vendors page. Rejected vendors cost nothing.
+const vendorCost = (v) => v.finalAmount ?? (v.status === 'FINALIZED' ? (v.negotiatedAmount ?? v.quotation ?? 0) : 0);
+const budgetOf = (v) => VENDOR_BUDGET[v.category] ?? 'Miscellaneous';
+
+// Vendors as Expense Ledger rows: the final amount is the amount and the advance is what's paid.
+// Worked out from the vendors on every read and never saved, so the ledger can't fall behind the Vendors page.
+export const vendorEntries = (vendors) =>
+  vendors
+    .filter((v) => v.status !== 'REJECTED')
+    .map((v) => ({
+      id: `vendor-${v.id}`,
+      vendorId: v.id,
+      date: v.createdAt,
+      category: budgetOf(v),
+      description: v.name,
+      paidTo: v.contactPerson || v.name,
+      amount: vendorCost(v),
+      paidAmount: v.advancePaid ?? 0,
+      paymentMode: 'VENDOR',
+    }))
+    .filter((e) => e.amount > 0 || e.paidAmount > 0);
+
+// Each category's share of the vendors
 export const vendorTotals = (vendors) => {
   const totals = {};
-  for (const v of vendors) {
-    if (v.status === 'REJECTED') continue;
-    const cost = v.finalAmount ?? (v.status === 'FINALIZED' ? (v.negotiatedAmount ?? v.quotation ?? 0) : 0);
-    const t = (totals[VENDOR_BUDGET[v.category] ?? 'Miscellaneous'] ??= { vendorCost: 0, vendorPaid: 0 });
-    t.vendorCost += cost;
-    t.vendorPaid += v.advancePaid ?? 0;
+  for (const e of vendorEntries(vendors)) {
+    const t = (totals[e.category] ??= { vendorCost: 0, vendorPaid: 0 });
+    t.vendorCost += e.amount;
+    t.vendorPaid += e.paidAmount;
   }
   return totals;
 };
