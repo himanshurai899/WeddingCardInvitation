@@ -35,6 +35,17 @@ const useStored = (key, initial) => {
   return [value, setValue];
 };
 
+// Ticks Invitation Sent, the same flag the Guests page shows
+const putSent = (ids) =>
+  ids.forEach((id) =>
+    fetch(`/api/admin/guests/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ invitationSent: true }),
+    }).catch(() => {}),
+  );
+const nameKey = (n) => (n ?? '').trim().toLowerCase();
+
 const box =
   'rounded-lg border px-3 py-2 text-sm outline-none bg-[#F5F3F8] border-[rgba(15,6,18,0.10)] text-[#0F0612] dark:bg-[#2A1842] dark:border-[rgba(201,168,76,0.16)] dark:text-[#F0EBF7] focus:ring-2 focus:ring-violet-500';
 
@@ -79,6 +90,34 @@ const InviteLinks = () => {
     };
   });
 
+  // Friend circles: a friend picked or typed with the same name as someone in the Guest List folds that
+  // guest into the circle, so the whole circle gets one invite. Hosts never fold into another circle.
+  const isHost = (g) => g.party === 'friends' && (g.friends ?? []).some((f) => f.trim());
+  const byName = new Map(guests.filter((g) => !isHost(g)).map((g) => [nameKey(g.name), g]));
+  const hostOf = {};
+  guests.filter(isHost).forEach((h) =>
+    h.friends.forEach((f) => {
+      const m = byName.get(nameKey(f));
+      if (m && !hostOf[m.id]) hostOf[m.id] = h;
+    }),
+  );
+  const membersOf = (h) => guests.filter((m) => hostOf[m.id]?.id === h.id);
+  const invited = (g) => g.sent || Boolean(hostOf[g.id]?.sent);
+
+  const tick = (ids) => {
+    if (!ids.length) return;
+    setDbGuests((list) => list.map((d) => (ids.includes(d.id) ? { ...d, invitationSent: true } : d)));
+    putSent(ids);
+  };
+  // Friends linked to a circle whose invite already went out count as invited too
+  const unsynced = guests.filter((m) => !m.sent && hostOf[m.id]?.sent).map((m) => m.id).join();
+  useEffect(() => {
+    if (!unsynced) return;
+    const ids = unsynced.split(',');
+    setDbGuests((list) => list.map((d) => (ids.includes(d.id) ? { ...d, invitationSent: true } : d)));
+    putSent(ids);
+  }, [unsynced]);
+
   // Who comes along: the plus one's name, or the list of friends
   const others = (g) => (g.party === 'friends' ? g.friends : g.plusOne);
   const link = (g) => inviteUrl(g.name, g.party, others(g));
@@ -91,24 +130,18 @@ const InviteLinks = () => {
       .replaceAll('{link}', link(g));
   const update = (id, change) => setSettings({ ...settings, [id]: { ...settings[id], ...change } });
   const setFriends = (g, friends) => update(g.id, { friends });
-  // Ticks Invitation Sent on the guest, the same flag the Guests page shows
-  const markSent = (g) => {
-    if (g.sent) return;
-    setDbGuests((list) => list.map((d) => (d.id === g.id ? { ...d, invitationSent: true } : d)));
-    fetch(`/api/admin/guests/${g.id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ invitationSent: true }),
-    }).catch(() => {});
-  };
+  // Sending marks the guest and everyone in their friend circle as invited
+  const markSent = (g) => tick([g, ...membersOf(g)].filter((x) => !x.sent).map((x) => x.id));
   const copy = async (g) => {
     await navigator.clipboard.writeText(link(g));
     setCopied(g.id);
     setTimeout(() => setCopied(''), 1500);
   };
 
-  const sentCount = guests.filter((g) => g.sent).length;
-  const shown = show === 'all' ? guests : guests.filter((g) => g.sent === (show === 'sent'));
+  // Counts are people; the list shows one row per invite (a circle's friends sit on the host's row)
+  const sentCount = guests.filter(invited).length;
+  const rows = guests.filter((g) => !hostOf[g.id]);
+  const shown = show === 'all' ? rows : rows.filter((g) => g.sent === (show === 'sent'));
 
   return (
     <div className="space-y-6 max-w-3xl">
@@ -162,6 +195,14 @@ const InviteLinks = () => {
             </button>
           ))}
         </div>
+        {/* Friend names to pick from: guests not already in a circle */}
+        <datalist id="invite-guest-names">
+          {guests
+            .filter((g) => !isHost(g) && !hostOf[g.id])
+            .map((g) => (
+              <option key={g.id} value={g.name} />
+            ))}
+        </datalist>
         {!dbGuests && (
           <p className="text-center py-6" style={{ color: 'var(--text-muted)' }}>
             Loading guests…
@@ -212,9 +253,10 @@ const InviteLinks = () => {
                       value={f}
                       onChange={(e) => setFriends(g, g.friends.map((x, j) => (j === i ? e.target.value : x)))}
                       autoFocus={!f}
-                      placeholder="Friend's name"
+                      list="invite-guest-names"
+                      placeholder="Pick or type a name"
                       aria-label={`Friend ${i + 1} of ${g.name}`}
-                      className={`${box} w-40`}
+                      className={cn(box, 'w-44', byName.has(nameKey(f)) && 'border-emerald-500 dark:border-emerald-500')}
                     />
                     <Button
                       variant="ghost"
@@ -228,6 +270,11 @@ const InviteLinks = () => {
                 <Button variant="outline" onClick={() => setFriends(g, [...(g.friends ?? []), ''])}>
                   <Plus size={16} /> Add friend
                 </Button>
+                {membersOf(g).length > 0 && (
+                  <p className="basis-full text-xs" style={{ color: 'var(--text-muted)' }}>
+                    From the Guest List, invited with {g.name}: {membersOf(g).map((m) => m.name).join(', ')}
+                  </p>
+                )}
               </div>
             )}
             {g.phone && (
