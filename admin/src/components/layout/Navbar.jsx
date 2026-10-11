@@ -28,7 +28,6 @@ import {
   X,
   MoreHorizontal,
   ListFilter,
-  Link2,
   LogOut,
 } from 'lucide-react';
 import { SkyToggle } from '@admin/components/ui/sky-toggle';
@@ -60,7 +59,6 @@ const navGroups = [
       { href: '/reports', label: 'Reports', icon: BarChart2 },
       { href: '/card', label: 'Invitation Card', icon: Heart },
       { href: '/invitation', label: 'Invitation', icon: Mail },
-      { href: '/invites', label: 'Invite Links', icon: Link2 },
     ],
   },
   {

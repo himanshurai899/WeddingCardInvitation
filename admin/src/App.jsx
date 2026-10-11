@@ -34,6 +34,8 @@ function Shell() {
                 {pages.map(({ path, Page }) => (
                   <Route key={path} path={path} element={<Page />} />
                 ))}
+                {/* Invite Links now lives in the Guest Sorter */}
+                <Route path="invites" element={<Navigate to="/guest-sorter?tab=invite" replace />} />
                 <Route path="*" element={<Navigate to="/dashboard" replace />} />
               </Routes>
             </Suspense>

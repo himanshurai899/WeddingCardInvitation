@@ -14,18 +14,21 @@ const NAMED = ['plusone', 'friends'];
 const cleanNames = (names) => [names ?? []].flat().map((n) => n.replaceAll(',', ' ').trim()).filter(Boolean);
 
 // How the invitation addresses them: "Sharma Ji & Family", "Rahul & Priya" (a named plus one),
-// "Rahul, Amit & Riya" (named friends), or "Rahul & Guest" / "Rahul & Friends" when no names are given
+// "Nidhi, Ashok, Harshil & Khevana" (named friends, first names so the whole circle fits),
+// or "Rahul & Guest" / "Rahul & Friends" when no names are given
 export const invitedAs = (name, p = 'solo', others = '', lang = 'en') => {
-  const all = [name, ...(NAMED.includes(p) ? cleanNames(others) : [])];
+  let all = [name, ...(NAMED.includes(p) ? cleanNames(others) : [])];
   if (all.length === 1) return name + (PARTIES[p] ?? PARTIES.solo)[lang];
+  if (p === 'friends') all = all.map((n) => n.trim().split(/\s+/)[0]);
   return `${all.slice(0, -1).join(', ')} ${lang === 'hi' ? 'एवं' : '&'} ${all.at(-1)}`;
 };
 
 const query = typeof window === 'undefined' ? new URLSearchParams() : new URLSearchParams(window.location.search);
 export const guestName = query.get('guest')?.trim().slice(0, 40) ?? '';
 export const party = query.get('party') in PARTIES ? query.get('party') : 'solo';
-// Who comes along, when the host knows (?with=Priya, or ?with=Amit,Riya,Neha for friends)
-const withNames = (query.get('with') ?? '').split(',').map((n) => n.trim().slice(0, 40)).filter(Boolean);
+// Who comes along, when the host knows: ?with=Priya, or one ?with= per friend.
+// Links sent earlier put friends in one comma list (?with=Amit,Riya), still read here.
+const withNames = query.getAll('with').flatMap((v) => v.split(',')).map((n) => n.trim().slice(0, 40)).filter(Boolean);
 export const plusOne = party === 'plusone' ? (withNames[0] ?? '') : '';
 export const friends = party === 'friends' ? withNames : [];
 export const guest = guestName && invitedAs(guestName, party, party === 'friends' ? friends : plusOne);
@@ -33,7 +36,8 @@ export const guest = guestName && invitedAs(guestName, party, party === 'friends
 export const inviteUrl = (name, p = 'solo', withNames = '') => {
   const others = NAMED.includes(p) ? cleanNames(withNames) : [];
   return `${wedding.siteUrl}/?guest=${encodeURIComponent(name.trim())}${p === 'solo' ? '' : `&party=${p}`}` +
-    (others.length ? `&with=${encodeURIComponent(others.join(','))}` : '');
+    // One &with= per name: a comma (%2C) in the link made WhatsApp cut it short after the first friend
+    others.map((n) => `&with=${encodeURIComponent(n)}`).join('');
 };
 
 // Digits only, with country code. A bare 10-digit number is taken as Indian. Returns '' if it can't be a phone.
@@ -41,61 +45,4 @@ export const normalizePhone = (raw) => {
   const d = String(raw ?? '').replace(/\D/g, '').replace(/^0+/, '');
   const full = d.length === 10 ? `91${d}` : d;
   return full.length >= 11 && full.length <= 15 ? full : '';
-};
-
-const parseCsv = (text) => {
-  const rows = [[]];
-  let cell = '';
-  let quoted = false;
-  for (let i = 0; i < text.length; i++) {
-    const c = text[i];
-    if (quoted) {
-      if (c === '"' && text[i + 1] === '"') { cell += '"'; i++; }
-      else if (c === '"') quoted = false;
-      else cell += c;
-    } else if (c === '"') quoted = true;
-    else if (c === ',' || c === '\n') {
-      rows.at(-1).push(cell.trim());
-      cell = '';
-      if (c === '\n') rows.push([]);
-    } else if (c !== '\r') cell += c;
-  }
-  rows.at(-1).push(cell.trim());
-  return rows.filter((r) => r.some(Boolean));
-};
-
-const fromCsv = (text) => {
-  const rows = parseCsv(text);
-  if (!rows.length) return [];
-  // A first row with no phone-like cell is a header (Google and Outlook exports have one)
-  const head = rows[0].map((h) => h.toLowerCase());
-  const hasHeader = !rows[0].some((c) => c.replace(/\D/g, '').length >= 7);
-  const find = (re) => head.findIndex((h) => re.test(h));
-  let nameCols = [0];
-  let phoneCol = 1;
-  if (hasHeader) {
-    const full = find(/^(full |display )?name$/);
-    nameCols = full >= 0 ? [full] : [find(/^(first|given) name$/), find(/^(last|family) name$/)].filter((i) => i >= 0);
-    phoneCol = head.findIndex((h) => /phone|mobile|tel|whatsapp/.test(h) && !/label|type/.test(h));
-  }
-  return rows.slice(hasHeader ? 1 : 0).map((r) => ({
-    name: nameCols.map((i) => r[i]).filter(Boolean).join(' '),
-    phone: r[phoneCol],
-  }));
-};
-
-// vCard export (iPhone Contacts, Android): the first number of each contact
-const fromVcf = (text) => text.split(/BEGIN:VCARD/i).slice(1).map((card) => ({
-  name: /^FN[^:\n]*:(.*)$/m.exec(card)?.[1].trim(),
-  phone: /^(?:item\d+\.)?TEL[^:\n]*:(.*)$/m.exec(card)?.[1],
-}));
-
-// Contacts from a .csv or .vcf file's text, as [{ name, phone }] with clean phones.
-// `skipped` counts rows with no name or no usable number.
-export const parseContacts = (text, fileName = '') => {
-  const raw = /\.vcf$/i.test(fileName) || /^\s*BEGIN:VCARD/i.test(text) ? fromVcf(text) : fromCsv(text);
-  const guests = raw
-    .map((g) => ({ name: (g.name ?? '').trim(), phone: normalizePhone(g.phone) }))
-    .filter((g) => g.name && g.phone);
-  return { guests, skipped: raw.length - guests.length };
 };

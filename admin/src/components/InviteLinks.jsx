@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Send, Link as LinkIcon, Trash2, Upload, Contact, Plus, X } from 'lucide-react';
+import { Send, Link as LinkIcon, Trash2, Contact, Plus, X } from 'lucide-react';
 import { Button } from '@admin/components/ui/Button';
 import { Select } from '@admin/components/ui/Select';
 import { wedding, mapsUrl } from '../../../src/config/wedding';
-import { inviteUrl, invitedAs, parseContacts, normalizePhone, PARTIES } from '../../../src/lib/guests';
+import { inviteUrl, invitedAs, normalizePhone, PARTIES } from '../../../src/lib/guests';
 
 const DEFAULT_MESSAGE = `🙏 नमस्ते {hname},
 
@@ -34,10 +34,23 @@ const useStored = (key, initial) => {
   return [value, setValue];
 };
 
+// Adds people picked in the Guest Sorter, as "Just them". Returns how many were new (the phone is the key).
+export const addInvitees = (people) => {
+  let list = [];
+  try { list = JSON.parse(localStorage.getItem('guestList')) ?? []; } catch { /* start fresh */ }
+  const have = new Set(list.map((g) => g.phone));
+  const fresh = people
+    .map((p) => ({ name: (p.name ?? '').trim(), phone: normalizePhone(p.phone) }))
+    .filter((g) => g.name && g.phone && !have.has(g.phone) && have.add(g.phone));
+  localStorage.setItem('guestList', JSON.stringify([...list, ...fresh.map((g) => ({ ...g, party: 'solo', sent: false }))]));
+  return fresh.length;
+};
+
 const box =
   'rounded-lg border px-3 py-2 text-sm outline-none bg-[#F5F3F8] border-[rgba(15,6,18,0.10)] text-[#0F0612] dark:bg-[#2A1842] dark:border-[rgba(201,168,76,0.16)] dark:text-[#F0EBF7] focus:ring-2 focus:ring-violet-500';
 
-const Admin = () => {
+// The Invite tab of the Guest Sorter
+const InviteLinks = () => {
   const [guests, setGuests] = useStored('guestList', []);
   const [message, setMessage] = useStored('guestMessage2', DEFAULT_MESSAGE);
   const [newParty, setNewParty] = useState('solo');
@@ -50,14 +63,6 @@ const Admin = () => {
     const fresh = incoming.filter((g) => !have.has(g.phone) && have.add(g.phone));
     setGuests([...guests, ...fresh.map((g) => ({ ...g, party: newParty, sent: false }))]);
     setNote(`Added ${fresh.length}. ${incoming.length - fresh.length} already on the list, ${skipped} skipped (no name or number).`);
-  };
-
-  const onFile = async (e) => {
-    const file = e.target.files[0];
-    e.target.value = '';
-    if (!file) return;
-    const { guests: found, skipped } = parseContacts(await file.text(), file.name);
-    addGuests(found, skipped);
   };
 
   // Android Chrome only; iPhone users export contacts as .vcf or .csv instead
@@ -103,15 +108,10 @@ const Admin = () => {
 
   return (
     <div className="space-y-6 max-w-3xl">
-      <div>
-        <h1 className="page-title flex items-center gap-2">
-          <LinkIcon size={22} aria-hidden /> Invite Links
-        </h1>
-        <p className="page-subtitle">
-          Personal links for the invitation card, sent over WhatsApp. Saved in this browser only. {guests.length} guests,{' '}
-          {sentCount} invited.
-        </p>
-      </div>
+      <p className="text-sm text-ink-dim">
+        Personal links for the invitation card, sent over WhatsApp. Saved in this browser only. {guests.length} guests,{' '}
+        {sentCount} invited. To bring people in from a contacts file, import it on the Sort tab and use Invite.
+      </p>
 
       <section className="card p-5 flex flex-col gap-3">
         <h2 className="font-semibold">Add guests</h2>
@@ -122,17 +122,11 @@ const Admin = () => {
           options={Object.entries(PARTIES).map(([value, v]) => ({ value, label: v.label }))}
           className="max-w-xs"
         />
-        <div className="flex flex-wrap gap-2">
-          <label className="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium cursor-pointer bg-violet-600 text-white hover:bg-violet-700">
-            <Upload size={16} /> Import CSV or VCF
-            <input type="file" accept=".csv,.vcf,text/csv,text/vcard,text/x-vcard" onChange={onFile} className="hidden" />
-          </label>
-          {'contacts' in navigator && (
-            <Button onClick={pickContacts}>
-              <Contact size={16} /> Pick from phone contacts
-            </Button>
-          )}
-        </div>
+        {'contacts' in navigator && (
+          <Button onClick={pickContacts} className="self-start">
+            <Contact size={16} /> Pick from phone contacts
+          </Button>
+        )}
         <form onSubmit={onAdd} className="flex flex-wrap gap-2" noValidate>
           <input name="name" aria-label="Name" placeholder="Name, e.g. Sharma Ji" className={`${box} flex-1 min-w-[10rem]`} />
           <input
@@ -170,7 +164,7 @@ const Admin = () => {
       <section className="flex flex-col gap-2">
         {guests.length === 0 && (
           <p className="text-center py-6" style={{ color: 'var(--text-muted)' }}>
-            No guests yet. Import a file or add one above.
+            No guests yet. Add one above, or pick people on the Sort tab and press Invite.
           </p>
         )}
         {guests.map((g) => (
@@ -210,6 +204,7 @@ const Admin = () => {
                     <input
                       value={f}
                       onChange={(e) => setFriends(g, g.friends.map((x, j) => (j === i ? e.target.value : x)))}
+                      autoFocus={!f}
                       placeholder="Friend's name"
                       aria-label={`Friend ${i + 1} of ${g.name}`}
                       className={`${box} w-40`}
@@ -254,4 +249,4 @@ const Admin = () => {
   );
 };
 
-export default Admin;
+export default InviteLinks;

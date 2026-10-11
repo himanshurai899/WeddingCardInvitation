@@ -12,11 +12,14 @@ import {
   Star,
   ChevronLeft,
   ChevronRight,
+  Send,
 } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
 import { Button } from '@admin/components/ui/Button';
 import { Modal } from '@admin/components/ui/Modal';
 import { useToastContext } from '@admin/components/ui/Toast';
 import { cn } from '@admin/lib/utils/cn';
+import InviteLinks, { addInvitees } from '@admin/components/InviteLinks';
 const LS_KEY = 'vivah_sorter_contacts';
 const EVENT_COLORS = [
   {
@@ -392,6 +395,9 @@ export default function GuestSorterPage() {
   const [pushSide, setPushSide] = useState('GROOM');
   const [pushing, setPushing] = useState(false);
   const fileInputRef = useRef(null);
+  // Two tabs: sort contacts into the guest list, or send them personal invite links
+  const [params, setParams] = useSearchParams();
+  const tab = params.get('tab') === 'invite' ? 'invite' : 'sort';
   // ── Persist contacts ──────────────────────────────────────────────────────
   const setContacts = useCallback((updater) => {
     setContactsState((prev) => {
@@ -503,6 +509,15 @@ export default function GuestSorterPage() {
     () => selectedContacts.filter((c) => (tags[c.id] ?? []).length > 0).length,
     [selectedContacts, tags],
   );
+  const inviteSelected = () => {
+    const added = addInvitees(selectedContacts.map((c) => ({ name: c.name, phone: c.phones[0] })));
+    const skipped = selectedContacts.length - added;
+    toast({
+      message: `${added} added to Invite${skipped ? `, ${skipped} already there or without a usable number` : ''}`,
+      variant: 'success',
+    });
+    setParams({ tab: 'invite' });
+  };
   const mainEventIds = useMemo(() => events.filter((ev) => ev.isMainFunction).map((ev) => ev.id), [events]);
   // Pagination over filteredImport — reset to page 0 on filter change
   const totalPages = Math.max(1, Math.ceil(filteredImport.length / PAGE_SIZE));
@@ -683,9 +698,9 @@ export default function GuestSorterPage() {
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div>
           <h1 className="page-title">Guest Sorter</h1>
-          <p className="text-sm mt-0.5 text-ink-dim">Import contacts · tag by event · push to guest list</p>
+          <p className="text-sm mt-0.5 text-ink-dim">Import contacts · tag by event · push to guest list · send invite links</p>
         </div>
-        <div className="flex gap-2 flex-wrap items-center">
+        {tab === 'sort' && <div className="flex gap-2 flex-wrap items-center">
           {contacts.length > 0 && (
             <button
               type="button"
@@ -717,8 +732,34 @@ export default function GuestSorterPage() {
             <Users size={14} />
             Add to Guest List{taggedCount > 0 ? ` (${taggedCount})` : ''}
           </Button>
-        </div>
+        </div>}
       </div>
+
+      <div className="flex gap-1 p-1 rounded-lg bg-[var(--surface-2)] self-start" role="tablist" aria-label="Guest Sorter">
+        {[
+          ['sort', 'Sort'],
+          ['invite', 'Invite'],
+        ].map(([key, label]) => (
+          <button
+            key={key}
+            type="button"
+            role="tab"
+            aria-selected={tab === key}
+            onClick={() => setParams(key === 'sort' ? {} : { tab: key })}
+            className={cn(
+              'px-4 h-8 rounded-md text-sm font-semibold cursor-pointer transition-colors',
+              tab === key ? 'bg-purple-600 text-white' : 'text-ink-muted hover:text-vivah-ink',
+            )}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+
+      {tab === 'invite' ? (
+        <InviteLinks />
+      ) : (
+        <>
 
       {/* ── Stats chips ──────────────────────────────────────────────────── */}
       <div className="flex flex-wrap gap-2">
@@ -1035,7 +1076,13 @@ export default function GuestSorterPage() {
                   {selectedIds.size.toLocaleString('en-IN')}
                 </span>
               </h2>
-              <span className="text-[11px] text-ink-hint">← Drag to deselect</span>
+              {selectedIds.size > 0 ? (
+                <Button size="sm" variant="outline" onClick={inviteSelected}>
+                  <Send size={13} /> Invite
+                </Button>
+              ) : (
+                <span className="text-[11px] text-ink-hint">← Drag to deselect</span>
+              )}
             </div>
 
             <div className="flex-1 overflow-y-auto p-2 flex flex-col gap-1.5">
@@ -1136,6 +1183,9 @@ export default function GuestSorterPage() {
             </div>
           </section>
         </div>
+      )}
+
+        </>
       )}
 
       {/* ── Push to Guest List modal ──────────────────────────────────────── */}
