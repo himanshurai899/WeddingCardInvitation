@@ -117,14 +117,14 @@ export const content = {
   phones: ['94283 00002', '94298 30002'],
 
   // Printed on the card, in the card's own words
-  swagatatur: ['रामअयोध्या यादव', 'गणेश सिंह यादव', 'रणजीत सिंह यादव', 'मदन सिंह यादव', 'रणवीर सिंह यादव'],
+  swagatatur: ['श्री रामअयोध्या यादव', 'श्री गणेश सिंह यादव', 'श्री रणजीत सिंह यादव', 'श्री मदन सिंह यादव', 'श्री रणवीर सिंह यादव'],
   darshanabhilashi: [
     'हरेन्द्र सिंह', 'अर्जुन सिंह', 'अखिलेश यादव', 'केशव सिंह',
     'हितेष राय', 'कृष्ण यादव', 'जीत यादव',
     'आरुष कुमार', 'लय कुमार',
     'मिथिलेश यादव', 'नीरज यादव',
   ],
-  vineet: [['आशा देवी राय', 'रामश्लोक राय'], ['मिथिलेश यादव', 'रमपुकार यादव']],
+  vineet: [['श्रीमती आशा देवी राय', 'श्री रामश्लोक राय'], ['श्रीमती मिथिलेश यादव', 'श्री रामपुकार यादव']],
   // Maithili welcome, for the Mithila side of the family (worth a check by a Maithili speaker)
   maithili: 'अपने सभक स्वागत अछि',
   doha: ['आते हैं जिस भाव से, भक्तों के भगवान।', 'उसी भाव से आप भी, दर्शन दें श्रीमान्॥'],
@@ -151,6 +151,10 @@ export const content = {
       en: 'With the blessings of our elders, we warmly invite you and your whole family, the elders and the little ones too, to the wedding of Himanshu and Samiksha. Please come together, all of you.',
       hi: 'हिमांशु और समीक्षा के शुभ विवाह में आप सपरिवार सादर आमंत्रित हैं।',
     },
+    friends: {
+      en: 'We warmly invite you and the whole gang to the wedding of Himanshu and Samiksha. The baraat is not complete without our friends, so come together and let us dance till the shehnai stops.',
+      hi: 'हिमांशु और समीक्षा के शुभ विवाह में आप अपनी मित्र मंडली के साथ सादर आमंत्रित हैं।',
+    },
     button: 'View the invitation',
   },
 
@@ -169,8 +173,8 @@ export const content = {
     fromHindi: ['आपके इंतज़ार में,', 'भैया के छोटे भाई-बहन,'],
     // The little ones from both sides, each name marked with a highlighter under the signature
     highlight: [
-      { label: 'मामा के', names: ['धृशिव यादव', 'दुर्गा ठाकुर'] },
-      { label: 'मौसी के', names: ['अदु', 'रहिनी', 'देव'] },
+      { label: 'मामा के', names: ['धृशिव', 'दुर्गा'] },
+      { label: 'मौसी के', names: ['अदु', 'राहिनी', 'देव'] },
     ],
     from: 'The little ones of both homes',
   },

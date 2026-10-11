@@ -1,11 +1,12 @@
 import { wedding } from '../config/wedding.js';
 
 // The guest named in the link, e.g. https://your-site.vercel.app/?guest=Sharma%20Ji&party=family
-// party: 'solo' (just them), 'plusone' (them and a guest) or 'family' (them and their family)
+// party: 'solo' (just them), 'plusone' (them and a guest), 'family' (them and their family) or 'friends' (their friend circle)
 export const PARTIES = {
   solo: { label: 'Just them', en: '', hi: '', seats: 1 },
   plusone: { label: 'Plus one', en: ' & Guest', hi: ' एवं अतिथि', seats: 2 },
   family: { label: 'Family', en: ' & Family', hi: ' सपरिवार', seats: 4 },
+  friends: { label: 'Friends', en: ' & Friends', hi: ' एवं मित्रगण', seats: 4 },
 };
 
 // How the invitation addresses them: "Sharma Ji & Family", "Rahul & Priya" (a named plus one) or "Rahul & Guest"
