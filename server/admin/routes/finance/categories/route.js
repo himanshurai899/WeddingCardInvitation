@@ -1,12 +1,10 @@
 import { prisma } from '../../../db.js';
 import { ok, serverErr, getWeddingId } from '../../../http.js';
+import { budgetCategories } from '../../../budget.js';
 export async function GET() {
   try {
-    const cats = await prisma.budgetCategory.findMany({
-      where: { weddingId: getWeddingId() },
-      orderBy: { category: 'asc' },
-    });
-    return ok(cats);
+    // Actual and paid include the vendors (their final amounts and advances), as vendorCost and vendorPaid
+    return ok(await budgetCategories(getWeddingId()));
   } catch (e) {
     return serverErr(e);
   }

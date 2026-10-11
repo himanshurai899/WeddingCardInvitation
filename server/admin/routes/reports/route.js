@@ -1,5 +1,6 @@
 import { prisma } from '../../db.js';
 import { ok, serverErr, getWeddingId } from '../../http.js';
+import { budgetCategories as withVendorBudget } from '../../budget.js';
 export async function GET() {
   try {
     const wid = getWeddingId();
@@ -8,7 +9,7 @@ export async function GET() {
         prisma.wedding.findUnique({ where: { id: wid } }),
         prisma.guest.findMany({ where: { weddingId: wid } }),
         prisma.vendor.findMany({ where: { weddingId: wid } }),
-        prisma.budgetCategory.findMany({ where: { weddingId: wid } }),
+        withVendorBudget(wid),
         prisma.expense.findMany({ where: { weddingId: wid } }),
         prisma.task.findMany({ where: { weddingId: wid } }),
         prisma.ritual.findMany({ where: { weddingId: wid } }),

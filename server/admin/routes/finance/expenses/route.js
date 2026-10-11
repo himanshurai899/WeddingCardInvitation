@@ -1,5 +1,6 @@
 import { prisma } from '../../../db.js';
 import { ok, serverErr, getWeddingId } from '../../../http.js';
+import { shiftCategory } from '../../../budget.js';
 export async function GET(req) {
   try {
     const { searchParams } = new URL(req.url);
@@ -29,16 +30,7 @@ export async function POST(req) {
         receipt: body.receipt,
       },
     });
-    // Update budget category actual cost
-    if (body.category) {
-      await prisma.budgetCategory.updateMany({
-        where: { weddingId: getWeddingId(), category: body.category },
-        data: {
-          actualCost: { increment: Number(body.amount) },
-          paidAmount: { increment: Number(body.paidAmount ?? 0) },
-        },
-      });
-    }
+    await shiftCategory(getWeddingId(), expense, 1);
     return ok(expense, 201);
   } catch (e) {
     return serverErr(e);

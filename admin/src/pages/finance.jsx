@@ -160,8 +160,18 @@ export default function FinancePage() {
                     <td className="px-4 py-3 text-gray-700">{formatINR(c.plannedBudget)}</td>
                     <td className={`px-4 py-3 font-medium ${over > 0 ? 'text-red-600' : 'text-gray-700'}`}>
                       {formatINR(c.actualCost)} {over > 0 && <span className="text-xs ml-1">+{over}%</span>}
+                      {c.vendorCost > 0 && (
+                        <span className="block text-xs font-normal text-gray-500">
+                          incl. {formatINR(c.vendorCost)} vendors
+                        </span>
+                      )}
                     </td>
-                    <td className="px-4 py-3 text-green-700">{formatINR(c.paidAmount)}</td>
+                    <td className="px-4 py-3 text-green-700">
+                      {formatINR(c.paidAmount)}
+                      {c.vendorPaid > 0 && (
+                        <span className="block text-xs text-gray-500">incl. {formatINR(c.vendorPaid)} advance</span>
+                      )}
+                    </td>
                     <td className="px-4 py-3 w-32">
                       <div className="flex items-center gap-2">
                         <div className="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
@@ -181,8 +191,8 @@ export default function FinancePage() {
                           setShowBudgetEdit(c);
                           setBudgetForm({
                             plannedBudget: c.plannedBudget,
-                            actualCost: c.actualCost,
-                            paidAmount: c.paidAmount,
+                            actualCost: c.actualCost - (c.vendorCost ?? 0),
+                            paidAmount: c.paidAmount - (c.vendorPaid ?? 0),
                           });
                         }}
                         className="text-xs text-violet-600 hover:underline"
@@ -331,17 +341,18 @@ export default function FinancePage() {
             onChange={(e) => setBudgetForm((p) => ({ ...p, plannedBudget: parseFloat(e.target.value) || 0 }))}
           />
           <Input
-            label="Actual Cost (₹)"
+            label="Actual Cost, not counting vendors (₹)"
             type="number"
             value={budgetForm.actualCost ?? 0}
             onChange={(e) => setBudgetForm((p) => ({ ...p, actualCost: parseFloat(e.target.value) || 0 }))}
-            hint="Auto-updated when expenses are added"
+            hint={`Auto-updated when expenses are added. Vendors add ${formatINR(showBudgetEdit?.vendorCost ?? 0)} on top, from the Vendors page.`}
           />
           <Input
-            label="Paid Amount (₹)"
+            label="Paid Amount, not counting vendors (₹)"
             type="number"
             value={budgetForm.paidAmount ?? 0}
             onChange={(e) => setBudgetForm((p) => ({ ...p, paidAmount: parseFloat(e.target.value) || 0 }))}
+            hint={`Vendor advances add ${formatINR(showBudgetEdit?.vendorPaid ?? 0)} on top.`}
           />
         </div>
         <div className="flex justify-end gap-3 mt-5">
