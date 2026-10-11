@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
-import { Send, Link as LinkIcon, Trash2, Contact, Plus, X } from 'lucide-react';
+import { useState, useEffect, useMemo } from 'react';
+import { Send, Link as LinkIcon, Plus, X } from 'lucide-react';
 import { Button } from '@admin/components/ui/Button';
-import { Select } from '@admin/components/ui/Select';
+import { Badge } from '@admin/components/ui/Badge';
+import { cn } from '@admin/lib/utils/cn';
 import { wedding, mapsUrl } from '../../../src/config/wedding';
 import { inviteUrl, invitedAs, normalizePhone, PARTIES } from '../../../src/lib/guests';
 
@@ -34,55 +35,49 @@ const useStored = (key, initial) => {
   return [value, setValue];
 };
 
-// Adds people picked in the Guest Sorter, as "Just them". Returns how many were new (the phone is the key).
-export const addInvitees = (people) => {
-  let list = [];
-  try { list = JSON.parse(localStorage.getItem('guestList')) ?? []; } catch { /* start fresh */ }
-  const have = new Set(list.map((g) => g.phone));
-  const fresh = people
-    .map((p) => ({ name: (p.name ?? '').trim(), phone: normalizePhone(p.phone) }))
-    .filter((g) => g.name && g.phone && !have.has(g.phone) && have.add(g.phone));
-  localStorage.setItem('guestList', JSON.stringify([...list, ...fresh.map((g) => ({ ...g, party: 'solo', sent: false }))]));
-  return fresh.length;
-};
-
 const box =
   'rounded-lg border px-3 py-2 text-sm outline-none bg-[#F5F3F8] border-[rgba(15,6,18,0.10)] text-[#0F0612] dark:bg-[#2A1842] dark:border-[rgba(201,168,76,0.16)] dark:text-[#F0EBF7] focus:ring-2 focus:ring-violet-500';
 
-// The Invite tab of the Guest Sorter
+// The Invite tab of the Guest Sorter: everyone sorted into the Guest List, each with their own link
 const InviteLinks = () => {
-  const [guests, setGuests] = useStored('guestList', []);
+  const [dbGuests, setDbGuests] = useState(null);
+  // Invite type and names, by Guest List id. Saved in this browser only.
+  const [settings, setSettings] = useStored('inviteSettings', {});
   const [message, setMessage] = useStored('guestMessage2', DEFAULT_MESSAGE);
-  const [newParty, setNewParty] = useState('solo');
-  const [note, setNote] = useState('');
   const [copied, setCopied] = useState('');
+  const [show, setShow] = useState('all');
 
+  useEffect(() => {
+    fetch('/api/admin/guests')
+      .then((r) => r.json())
+      .then((d) => setDbGuests(Array.isArray(d) ? d : []))
+      .catch(() => setDbGuests([]));
+  }, []);
 
-  const addGuests = (incoming, skipped = 0) => {
-    const have = new Set(guests.map((g) => g.phone));
-    const fresh = incoming.filter((g) => !have.has(g.phone) && have.add(g.phone));
-    setGuests([...guests, ...fresh.map((g) => ({ ...g, party: newParty, sent: false }))]);
-    setNote(`Added ${fresh.length}. ${incoming.length - fresh.length} already on the list, ${skipped} skipped (no name or number).`);
-  };
-
-  // Android Chrome only; iPhone users export contacts as .vcf or .csv instead
-  const pickContacts = async () => {
+  // The earlier standalone list (by phone), so types and friends set there carry over
+  const oldByPhone = useMemo(() => {
     try {
-      const picked = await navigator.contacts.select(['name', 'tel'], { multiple: true });
-      const found = picked.map((c) => ({ name: c.name[0]?.trim(), phone: normalizePhone(c.tel[0]) })).filter((g) => g.name && g.phone);
-      addGuests(found, picked.length - found.length);
-    } catch { /* picker closed */ }
-  };
+      return Object.fromEntries((JSON.parse(localStorage.getItem('guestList')) ?? []).map((g) => [g.phone, g]));
+    } catch {
+      return {};
+    }
+  }, []);
 
-  const onAdd = (e) => {
-    e.preventDefault();
-    const f = new FormData(e.currentTarget);
-    const name = String(f.get('name')).trim();
-    const phone = normalizePhone(f.get('phone'));
-    if (!name || !phone) return setNote('Enter a name and a valid phone number.');
-    addGuests([{ name, phone }]);
-    e.currentTarget.reset();
-  };
+  const guests = (dbGuests ?? []).map((d) => {
+    const phone = normalizePhone(d.mobile);
+    const prev = oldByPhone[phone] ?? {};
+    return {
+      id: d.id,
+      // The sorter saves a one-word name as both name and family name
+      name: d.name === d.familyName ? d.name : `${d.name} ${d.familyName}`.trim(),
+      phone,
+      party: prev.party ?? 'solo',
+      plusOne: prev.plusOne,
+      friends: prev.friends,
+      ...settings[d.id],
+      sent: d.invitationSent || Boolean(prev.sent),
+    };
+  });
 
   // Who comes along: the plus one's name, or the list of friends
   const others = (g) => (g.party === 'friends' ? g.friends : g.plusOne);
@@ -94,58 +89,33 @@ const InviteLinks = () => {
       .replaceAll('{venue}', venue)
       .replaceAll('{map}', mapsUrl)
       .replaceAll('{link}', link(g));
-  const update = (phone, change) => setGuests(guests.map((g) => (g.phone === phone ? { ...g, ...change } : g)));
-  const setParty = (phone, party) => update(phone, { party });
-  const setFriends = (g, friends) => update(g.phone, { friends });
-  const mark = (phone, sent) => setGuests(guests.map((g) => (g.phone === phone ? { ...g, sent } : g)));
+  const update = (id, change) => setSettings({ ...settings, [id]: { ...settings[id], ...change } });
+  const setFriends = (g, friends) => update(g.id, { friends });
+  // Ticks Invitation Sent on the guest, the same flag the Guests page shows
+  const markSent = (g) => {
+    if (g.sent) return;
+    setDbGuests((list) => list.map((d) => (d.id === g.id ? { ...d, invitationSent: true } : d)));
+    fetch(`/api/admin/guests/${g.id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ invitationSent: true }),
+    }).catch(() => {});
+  };
   const copy = async (g) => {
     await navigator.clipboard.writeText(link(g));
-    setCopied(g.phone);
+    setCopied(g.id);
     setTimeout(() => setCopied(''), 1500);
   };
 
   const sentCount = guests.filter((g) => g.sent).length;
+  const shown = show === 'all' ? guests : guests.filter((g) => g.sent === (show === 'sent'));
 
   return (
     <div className="space-y-6 max-w-3xl">
       <p className="text-sm text-ink-dim">
-        Personal links for the invitation card, sent over WhatsApp. Saved in this browser only. {guests.length} guests,{' '}
-        {sentCount} invited. To bring people in from a contacts file, import it on the Sort tab and use Invite.
+        Personal links for the invitation card, sent over WhatsApp, for everyone in the Guest List. To add people, sort
+        them on the Sort tab and press Add to Guest List.
       </p>
-
-      <section className="card p-5 flex flex-col gap-3">
-        <h2 className="font-semibold">Add guests</h2>
-        <Select
-          label="Invite new guests as"
-          value={newParty}
-          onChange={(e) => setNewParty(e.target.value)}
-          options={Object.entries(PARTIES).map(([value, v]) => ({ value, label: v.label }))}
-          className="max-w-xs"
-        />
-        {'contacts' in navigator && (
-          <Button onClick={pickContacts} className="self-start">
-            <Contact size={16} /> Pick from phone contacts
-          </Button>
-        )}
-        <form onSubmit={onAdd} className="flex flex-wrap gap-2" noValidate>
-          <input name="name" aria-label="Name" placeholder="Name, e.g. Sharma Ji" className={`${box} flex-1 min-w-[10rem]`} />
-          <input
-            name="phone"
-            type="tel"
-            aria-label="Phone"
-            placeholder="Phone, e.g. 98765 43210"
-            className={`${box} flex-1 min-w-[10rem]`}
-          />
-          <Button type="submit" variant="outline">
-            Add
-          </Button>
-        </form>
-        {note && (
-          <p className="text-sm" style={{ color: 'var(--text-muted)' }} role="status">
-            {note}
-          </p>
-        )}
-      </section>
 
       <section className="card p-5 flex flex-col gap-2">
         <h2 className="font-semibold">Message</h2>
@@ -162,23 +132,60 @@ const InviteLinks = () => {
       </section>
 
       <section className="flex flex-col gap-2">
-        {guests.length === 0 && (
+        <div className="flex flex-wrap gap-2" role="group" aria-label="Show guests">
+          {[
+            ['all', 'All', guests.length],
+            ['sent', 'Invited', sentCount],
+            ['pending', 'Not yet invited', guests.length - sentCount],
+          ].map(([key, label, n]) => (
+            <button
+              key={key}
+              type="button"
+              aria-pressed={show === key}
+              onClick={() => setShow(key)}
+              className={cn(
+                'inline-flex items-center gap-1.5 h-8 px-3 rounded-full text-sm font-semibold border cursor-pointer transition-colors',
+                show === key
+                  ? 'bg-purple-600 text-white border-transparent'
+                  : 'border-[var(--border)] text-ink-muted hover:text-vivah-ink',
+              )}
+            >
+              {label}
+              <span
+                className={cn(
+                  'min-w-5 px-1.5 rounded-full text-xs leading-5 text-center',
+                  show === key ? 'bg-white/25' : 'bg-[var(--surface-2)]',
+                )}
+              >
+                {n.toLocaleString('en-IN')}
+              </span>
+            </button>
+          ))}
+        </div>
+        {!dbGuests && (
           <p className="text-center py-6" style={{ color: 'var(--text-muted)' }}>
-            No guests yet. Add one above, or pick people on the Sort tab and press Invite.
+            Loading guests…
           </p>
         )}
-        {guests.map((g) => (
-          <div key={g.phone} className="card px-4 py-3 flex flex-wrap items-center gap-x-3 gap-y-2">
+        {dbGuests && shown.length === 0 && (
+          <p className="text-center py-6" style={{ color: 'var(--text-muted)' }}>
+            {guests.length ? 'No one here.' : 'No one in the Guest List yet. Sort contacts on the Sort tab and press Add to Guest List.'}
+          </p>
+        )}
+        {shown.map((g) => (
+          <div key={g.id} className="card px-4 py-3 flex flex-wrap items-center gap-x-3 gap-y-2">
             <div className="flex-1 min-w-[9rem]">
-              <p className="font-semibold break-words">{g.name}</p>
+              <p className="font-semibold break-words flex flex-wrap items-center gap-2">
+                {g.name}
+                {g.sent ? <Badge color="green">Invited</Badge> : <Badge>Not yet</Badge>}
+              </p>
               <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
-                +{g.phone}
-                {g.sent && ' · invited'}
+                {g.phone ? `+${g.phone}` : 'No mobile number'}
               </p>
             </div>
             <select
               value={g.party ?? 'solo'}
-              onChange={(e) => setParty(g.phone, e.target.value)}
+              onChange={(e) => update(g.id, { party: e.target.value })}
               aria-label={`Invitation for ${g.name}`}
               className={box}
             >
@@ -191,7 +198,7 @@ const InviteLinks = () => {
             {g.party === 'plusone' && (
               <input
                 value={g.plusOne ?? ''}
-                onChange={(e) => update(g.phone, { plusOne: e.target.value })}
+                onChange={(e) => update(g.id, { plusOne: e.target.value })}
                 placeholder="Plus one's name (optional)"
                 aria-label={`Plus one's name for ${g.name}`}
                 className={`${box} w-48`}
@@ -223,24 +230,19 @@ const InviteLinks = () => {
                 </Button>
               </div>
             )}
-            <a
-              href={`https://wa.me/${g.phone}?text=${encodeURIComponent(text(g))}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => mark(g.phone, true)}
-              className="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium bg-[#128c4a] text-white hover:opacity-90"
-            >
-              <Send size={16} /> {g.sent ? 'Send again' : 'WhatsApp'}
-            </a>
+            {g.phone && (
+              <a
+                href={`https://wa.me/${g.phone}?text=${encodeURIComponent(text(g))}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => markSent(g)}
+                className="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium bg-[#128c4a] text-white hover:opacity-90"
+              >
+                <Send size={16} /> {g.sent ? 'Send again' : 'WhatsApp'}
+              </a>
+            )}
             <Button variant="outline" onClick={() => copy(g)}>
-              <LinkIcon size={16} /> {copied === g.phone ? 'Copied' : 'Copy link'}
-            </Button>
-            <Button
-              variant="ghost"
-              aria-label={`Remove ${g.name}`}
-              onClick={() => setGuests(guests.filter((x) => x.phone !== g.phone))}
-            >
-              <Trash2 size={16} />
+              <LinkIcon size={16} /> {copied === g.id ? 'Copied' : 'Copy link'}
             </Button>
           </div>
         ))}

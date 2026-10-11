@@ -12,14 +12,13 @@ import {
   Star,
   ChevronLeft,
   ChevronRight,
-  Send,
 } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
 import { Button } from '@admin/components/ui/Button';
 import { Modal } from '@admin/components/ui/Modal';
 import { useToastContext } from '@admin/components/ui/Toast';
 import { cn } from '@admin/lib/utils/cn';
-import InviteLinks, { addInvitees } from '@admin/components/InviteLinks';
+import InviteLinks from '@admin/components/InviteLinks';
 const LS_KEY = 'vivah_sorter_contacts';
 const EVENT_COLORS = [
   {
@@ -509,15 +508,6 @@ export default function GuestSorterPage() {
     () => selectedContacts.filter((c) => (tags[c.id] ?? []).length > 0).length,
     [selectedContacts, tags],
   );
-  const inviteSelected = () => {
-    const added = addInvitees(selectedContacts.map((c) => ({ name: c.name, phone: c.phones[0] })));
-    const skipped = selectedContacts.length - added;
-    toast({
-      message: `${added} added to Invite${skipped ? `, ${skipped} already there or without a usable number` : ''}`,
-      variant: 'success',
-    });
-    setParams({ tab: 'invite' });
-  };
   const mainEventIds = useMemo(() => events.filter((ev) => ev.isMainFunction).map((ev) => ev.id), [events]);
   // Pagination over filteredImport — reset to page 0 on filter change
   const totalPages = Math.max(1, Math.ceil(filteredImport.length / PAGE_SIZE));
@@ -1076,13 +1066,7 @@ export default function GuestSorterPage() {
                   {selectedIds.size.toLocaleString('en-IN')}
                 </span>
               </h2>
-              {selectedIds.size > 0 ? (
-                <Button size="sm" variant="outline" onClick={inviteSelected}>
-                  <Send size={13} /> Invite
-                </Button>
-              ) : (
-                <span className="text-[11px] text-ink-hint">← Drag to deselect</span>
-              )}
+              <span className="text-[11px] text-ink-hint">← Drag to deselect</span>
             </div>
 
             <div className="flex-1 overflow-y-auto p-2 flex flex-col gap-1.5">
