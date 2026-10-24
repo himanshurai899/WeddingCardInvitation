@@ -13,7 +13,9 @@ const tones = {
 };
 const toneOf = (item) => tones[item.tone] ?? tones.pastel;
 
+// An empty list (the bride's side) leaves the section out
 const DressCode = () => {
+  if (!wedding.dressCode.length) return null;
   return (
     <section id="dress" className="py-16 sm:py-20 px-5 bg-cream-card">
       <header className="text-center mb-8">

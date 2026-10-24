@@ -18,8 +18,6 @@ const MusicPlayer = ({ tracks }) => {
 
   useEffect(() => {
     const audio = audioRef.current;
-    // Exposed so the WelcomeOverlay tap can start playback inside the user gesture
-    window.weddingAudio = audio;
 
     // Pause audio when the guest switches tabs or locks the phone
     let resumeOnReturn = false;
@@ -37,7 +35,6 @@ const MusicPlayer = ({ tracks }) => {
       audio.pause();
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       clearTimeout(titleTimer.current);
-      if (window.weddingAudio === audio) delete window.weddingAudio;
     };
   }, []);
 
@@ -84,7 +81,7 @@ const MusicPlayer = ({ tracks }) => {
 
   return (
     <>
-      {/* Always there, so the cover's tap has an element to start even before the list is checked */}
+      {/* Off until the guest taps play */}
       <audio
         ref={audioRef}
         src={track?.src}

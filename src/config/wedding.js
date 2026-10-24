@@ -64,11 +64,12 @@ themes.sita = {
   door: ['सिया', 'राम'],
   art: {
     ...themes.ram.art,
-    // Madhubani is Mithila's own painting, and Mithila is Sita's home (and the Yadav family's, in Samastipur)
-    cover: themes.ram.art.week,
-    week: themes.ram.art.cover,
+    // The moment Sita waited for: Ram lifting Shiv ji's bow at her swayamvar
+    cover: { src: '/art/ram-dhanush.webp', alt: "Ram breaking Shiv ji's bow at Sita's swayamvar, a painting by Raja Ravi Varma" },
+    week: themes.ram.art.night,
     night: { ...themes.ram.art.night, caption: "Ram ji's baraat reached Sita's Mithila in just this style. We'll be waiting at the gate for ours." },
   },
+  credits: 'Artwork: paintings by Raja Ravi Varma and M. V. Dhurandhar (public domain, Wikimedia Commons); Janaki Mandir photo by Rajesh Dhungana (CC BY-SA 4.0)',
   // Gauri Maa's answer to Sita's prayer in Janak's garden
   shloka: {
     salutation: '॥ श्री जानकीवल्लभो विजयते ॥',
@@ -358,22 +359,23 @@ export const side = where && [where.pathname.split('/')[1], where.hostname.split
 const themeKey = asked in themes ? asked : side === 'bride' ? 'sita' : DEFAULT_THEME;
 
 // What changes on the bride's side, laid over the admin's saved copy so dates, times and venues still come from there.
-// Lines marked VERIFY need the Yadav family's details.
+// Lines marked VERIFY need a check with the Yadav family.
 const patch = (list, id, changes) => list.map((item) => ({ ...item, ...changes[item[id]] }));
 const brideSide = (w) => ({
   coverLine: "You're invited to our daughter's wedding",
-  // VERIFY: where Samiksha's haldi and mehendi happen. Until then the venue line stays hidden.
-  functions: patch(w.functions, 'key', {
-    haldi: { venue: '', mapsQuery: '', about: "Samiksha's haldi, with all her mausis, chachis and buas teasing her the whole time. Wear something you don't mind getting yellow." },
-    mehendi: { venue: '', mapsQuery: '', about: 'Mehendi for Samiksha and all the ladies, with the dholak going and the old Maithili geet. They say the darker it gets, the more she will be loved.' },
+  // Shorter than the groom's card: the baraat and vivah are told in the wedding night section, and no dress code
+  dressCode: [],
+  weekNote: 'Haldi at home in Gadarwara, then on to Vadodara for the rest. Come for as many as you can!',
+  functions: patch(w.functions.filter((f) => !['baraat', 'vivah'].includes(f.key)), 'key', {
+    // Haldi is at the Yadav home in Gadarwara. VERIFY: its time, which still follows the Rai family's haldi
+    haldi: { venue: w.bride.address.label, mapsQuery: w.bride.address.mapsQuery, about: "Samiksha's haldi at home in Gadarwara, with all her mausis, chachis and buas teasing her the whole time. Wear something you don't mind getting yellow." },
+    mehendi: { time: '4:00 PM to 7:00 PM', venue: 'Vadodara', mapsQuery: '', about: 'Mehendi for Samiksha and all the ladies in Vadodara, with the dholak going and the old Maithili geet. They say the darker it gets, the more she will be loved.' },
     tilak: { about: "We go over to Himanshu's home to put tilak on him and bless him. Then we all sit down to lunch together." },
-    baraat: { name: 'Baraat Aagman', hindi: 'बारात आगमन', about: "The baraat leaves Yogi Nagar at 4 PM and dances its way to the party plot. We'll be at the gate with aarti thalis and garlands." },
-    vivah: { about: "Dwar puja, jaimala, dinner, and then the pheras late into the night. The night we've all been waiting for." },
   }),
-  weddingDay: patch(w.weddingDay, 'hindi', {
+  // The family asked for no kanyadaan line on their card
+  weddingDay: patch(w.weddingDay.filter((m) => m.hindi !== 'कन्यादान'), 'hindi', {
     'बारात प्रस्थान': { name: 'Baraat Aagman', hindi: 'बारात आगमन', about: "Himanshu sets off from home with the baraat, and we wait at the venue for them to dance their way in." },
     'द्वार पूजा': { about: 'The baraat reaches our gate and we welcome Himanshu with aarti.' },
-    'कन्यादान': { about: "Mummy and Papa place Samiksha's hand in Himanshu's. Keep a hanky ready for this one." },
     'बिदाई': { about: "At first light our Samiksha leaves for her new home in Yogi Nagar, throwing rice back over her head to wish this house well. Everyone cries, Papa most of all." },
   }),
   invite: {
@@ -402,9 +404,9 @@ const brideSide = (w) => ({
   balManuhar: { ...w.balManuhar, fromHindi: ['आपके इंतज़ार में,', 'मौसी की नन्ही टोली,'] },
   // A Maithili vivah geet for the Mithila side, if one is dropped in; the shared tracks follow
   music: [{ title: 'Vivah Geet', src: '/music/vivah-geet.mp3' }, ...w.music],
-  // VERIFY: the Yadav family's numbers for calls and RSVPs. Until then the card shows the Rai family's.
-  // phones: ['', ''],
-  // rsvpWhatsApp: '91',
+  // The Yadav family's numbers; RSVPs go to the first one on WhatsApp
+  phones: ['97525 63217', '96309 30237'],
+  rsvpWhatsApp: '919752563217',
 });
 
 // Dates are stored as IST calendar days; noon avoids any timezone rollover

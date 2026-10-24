@@ -34,9 +34,7 @@ const WelcomeOverlay = ({ onOpen }) => {
   const handleOpen = () => {
     setIsOpen(true);
     window.scrollTo(0, 0);
-    if (window.weddingAudio) {
-      window.weddingAudio.play().catch(() => { });
-    }
+    // Music stays off until the guest taps the music button
     if (onOpen) onOpen();
   };
 

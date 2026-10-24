@@ -129,7 +129,7 @@ const FunctionsTimeline = () => {
         </div>
         <p className="text-[11px] tracking-[0.35em] uppercase font-extrabold text-sindoor">The wedding week</p>
         <h2 className="deva text-5xl text-maroon-deep mt-2">रस्में</h2>
-        <p className="font-serif italic text-lg text-ink-soft mt-1 max-w-md mx-auto">Four busy days at home and then the big night. Come for as many as you can!</p>
+        <p className="font-serif italic text-lg text-ink-soft mt-1 max-w-md mx-auto">{wedding.weekNote ?? 'Four busy days at home and then the big night. Come for as many as you can!'}</p>
         <MadhubaniBand className="max-w-xs mx-auto mt-5" />
       </header>
 

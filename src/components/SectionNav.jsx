@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { House, Mail, MapPin, Shirt, Sparkles } from 'lucide-react';
+import { wedding } from '../config/wedding';
 
 const tabs = [
   { id: 'home', label: 'Home', Icon: House },
@@ -8,7 +9,7 @@ const tabs = [
   { id: 'venue', label: 'Venue', Icon: MapPin },
   { id: 'dress', label: 'Dress', Icon: Shirt },
   { id: 'rsvp', label: 'RSVP', Icon: Mail },
-];
+].filter(({ id }) => id !== 'dress' || wedding.dressCode.length);
 
 // Bottom tab bar (after the reference invitation). Highlights whichever section crosses mid-screen
 const SectionNav = ({ visible }) => {
@@ -38,7 +39,7 @@ const SectionNav = ({ visible }) => {
       transition={{ duration: 0.5, ease: 'easeOut' }}
       className="fixed bottom-0 inset-x-0 z-40 mx-auto max-w-md pb-[env(safe-area-inset-bottom)] bg-gradient-to-b from-cream-card to-[#f5e6c2] border-t-[1.5px] border-gold/50 shadow-[0_-6px_24px_rgba(92,20,32,.12)] sm:bottom-3 sm:rounded-2xl sm:border"
     >
-      <ul className="grid grid-cols-5 h-16">
+      <ul className="grid h-16" style={{ gridTemplateColumns: `repeat(${tabs.length}, minmax(0, 1fr))` }}>
         {tabs.map(({ id, label, Icon }) => {
           const on = active === id;
           return (
