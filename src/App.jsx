@@ -30,7 +30,7 @@ function App() {
         <WelcomeOverlay onOpen={() => setOpened(true)} />
         <PersonalInvite opened={opened} />
         <ScrollProgress visible={opened} />
-        <MusicPlayer src={wedding.music} />
+        <MusicPlayer tracks={wedding.music} />
         <SectionNav visible={opened} />
 
         <Hero opened={opened} />
@@ -92,7 +92,7 @@ function App() {
               <span className="text-sindoor tracking-[0.5em] uppercase text-xs font-bold mb-3">With Love</span>
               <h4 className="script-font text-[clamp(2.75rem,12vw,4.5rem)] leading-tight text-maroon">{coupleShort}</h4>
               <p className="deva text-lg text-marigold-deep mt-1">
-                {wedding.groom.familyHindi} एवं {wedding.bride.familyHindi} परिवार
+                {wedding.couple[0].familyHindi} एवं {wedding.couple[1].familyHindi} परिवार
               </p>
             </div>
           </motion.div>

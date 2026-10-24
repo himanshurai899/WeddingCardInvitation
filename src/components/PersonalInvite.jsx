@@ -70,7 +70,7 @@ const PersonalInvite = ({ opened }) => {
                 25 November 2026 · Vadodara
               </p>
               <p className="deva text-marigold-deep mt-1">
-                सप्रेम, {wedding.groom.familyHindi} एवं {wedding.bride.familyHindi} परिवार
+                सप्रेम, {wedding.couple[0].familyHindi} एवं {wedding.couple[1].familyHindi} परिवार
               </p>
 
               <button

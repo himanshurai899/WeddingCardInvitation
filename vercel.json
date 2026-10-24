@@ -4,7 +4,8 @@
     { "source": "/api/wedding.ics", "destination": "/api/admin?__path=public/ics" },
     { "source": "/api/gallery", "destination": "/api/admin?__path=public/gallery" },
     { "source": "/api/admin/:path*", "destination": "/api/admin?__path=:path*" },
-    { "source": "/admin/:path*", "destination": "/admin/index.html" }
+    { "source": "/admin/:path*", "destination": "/admin/index.html" },
+    { "source": "/samiksha", "destination": "/index.html" }
   ],
   "headers": [
     {

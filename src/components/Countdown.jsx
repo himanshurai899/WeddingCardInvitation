@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { wedding } from '../config/wedding';
+import { StoryNote } from './art/Symbols';
 
 const remaining = (now) => {
   const distance = Math.max(0, new Date(wedding.muhurat).getTime() - now);
@@ -66,6 +67,7 @@ const Countdown = () => {
             </div>
           )}
         </div>
+        <StoryNote part="pratiksha" className="mt-6" />
       </motion.div>
     </section>
   );

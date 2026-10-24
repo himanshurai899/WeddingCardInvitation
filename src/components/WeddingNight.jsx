@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { MapPin } from 'lucide-react';
 import { wedding, routeUrl } from '../config/wedding';
-import { Crest } from './art/Symbols';
+import { Crest, StoryNote } from './art/Symbols';
 
 // One moment of the night on a gold rail: a marker, then the time and what happens
 const Moment = ({ item }) => (
@@ -39,6 +39,7 @@ const WeddingNight = () => {
         <p className="deva text-xs text-gold-pale/90 mt-1">मार्गशीर्ष कृष्ण प्रतिपदा</p>
         <h2 className="font-serif text-4xl sm:text-5xl font-bold mt-2 bg-gradient-to-b from-[#fff6e0] to-gold-bright bg-clip-text text-transparent">The Wedding Night</h2>
         <p className="deva text-xl text-marigold-soft mt-1">विवाह की शुभ रात्रि</p>
+        <StoryNote part="jaimala" dark className="mt-5" />
       </header>
 
       <div className="relative max-w-md md:max-w-5xl mx-auto md:grid md:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] md:gap-12 lg:gap-16 md:items-start">

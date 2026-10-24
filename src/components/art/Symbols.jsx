@@ -28,7 +28,7 @@ export const Surya = ({ color = '#e0b45f', ...props }) => (
   </svg>
 );
 
-const ram = wedding.theme === 'ram';
+const ram = wedding.theme !== 'shiv';
 
 // What the rest of the card uses, so a component never has to ask which theme is on
 export const Emblem = ram ? Dhanush : Trishul; // the big gate and shloka symbol
@@ -36,3 +36,22 @@ export const Crest = ram ? Surya : Chandra; // the small crown over arches and h
 export const ThemeDivider = ram
   ? ({ className = '' }) => <Divider className={`w-44 h-5 mx-auto text-gold ${className}`} />
   : ShivDivider;
+
+// One chapter of Sita's story (`story` in the Siya-Ram theme), numbered in the order the card tells it.
+// Renders nothing in the other looks.
+export const StoryNote = ({ part, dark = false, className = '' }) => {
+  const note = wedding.story?.[part];
+  if (!note) return null;
+  const n = (Object.keys(wedding.story).indexOf(part) + 1).toLocaleString('hi-IN-u-nu-deva');
+  return (
+    <div className={`max-w-md mx-auto text-center ${className}`}>
+      <p className={`deva text-base ${dark ? 'text-gold-bright' : 'text-sindoor'}`}>✻ सिया की कथा {n} · {note.title} ✻</p>
+      {note.verse && (
+        <p className={`font-devaText text-lg leading-relaxed mt-1 ${dark ? 'text-gold-pale' : 'text-maroon-deep'}`}>
+          {note.verse.map((line) => <span key={line} className="block">{line}</span>)}
+        </p>
+      )}
+      <p className={`font-serif italic leading-relaxed mt-1 ${dark ? 'text-neel-pale' : 'text-ink'}`}>{note.text}</p>
+    </div>
+  );
+};

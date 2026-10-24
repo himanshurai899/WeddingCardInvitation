@@ -3,6 +3,7 @@ import { Navigation, Phone } from 'lucide-react';
 import { wedding, directionsUrl, telUrl } from '../config/wedding';
 import { MadhubaniBand } from './art/Motifs';
 import BalManuhar from './BalManuhar';
+import { StoryNote } from './art/Symbols';
 
 const Side = ({ label, hindi, person, delay }) => (
   <motion.div
@@ -70,12 +71,14 @@ const Families = () => {
         <h2 className="deva text-4xl sm:text-5xl text-maroon-deep mt-1">निमंत्रक</h2>
         <p className="font-serif italic text-ink-soft">Your hosts</p>
       </header>
+      <StoryNote part="bidaai" className="mt-6" />
 
       <MadhubaniBand className="max-w-md mx-auto block my-6" />
 
       <div className="max-w-md sm:max-w-3xl mx-auto grid sm:grid-cols-2 gap-4">
-        <Side label="Groom's family" hindi="वर पक्ष" person={wedding.groom} delay={0} />
-        <Side label="Bride's family" hindi="वधू पक्ष" person={wedding.bride} delay={0.1} />
+        {wedding.couple.map((person, i) => (
+          <Side key={person.name} {...(person === wedding.bride ? { label: "Bride's family", hindi: 'वधू पक्ष' } : { label: "Groom's family", hindi: 'वर पक्ष' })} person={person} delay={i * 0.1} />
+        ))}
       </div>
 
       <motion.div
@@ -109,7 +112,7 @@ const Families = () => {
       </motion.div>
 
       <p className="text-center mt-8 font-serif text-lg text-ink">
-        समस्त {wedding.groom.familyHindi} एवं {wedding.bride.familyHindi} परिवार
+        समस्त {wedding.couple[0].familyHindi} एवं {wedding.couple[1].familyHindi} परिवार
         <span className="block text-sm italic text-ink-soft">and all our friends and well-wishers</span>
       </p>
 

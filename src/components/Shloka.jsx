@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { wedding } from '../config/wedding';
-import { Emblem, ThemeDivider } from './art/Symbols';
+import { Emblem, StoryNote, ThemeDivider } from './art/Symbols';
 
 // The opening blessing for the chosen theme (see `shloka` in the config)
 const Shloka = () => {
@@ -15,6 +15,7 @@ const Shloka = () => {
       >
         <Emblem className="w-9 h-24 mb-3" />
         <p className="deva text-marigold-deep text-lg tracking-wide mb-4">{wedding.shloka.salutation}</p>
+        <StoryNote part="vatika" className="mb-5" />
         <p className="font-devaText text-[clamp(1.4rem,6vw,2.1rem)] text-maroon-deep leading-relaxed mb-5">
           {wedding.shloka.lines.map((line) => (
             <span key={line} className="block">{line}</span>

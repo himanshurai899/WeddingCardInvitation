@@ -82,7 +82,7 @@ const Hero = ({ opened }) => {
           <span className="deva text-marigold-deep text-2xl sm:text-3xl">सुस्वागतम्</span>
           <CoupleArch className="h-[min(44svh,460px)] w-auto max-w-[82vw] mt-1" />
           <h2 className="script-font text-[clamp(1.9rem,9vw,4rem)] text-maroon-deep mt-1 leading-tight">
-            {wedding.groom.name} <span className="text-sindoor">&amp;</span> {wedding.bride.name}
+            {wedding.couple[0].name} <span className="text-sindoor">&amp;</span> {wedding.couple[1].name}
           </h2>
           <p className="mt-1 text-[11px] sm:text-xs tracking-[0.2em] min-[400px]:tracking-[0.3em] uppercase font-bold text-ink-soft">
             Shubh Vivah · 25 November 2026

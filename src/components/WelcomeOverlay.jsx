@@ -98,7 +98,7 @@ const WelcomeOverlay = ({ onOpen }) => {
                 </motion.p>
               )}
               <motion.span {...rise(0.6)} className="mt-3 text-gold-pale/90 tracking-[0.2em] min-[400px]:tracking-[0.3em] uppercase text-[10px] font-semibold">
-                You&apos;re invited to the wedding of
+                {wedding.coverLine ?? <>You&apos;re invited to the wedding of</>}
               </motion.span>
 
               <motion.h1
@@ -108,7 +108,7 @@ const WelcomeOverlay = ({ onOpen }) => {
                 शुभ विवाह
               </motion.h1>
               <motion.p {...rise(0.9)} className="script-font text-[clamp(1.9rem,min(5.9svh,9.4vw),3.25rem)] leading-tight text-cream">
-                {wedding.groom.name} <span className="text-marigold-soft">&amp;</span> {wedding.bride.name}
+                {wedding.couple[0].name} <span className="text-marigold-soft">&amp;</span> {wedding.couple[1].name}
               </motion.p>
 
               <motion.div {...rise(1.0)} className="w-40 my-2 opacity-80">

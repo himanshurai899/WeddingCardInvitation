@@ -7,8 +7,9 @@ const home = {
   mapsQuery: 'Yogi Nagar Township, Near Ambika Nagar, Gotri, Vadodara 390021',
 };
 
-// The card has two looks. Shiv-Parvati is the default; Ram-Sita is the other option.
-// Switch for everyone by changing DEFAULT_THEME, or preview either one with ?theme=ram or ?theme=shiv
+// The card has three looks. Shiv-Parvati is the default; Ram-Sita is the other option, and Siya-Ram is Ram-Sita
+// told from Sita's side (her wait in Mithila), which the bride's side opens with (see `side` below).
+// Switch for everyone by changing DEFAULT_THEME, or preview one with ?theme=ram, ?theme=sita or ?theme=shiv
 // (a guest link can carry it too, e.g. ?guest=Sharma%20Ji&theme=ram).
 const DEFAULT_THEME = 'shiv';
 
@@ -55,8 +56,48 @@ const themes = {
   },
 };
 
+// Ram-Sita from Sita's side, in Tulsidas's order: she sees Ram in Janak's garden and prays to Gauri Maa, waits
+// through the swayamvar, garlands him, and then leaves her father's house. `story` puts one chapter in each of
+// four existing sections (see StoryNote).
+themes.sita = {
+  ...themes.ram,
+  door: ['सिया', 'राम'],
+  art: {
+    ...themes.ram.art,
+    // Madhubani is Mithila's own painting, and Mithila is Sita's home (and the Yadav family's, in Samastipur)
+    cover: themes.ram.art.week,
+    week: themes.ram.art.cover,
+    night: { ...themes.ram.art.night, caption: "Ram ji's baraat reached Sita's Mithila in just this style. We'll be waiting at the gate for ours." },
+  },
+  // Gauri Maa's answer to Sita's prayer in Janak's garden
+  shloka: {
+    salutation: '॥ श्री जानकीवल्लभो विजयते ॥',
+    lines: ['मनु जाहिं राचेउ मिलिहि सो', 'बरु सहज सुंदर साँवरो ।', 'करुना निधान सुजान सीलु', 'सनेहु जानत रावरो ॥'],
+    english: 'The one your heart has settled on, the gentle and handsome dark one, will be yours. He is kind and wise, and he already knows your heart.',
+    source: 'Gauri Maa to Sita · Ramcharitmanas, Bal Kand',
+  },
+  story: {
+    vatika: {
+      title: 'पुष्प वाटिका',
+      text: "In Janak ji's garden in Mithila, Sita saw Ram for the first time. She ran to Gauri Maa's mandir and prayed for him with her whole heart, and Gauri Maa answered her.",
+    },
+    pratiksha: {
+      title: 'प्रतीक्षा',
+      text: "Then came the wait. At the swayamvar Sita prayed to every god she knew to make Shiv ji's bow light in Ram's hands. We're counting the days just like her, till the baraat reaches our door.",
+    },
+    jaimala: {
+      title: 'जयमाला',
+      text: 'The bow broke, and Sita walked up with the jaimala, her hands shaking. Then Ayodhya came to Mithila with the baraat, and the whole of Janakpur came out to see.',
+    },
+    bidaai: {
+      title: 'बिदाई',
+      verse: ['सीय बिलोकि धीरता भागी ।', 'रहे कहावत परम बिरागी ॥'],
+      text: "Janak ji was known as the calmest man alive. One look at Sita leaving, and all that calm was gone. Our Mummy and Papa won't be any braver, so come and stand by them.",
+    },
+  },
+};
+
 const asked = typeof window === 'undefined' ? null : new URLSearchParams(window.location.search).get('theme');
-const themeKey = asked in themes ? asked : DEFAULT_THEME;
 
 // The proof copy of everything guests read. The admin portal (/admin, Invitation Card) keeps an editable copy in
 // the database, seeded from this; the card loads that copy and falls back to this one if it can't.
@@ -188,9 +229,17 @@ export const content = {
   // RSVPs arrive on this WhatsApp number (digits only, with country code)
   rsvpWhatsApp: '919408101002',
 
-  // Drop a shehnai or vivah geet track at public/music/shehnai.mp3.
-  // The music button hides itself until the file is there.
-  music: '/music/shehnai.mp3',
+  // The music button plays these in turn, and its skip button moves to the next one. A track whose file isn't
+  // in public/ yet is left out, so each one joins in once its file is dropped there.
+  // Soft shehnai, bansuri and sitar from Pixabay (free to use, no credit needed): pixabay.com/music/ + the id
+  music: [
+    { title: 'Shehnai', src: '/music/shehnai.mp3' }, // wedding-traditional-wedding-ceremonial-vibe-with-shehna-376293
+    { title: 'Prabhat Ki Dhun', src: '/music/prabhat-ki-dhun.mp3' }, // india-prabhat-ki-dhun-564671
+    { title: 'Bansuri', src: '/music/bansuri.mp3' }, // folk-indian-flute-indian-flute-music-580577
+    { title: 'Raag', src: '/music/raag.mp3' }, // world-peaceful-music-indian-classical-295245
+    { title: 'Sitar & Bansuri', src: '/music/sitar-bansuri.mp3' }, // world-cinematic-sitar-alap-bansuri-flute-436044
+    { title: 'Mangalam', src: '/mangalam-sezhikka-tamil-christian-wedding-suite-orchestral-music_2m8kKNGs.mp3' },
+  ],
 
   // Optional: your own artwork instead of the drawn SVGs. Put the file in public/art/.
   // The couple image sits inside the gold arch; a light background blends away.
@@ -300,6 +349,64 @@ export const content = {
   ],
 };
 
+// Which family is sending the card. The main address is the groom's side; /samiksha (the bride's first name), or a
+// samiksha. subdomain on a custom domain, is the bride's side: her name first, her family as hosts, the Siya-Ram look.
+const where = typeof window === 'undefined' ? null : window.location;
+const brideSlug = content.bride.name.toLowerCase();
+export const side = where && [where.pathname.split('/')[1], where.hostname.split('.')[0]].some((s) => s?.toLowerCase() === brideSlug) ? 'bride' : 'groom';
+
+const themeKey = asked in themes ? asked : side === 'bride' ? 'sita' : DEFAULT_THEME;
+
+// What changes on the bride's side, laid over the admin's saved copy so dates, times and venues still come from there.
+// Lines marked VERIFY need the Yadav family's details.
+const patch = (list, id, changes) => list.map((item) => ({ ...item, ...changes[item[id]] }));
+const brideSide = (w) => ({
+  coverLine: "You're invited to our daughter's wedding",
+  // VERIFY: where Samiksha's haldi and mehendi happen. Until then the venue line stays hidden.
+  functions: patch(w.functions, 'key', {
+    haldi: { venue: '', mapsQuery: '', about: "Samiksha's haldi, with all her mausis, chachis and buas teasing her the whole time. Wear something you don't mind getting yellow." },
+    mehendi: { venue: '', mapsQuery: '', about: 'Mehendi for Samiksha and all the ladies, with the dholak going and the old Maithili geet. They say the darker it gets, the more she will be loved.' },
+    tilak: { about: "We go over to Himanshu's home to put tilak on him and bless him. Then we all sit down to lunch together." },
+    baraat: { name: 'Baraat Aagman', hindi: 'बारात आगमन', about: "The baraat leaves Yogi Nagar at 4 PM and dances its way to the party plot. We'll be at the gate with aarti thalis and garlands." },
+    vivah: { about: "Dwar puja, jaimala, dinner, and then the pheras late into the night. The night we've all been waiting for." },
+  }),
+  weddingDay: patch(w.weddingDay, 'hindi', {
+    'बारात प्रस्थान': { name: 'Baraat Aagman', hindi: 'बारात आगमन', about: "Himanshu sets off from home with the baraat, and we wait at the venue for them to dance their way in." },
+    'द्वार पूजा': { about: 'The baraat reaches our gate and we welcome Himanshu with aarti.' },
+    'कन्यादान': { about: "Mummy and Papa place Samiksha's hand in Himanshu's. Keep a hanky ready for this one." },
+    'बिदाई': { about: "At first light our Samiksha leaves for her new home in Yogi Nagar, throwing rice back over her head to wish this house well. Everyone cries, Papa most of all." },
+  }),
+  invite: {
+    ...w.invite,
+    solo: {
+      en: 'With the blessings of our elders, we warmly invite you to the wedding of our daughter Samiksha with Himanshu. It would mean so much to have you with us.',
+      hi: 'हमारी सुपुत्री समीक्षा एवं हिमांशु के शुभ विवाह में आप सादर आमंत्रित हैं।',
+    },
+    plusone: {
+      en: 'With the blessings of our elders, we warmly invite you both to the wedding of our daughter Samiksha with Himanshu. It would mean so much to have the two of you with us.',
+      hi: 'हमारी सुपुत्री समीक्षा एवं हिमांशु के शुभ विवाह में आप दोनों सादर आमंत्रित हैं।',
+    },
+    plusoneOpen: {
+      en: 'With the blessings of our elders, we warmly invite you to the wedding of our daughter Samiksha with Himanshu. Do bring your better half or a plus one along to share the day with us.',
+      hi: 'हमारी सुपुत्री समीक्षा एवं हिमांशु के शुभ विवाह में आप अपने जीवनसाथी या किसी अपने के साथ सादर आमंत्रित हैं।',
+    },
+    family: {
+      en: 'With the blessings of our elders, we warmly invite you and your whole family, the elders and the little ones too, to the wedding of our daughter Samiksha with Himanshu. Please come together, all of you.',
+      hi: 'हमारी सुपुत्री समीक्षा एवं हिमांशु के शुभ विवाह में आप सपरिवार सादर आमंत्रित हैं।',
+    },
+    friends: {
+      en: "We warmly invite you and the whole gang to Samiksha's wedding. She needs her friends around her at the jaimala, so come together and let us dance till the shehnai stops.",
+      hi: 'समीक्षा के शुभ विवाह में आप अपनी मित्र मंडली के साथ सादर आमंत्रित हैं।',
+    },
+  },
+  balManuhar: { ...w.balManuhar, fromHindi: ['आपके इंतज़ार में,', 'मौसी की नन्ही टोली,'] },
+  // A Maithili vivah geet for the Mithila side, if one is dropped in; the shared tracks follow
+  music: [{ title: 'Vivah Geet', src: '/music/vivah-geet.mp3' }, ...w.music],
+  // VERIFY: the Yadav family's numbers for calls and RSVPs. Until then the card shows the Rai family's.
+  // phones: ['', ''],
+  // rsvpWhatsApp: '91',
+});
+
 // Dates are stored as IST calendar days; noon avoids any timezone rollover
 export const formatDate = (isoDay, options) =>
   new Date(`${isoDay}T12:00:00+05:30`).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', ...options });
@@ -313,14 +420,17 @@ export const routeUrl = ({ from, to }) =>
 export const telUrl = (phone) => `tel:+91${phone.replace(/\D/g, '')}`;
 
 // What the card renders: the content plus everything the theme changes (gate words, pictures, the opening verse,
-// the footer credit). Filled in by applyContent below.
+// the footer credit) and, on the bride's side, her side's copy. `couple` is the two of them in the order this
+// side names them. Filled in by applyContent below.
 export const wedding = {};
 export let coupleShort, mapsUrl, mapsEmbedUrl;
 
 // Swaps in the admin's saved content. The derived exports above are live bindings, so every importer sees the update.
 export const applyContent = (saved) => {
   Object.assign(wedding, content, saved, { theme: themeKey, ...themes[themeKey] });
-  coupleShort = `${wedding.groom.name} & ${wedding.bride.name}`;
+  if (side === 'bride') Object.assign(wedding, brideSide(wedding));
+  wedding.couple = side === 'bride' ? [wedding.bride, wedding.groom] : [wedding.groom, wedding.bride];
+  coupleShort = `${wedding.couple[0].name} & ${wedding.couple[1].name}`;
   mapsUrl = directionsUrl(wedding.venue.mapsQuery);
   mapsEmbedUrl = `https://maps.google.com/maps?q=${encodeURIComponent(wedding.venue.mapsQuery)}&z=15&output=embed`;
 };

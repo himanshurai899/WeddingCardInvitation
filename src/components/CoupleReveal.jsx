@@ -49,7 +49,7 @@ const CoupleReveal = () => {
         </p>
 
         <div className="lg:grid lg:grid-cols-[1fr_auto_1fr] lg:items-center lg:gap-14 max-w-5xl mx-auto">
-          <Person person={wedding.groom} delay={0.1} />
+          <Person person={wedding.couple[0]} delay={0.1} />
 
           <motion.div
             initial={{ scale: 0, opacity: 0 }}
@@ -69,7 +69,7 @@ const CoupleReveal = () => {
             <span className="h-px w-10 lg:w-px lg:h-12 bg-gradient-to-l lg:bg-gradient-to-t from-transparent to-gold" />
           </motion.div>
 
-          <Person person={wedding.bride} delay={0.2} />
+          <Person person={wedding.couple[1]} delay={0.2} />
         </div>
 
         <motion.p
