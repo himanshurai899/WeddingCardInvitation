@@ -247,7 +247,7 @@ export default function WhatsAppPage() {
           <p>No templates yet. Create your first WhatsApp message template.</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {templates.map((t) => (
             <div key={t.id} className="card p-4 flex flex-col gap-3">
               <div className="flex items-start justify-between gap-2">

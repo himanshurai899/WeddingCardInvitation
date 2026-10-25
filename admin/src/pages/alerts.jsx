@@ -84,9 +84,9 @@ export default function AlertsPage() {
         </Button>
       </div>
 
-      <div className="space-y-3">
+      <div className="grid gap-3 xl:grid-cols-2 content-start">
         {alerts.length === 0 ? (
-          <div className="text-center py-12 text-gray-400">No alerts. System is clear! ✅</div>
+          <div className="xl:col-span-2 text-center py-12 text-gray-400">No alerts. System is clear! ✅</div>
         ) : (
           alerts.map((a) => (
             <div

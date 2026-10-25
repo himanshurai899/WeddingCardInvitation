@@ -172,7 +172,7 @@ export default function CardPage() {
   const groups = Object.keys(draft).filter((k) => !simple.includes(k));
 
   return (
-    <div className="space-y-6 max-w-4xl">
+    <div className="space-y-6 max-w-6xl">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="page-title flex items-center gap-2">
@@ -199,9 +199,11 @@ export default function CardPage() {
 
       <section className="card p-5 space-y-3">
         <h2 className="font-semibold">General</h2>
-        {simple.map((k) => (
-          <Field key={k} name={label(k)} value={draft[k]} shape={data.defaults[k]} onChange={(x) => setDraft({ ...draft, [k]: x })} />
-        ))}
+        <div className="grid gap-3 lg:grid-cols-2">
+          {simple.map((k) => (
+            <Field key={k} name={label(k)} value={draft[k]} shape={data.defaults[k]} onChange={(x) => setDraft({ ...draft, [k]: x })} />
+          ))}
+        </div>
       </section>
 
       {groups.map((k) => (
