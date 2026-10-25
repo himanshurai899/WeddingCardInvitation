@@ -201,7 +201,7 @@ function parseJSON(text) {
   }
 }
 async function parseExcel(buffer) {
-  const XLSX = (await import('xlsx')).default;
+  const XLSX = await import('xlsx');
   const wb = XLSX.read(new Uint8Array(buffer), { type: 'array' });
   const ws = wb.Sheets[wb.SheetNames[0]];
   const rows = XLSX.utils.sheet_to_json(ws, { defval: '' });
@@ -393,6 +393,7 @@ export default function GuestSorterPage() {
   const [pushOpen, setPushOpen] = useState(false);
   const [pushSide, setPushSide] = useState('GROOM');
   const [pushing, setPushing] = useState(false);
+  const [importing, setImporting] = useState('');
   const fileInputRef = useRef(null);
   // Two tabs: sort contacts into the guest list, or send them personal invite links
   const [params, setParams] = useSearchParams();
@@ -553,23 +554,28 @@ export default function GuestSorterPage() {
   const handleFiles = useCallback(
     async (files) => {
       if (!files || !files.length) return;
-      let totalNew = 0;
+      let read = 0;
       for (const file of Array.from(files)) {
-        const ext = file.name.split('.').pop()?.toLowerCase() ?? '';
-        let parsed = [];
-        if (ext === 'vcf') parsed = parseVCF(await file.text());
-        else if (ext === 'json') parsed = parseJSON(await file.text());
-        else if (ext === 'csv') parsed = parseCSV(await file.text());
-        else if (ext === 'xlsx' || ext === 'xls') parsed = await parseExcel(await file.arrayBuffer());
-        else parsed = parseCSV(await file.text());
-        setContacts((prev) => {
-          const next = mergeIntoList(prev, parsed);
-          totalNew += next.length - prev.length;
-          return next;
-        });
+        setImporting(`Reading ${file.name}…`);
+        try {
+          const ext = file.name.split('.').pop()?.toLowerCase() ?? '';
+          let parsed = [];
+          if (ext === 'vcf') parsed = parseVCF(await file.text());
+          else if (ext === 'json') parsed = parseJSON(await file.text());
+          else if (ext === 'csv') parsed = parseCSV(await file.text());
+          else if (ext === 'xlsx' || ext === 'xls') parsed = await parseExcel(await file.arrayBuffer());
+          else parsed = parseCSV(await file.text());
+          setImporting(`Adding ${parsed.length} contacts from ${file.name}…`);
+          await new Promise((r) => setTimeout(r, 0)); // let the progress line paint before the merge
+          setContacts((prev) => mergeIntoList(prev, parsed));
+          read += parsed.length;
+        } catch (e) {
+          toast({ message: `Could not read ${file.name}: ${e instanceof Error ? e.message : 'unknown error'}`, variant: 'error' });
+        }
       }
+      setImporting('');
       setPage(0);
-      toast({ message: `Imported ${totalNew} new contacts`, variant: 'success' });
+      if (read) toast({ message: `Imported ${read} contacts (duplicates merged)`, variant: 'success' });
     },
     [toast, setContacts],
   );
@@ -830,6 +836,11 @@ export default function GuestSorterPage() {
                 </span>
               )}
             </p>
+            {importing && (
+              <p className="text-xs mt-0.5 font-semibold text-purple-600 flex items-center gap-1.5" role="status">
+                <Loader2 size={12} className="animate-spin" /> {importing}
+              </p>
+            )}
             <p className="text-xs mt-0.5 text-ink-muted">VCF · JSON · CSV · Excel (.xlsx) · Google Contacts CSV</p>
           </div>
           <Button
