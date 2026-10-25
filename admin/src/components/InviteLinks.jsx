@@ -8,20 +8,21 @@ import { inviteUrl, invitedAs, normalizePhone, PARTIES } from '../../../src/lib/
 
 const DEFAULT_MESSAGE = `🙏 नमस्ते {hname},
 
-हिमांशु और समीक्षा का शुभ विवाह 25 नवंबर 2026 को वडोदरा में है। आपके आने से हमारी खुशी दोगुनी हो जाएगी। कृपया पधारें।
+बड़ों के आशीर्वाद और ईश्वर की कृपा से हमारे आँगन में शहनाइयाँ गूँजने वाली हैं। हिमांशु और समीक्षा का शुभ विवाह 25 नवंबर 2026 को वडोदरा में है, और आपके बिना यह उत्सव अधूरा रहेगा।
 
 Namaste {name},
 
-Himanshu & Samiksha are getting married on 25 November 2026 in Vadodara, and it would mean a lot to us to have you with us.
+With the blessings of our elders, Himanshu & Samiksha begin their life together on 25 November 2026 in Vadodara. Our celebration would not feel complete without you.
+
+💌 निमंत्रण / Your invitation, made just for you:
+{link}
 
 📍 स्थान / Venue:
 {venue}
 {map}
 
-💌 निमंत्रण / Your invitation:
-{link}
-
-सप्रेम / With love,
+आपके स्नेह की प्रतीक्षा में,
+With love and gratitude,
 राय एवं यादव परिवार / Rai & Yadav families`;
 
 const venue = `${wedding.venue.nameHindi} (${wedding.venue.name}), ${wedding.venue.address}`;
@@ -55,7 +56,7 @@ const InviteLinks = () => {
   const [dbGuests, setDbGuests] = useState(null);
   // Invite type and names, by Guest List id. Saved in this browser only.
   const [settings, setSettings] = useStored('inviteSettings', {});
-  const [message, setMessage] = useStored('guestMessage2', DEFAULT_MESSAGE);
+  const [message, setMessage] = useStored('guestMessage3', DEFAULT_MESSAGE);
   const [copied, setCopied] = useState('');
   const [show, setShow] = useState('all');
 

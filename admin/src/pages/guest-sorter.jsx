@@ -210,7 +210,7 @@ async function parseExcel(buffer) {
       const keys = Object.keys(row);
       const nameKey = keys.find((k) => /^(name|full.?name|contact.*name|person)$/i.test(k)) || keys[0];
       const phones = keys
-        .filter((k) => /phone|mobile|tel|number/i.test(k))
+        .filter((k) => /phone|mobile|tel|number|^contact$/i.test(k))
         .map((k) => String(row[k]).replace(/\s+/g, '').trim())
         .filter(Boolean);
       return { id: newId(), name: String(row[nameKey] || '').trim(), phones };
