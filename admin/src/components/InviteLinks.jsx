@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Send, Link as LinkIcon, Plus, X } from 'lucide-react';
+import { Send, Link as LinkIcon, Plus, X, Check, Undo2, Search } from 'lucide-react';
 import { Button } from '@admin/components/ui/Button';
 import { Badge } from '@admin/components/ui/Badge';
 import { cn } from '@admin/lib/utils/cn';
@@ -36,13 +36,13 @@ const useStored = (key, initial) => {
   return [value, setValue];
 };
 
-// Ticks Invitation Sent, the same flag the Guests page shows
-const putSent = (ids) =>
+// Sets Invitation Sent, the same flag the Guests page shows
+const putSent = (ids, value = true) =>
   ids.forEach((id) =>
     fetch(`/api/admin/guests/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ invitationSent: true }),
+      body: JSON.stringify({ invitationSent: value }),
     }).catch(() => {}),
   );
 const nameKey = (n) => (n ?? '').trim().toLowerCase();
@@ -59,6 +59,9 @@ const InviteLinks = () => {
   const [message, setMessage] = useStored('guestMessage3', DEFAULT_MESSAGE);
   const [copied, setCopied] = useState('');
   const [show, setShow] = useState('all');
+  const [query, setQuery] = useState('');
+  // Guests whose WhatsApp was opened but not yet confirmed as sent. Kept in this browser so a reload doesn't lose them.
+  const [pending, setPending] = useStored('invitePending', []);
 
   useEffect(() => {
     fetch('/api/admin/guests')
@@ -111,10 +114,10 @@ const InviteLinks = () => {
   const membersOf = (h) => guests.filter((m) => hostOf[m.id]?.id === h.id);
   const invited = (g) => g.sent || Boolean(hostOf[g.id]?.sent);
 
-  const tick = (ids) => {
+  const tick = (ids, value = true) => {
     if (!ids.length) return;
-    setDbGuests((list) => list.map((d) => (ids.includes(d.id) ? { ...d, invitationSent: true } : d)));
-    putSent(ids);
+    setDbGuests((list) => list.map((d) => (ids.includes(d.id) ? { ...d, invitationSent: value } : d)));
+    putSent(ids, value);
   };
   // Friends linked to a circle whose invite already went out count as invited too
   const unsynced = guests.filter((m) => !m.sent && hostOf[m.id]?.sent).map((m) => m.id).join();
@@ -135,8 +138,19 @@ const InviteLinks = () => {
       .replaceAll('{link}', link(g));
   const update = (id, change) => setSettings({ ...settings, [id]: { ...settings[id], ...change } });
   const setNames = (g, friends) => update(g.id, { friends });
-  // Sending marks the guest and everyone in their circle as invited
-  const markSent = (g) => tick([g, ...membersOf(g)].filter((x) => !x.sent).map((x) => x.id));
+  // Opening WhatsApp only flags the guest as waiting for confirmation; nothing is marked invited until they confirm
+  const openedWhatsApp = (g) => setPending((p) => (p.includes(g.id) ? p : [...p, g.id]));
+  const clearPending = (g) => setPending((p) => p.filter((id) => id !== g.id));
+  // Confirming marks the guest and everyone in their circle as invited
+  const confirmSent = (g) => {
+    tick([g, ...membersOf(g)].filter((x) => !x.sent).map((x) => x.id));
+    clearPending(g);
+  };
+  // Undo puts the guest and their circle back to not invited
+  const revert = (g) => {
+    tick([g, ...membersOf(g)].filter((x) => x.sent).map((x) => x.id), false);
+    clearPending(g);
+  };
   const copy = async (g) => {
     await navigator.clipboard.writeText(link(g));
     setCopied(g.id);
@@ -146,16 +160,20 @@ const InviteLinks = () => {
   // Counts are people; the list shows one row per invite (a circle's friends sit on the host's row)
   const sentCount = guests.filter(invited).length;
   const rows = guests.filter((g) => !hostOf[g.id]);
-  const shown = show === 'all' ? rows : rows.filter((g) => g.sent === (show === 'sent'));
+  const q = query.trim().toLowerCase();
+  const shown = (show === 'all' ? rows : rows.filter((g) => g.sent === (show === 'sent'))).filter(
+    (g) => !q || g.name.toLowerCase().includes(q) || g.phone.includes(q),
+  );
 
   return (
-    <div className="space-y-6 max-w-3xl">
-      <p className="text-sm text-ink-dim">
-        Personal links for the invitation card, sent over WhatsApp, for everyone in the Guest List. To add people, sort
-        them on the Sort tab and press Add to Guest List.
+    <div className="grid gap-6 lg:grid-cols-[minmax(320px,420px)_minmax(0,1fr)] items-start">
+      <p className="text-sm text-ink-dim lg:col-span-2">
+        Personal links for the invitation card, sent over WhatsApp, for everyone in the Guest List. Press WhatsApp, send
+        the message, then come back and confirm it was sent. To add people, sort them on the Sort tab and press Add to
+        Guest List.
       </p>
 
-      <section className="card p-5 flex flex-col gap-2">
+      <section className="card p-5 flex flex-col gap-2 lg:sticky lg:top-20">
         <h2 className="font-semibold">Message</h2>
         <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
           Filled in for each guest: {'{name}'} {'{hname}'} (name in Hindi greeting) {'{venue}'} {'{map}'} {'{link}'}
@@ -164,13 +182,13 @@ const InviteLinks = () => {
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           aria-label="Message"
-          rows={16}
+          rows={18}
           className={`${box} resize-y`}
         />
       </section>
 
       <section className="flex flex-col gap-2">
-        <div className="flex flex-wrap gap-2" role="group" aria-label="Show guests">
+        <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Show guests">
           {[
             ['all', 'All', guests.length],
             ['sent', 'Invited', sentCount],
@@ -199,6 +217,17 @@ const InviteLinks = () => {
               </span>
             </button>
           ))}
+          <div className="relative ml-auto w-full sm:w-64">
+            <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 opacity-50 pointer-events-none" aria-hidden="true" />
+            <input
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search name or number"
+              aria-label="Search guests"
+              className={cn(box, 'w-full h-10 pl-9')}
+            />
+          </div>
         </div>
         {/* Friend names to pick from: guests not already in a circle */}
         <datalist id="invite-guest-names">
@@ -218,8 +247,9 @@ const InviteLinks = () => {
             {guests.length ? 'No one here.' : 'No one in the Guest List yet. Sort contacts on the Sort tab and press Add to Guest List.'}
           </p>
         )}
+        <div className="grid gap-3 xl:grid-cols-2">
         {shown.map((g) => (
-          <div key={g.id} className="card px-4 py-3 flex flex-wrap items-center gap-x-3 gap-y-2">
+          <div key={g.id} className="card px-4 py-3 flex flex-wrap items-center gap-x-3 gap-y-2 content-start">
             <div className="flex-1 min-w-[9rem]">
               <p className="font-semibold break-words flex flex-wrap items-center gap-2">
                 {g.name}
@@ -275,22 +305,45 @@ const InviteLinks = () => {
                 )}
               </div>
             )}
-            {g.phone && (
-              <a
-                href={`https://api.whatsapp.com/send?phone=${g.phone}&text=${encodeURIComponent(text(g))}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => markSent(g)}
-                className="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium bg-[#128c4a] text-white hover:opacity-90"
+            <div className="basis-full order-last flex flex-wrap items-center gap-2">
+              {g.phone && (
+                <a
+                  href={`https://api.whatsapp.com/send?phone=${g.phone}&text=${encodeURIComponent(text(g))}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => !g.sent && openedWhatsApp(g)}
+                  className="inline-flex items-center gap-2 h-10 rounded-lg px-4 text-sm font-medium bg-[#128c4a] text-white hover:opacity-90 cursor-pointer"
+                >
+                  <Send size={16} /> {g.sent ? 'Send again' : 'WhatsApp'}
+                </a>
+              )}
+              <Button variant="outline" onClick={() => copy(g)}>
+                <LinkIcon size={16} /> {copied === g.id ? 'Copied' : 'Copy link'}
+              </Button>
+              {g.sent && (
+                <Button variant="ghost" onClick={() => revert(g)} aria-label={`Mark ${g.name} as not invited`}>
+                  <Undo2 size={16} /> Mark not invited
+                </Button>
+              )}
+            </div>
+            {!g.sent && pending.includes(g.id) && (
+              <div
+                role="group"
+                aria-label={`Confirm invite to ${g.name}`}
+                className="basis-full order-last flex flex-wrap items-center gap-2 rounded-lg px-3 py-2 bg-amber-50 text-amber-900 dark:bg-amber-900/20 dark:text-amber-200"
               >
-                <Send size={16} /> {g.sent ? 'Send again' : 'WhatsApp'}
-              </a>
+                <span className="text-sm font-medium flex-1 min-w-[10rem]">Did you send the invite?</span>
+                <Button onClick={() => confirmSent(g)}>
+                  <Check size={16} /> Yes, invited
+                </Button>
+                <Button variant="outline" onClick={() => clearPending(g)}>
+                  Not sent
+                </Button>
+              </div>
             )}
-            <Button variant="outline" onClick={() => copy(g)}>
-              <LinkIcon size={16} /> {copied === g.id ? 'Copied' : 'Copy link'}
-            </Button>
           </div>
         ))}
+        </div>
       </section>
     </div>
   );
