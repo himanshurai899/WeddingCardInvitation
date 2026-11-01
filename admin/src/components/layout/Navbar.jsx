@@ -99,7 +99,7 @@ export function Navbar() {
     <>
       {/* ── Top bar ─────────────────────────────────────────────────────── */}
       <header className="fixed top-0 inset-x-0 z-40 h-14 nav-header">
-        <div className="flex items-center h-full px-4 gap-3 max-w-screen-2xl mx-auto">
+        <div className="flex items-center h-full px-4 gap-3 max-w-[1920px] mx-auto">
           {/* Logo — Agni-Jal SVG mark */}
           <Link href="/dashboard" className="flex items-center gap-2.5 shrink-0 group" aria-label="Vivah home">
             {/* SVG favicon mark */}

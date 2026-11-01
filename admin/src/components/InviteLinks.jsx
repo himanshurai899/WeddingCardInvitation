@@ -243,38 +243,51 @@ const InviteLinks = () => {
   };
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[minmax(320px,420px)_minmax(0,1fr)] items-start">
-      <p className="text-sm text-ink-dim lg:col-span-2">
+    <div className="flex flex-col gap-4">
+      <p className="text-sm text-ink-dim">
         Personal links for the invitation card, sent over WhatsApp, for everyone in the Guest List. Set each guest up,
         then press Send all: it opens one chat after another, you press Send in WhatsApp, and one tap here marks them
         invited and opens the next. Guests not on WhatsApp get the SMS instead. To add people, sort them on the Sort tab and press Add to
         Guest List.
       </p>
 
-      <section className="card p-5 flex flex-col gap-2 lg:sticky lg:top-20">
-        <h2 className="font-semibold">Message</h2>
-        <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
-          Filled in for each guest: {'{name}'} {'{hname}'} (name in Hindi greeting) {'{venue}'} {'{map}'} {'{link}'}
-        </p>
-        <textarea
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          aria-label="Message"
-          rows={18}
-          className={`${box} resize-y`}
-        />
-        <h2 className="font-semibold mt-3">SMS, for guests not on WhatsApp</h2>
-        <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
-          Same fill-ins. Keep it short and in English: about {smsLength} characters, {Math.ceil(smsLength / 153)} SMS.
-        </p>
-        <textarea
-          value={smsMessage}
-          onChange={(e) => setSmsMessage(e.target.value)}
-          aria-label="SMS message"
-          rows={6}
-          className={`${box} resize-y`}
-        />
-      </section>
+      {/* Set once, so it folds away and the guests get the full width */}
+      <details className="card p-5 group">
+        <summary className="font-semibold cursor-pointer select-none">
+          Messages: WhatsApp and SMS
+          <span className="ml-2 text-xs font-normal" style={{ color: 'var(--text-muted)' }}>
+            tap to edit
+          </span>
+        </summary>
+        <div className="grid gap-x-6 gap-y-2 mt-3 lg:grid-cols-2 items-start">
+          <div className="flex flex-col gap-2">
+            <h2 className="font-semibold">WhatsApp</h2>
+            <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
+              Filled in for each guest: {'{name}'} {'{hname}'} (name in Hindi greeting) {'{venue}'} {'{map}'} {'{link}'}
+            </p>
+            <textarea
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              aria-label="Message"
+              rows={18}
+              className={`${box} resize-y`}
+            />
+          </div>
+          <div className="flex flex-col gap-2">
+            <h2 className="font-semibold">SMS, for guests not on WhatsApp</h2>
+            <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
+              Same fill-ins. Keep it short and in English: about {smsLength} characters, {Math.ceil(smsLength / 153)} SMS.
+            </p>
+            <textarea
+              value={smsMessage}
+              onChange={(e) => setSmsMessage(e.target.value)}
+              aria-label="SMS message"
+              rows={6}
+              className={`${box} resize-y`}
+            />
+          </div>
+        </div>
+      </details>
 
       <section className="flex flex-col gap-2">
         {queue && dbGuests && !cur && (
@@ -435,7 +448,7 @@ const InviteLinks = () => {
             {guests.length ? 'No one here.' : 'No one in the Guest List yet. Sort contacts on the Sort tab and press Add to Guest List.'}
           </p>
         )}
-        <div className="grid gap-3 xl:grid-cols-2">
+        <div className="grid gap-3 lg:grid-cols-2 2xl:grid-cols-3">
         {shown.map((g) => g.removed ? (
           <div key={g.id} className="card px-4 py-3 flex flex-wrap items-center gap-3">
             <p className="flex-1 min-w-[9rem] font-semibold break-words">
