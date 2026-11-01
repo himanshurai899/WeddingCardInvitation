@@ -52,6 +52,13 @@ const putSent = (ids, value = true) =>
     }).catch(() => {}),
   );
 const nameKey = (n) => (n ?? '').trim().toLowerCase();
+
+// WhatsApp restricts a number that sends the same text to many chats quickly. Send all pauses after every
+// BATCH WhatsApp sends, and the greeting changes from guest to guest (always the same one for the same guest).
+const BATCH = 15;
+const BREAK_MIN = 10;
+const GREETINGS = [['Namaste', 'नमस्ते'], ['Pranam', 'प्रणाम'], ['Sadar Pranam', 'सादर प्रणाम'], ['Namaskar', 'नमस्कार']];
+const greeting = (g) => GREETINGS[Math.abs([...(g.id ?? '')].reduce((h, c) => (h * 31 + c.charCodeAt(0)) | 0, 0)) % GREETINGS.length];
 const ADD = { plusone: 'plus one', family: 'family member', friends: 'friend' };
 
 const box =
@@ -66,6 +73,15 @@ const InviteLinks = () => {
   const [smsMessage, setSmsMessage] = useStored('guestSms', DEFAULT_SMS);
   // Send all: the guests left to send to and where we are. Kept so a reload carries on from the same guest.
   const [queue, setQueue] = useStored('inviteQueue', null);
+  const [smsOnly, setSmsOnly] = useStored('inviteSmsOnly', false);
+  // Ticks once a second during a Send all break, for the countdown
+  const [now, setNow] = useState(Date.now);
+  const onBreak = queue?.breakUntil > now;
+  useEffect(() => {
+    if (!onBreak) return;
+    const t = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(t);
+  }, [onBreak]);
   const [copied, setCopied] = useState('');
   const [editing, setEditing] = useState(null);
   const [show, setShow] = useState('all');
@@ -145,17 +161,22 @@ const InviteLinks = () => {
   const link = (g) => inviteUrl(g.name, g.party, names(g), g.prime);
   const fill = (template, g) =>
     template
+      // A different greeting from guest to guest, so a run isn't hundreds of identical messages
+      .replaceAll('Namaste {name}', `${greeting(g)[0]} {name}`)
+      .replaceAll('नमस्ते {hname}', `${greeting(g)[1]} {hname}`)
       .replaceAll('{name}', invitedAs(g.name, g.party, names(g)))
       .replaceAll('{hname}', invitedAs(g.name, g.party, names(g), 'hi'))
       .replaceAll('{venue}', venue)
       .replaceAll('{map}', mapsUrl)
       .replaceAll('{link}', link(g));
   // Guests marked not on WhatsApp get the SMS instead. sms:NUMBER?&body= opens Messages prefilled on both iPhone and Android.
+  // While WhatsApp has the number restricted, everyone goes by SMS
+  const bySms = (g) => g.noWa || smsOnly;
   const sendUrl = (g) =>
-    g.noWa
+    bySms(g)
       ? `sms:+${g.phone}?&body=${encodeURIComponent(fill(smsMessage, g))}`
       : `https://api.whatsapp.com/send?phone=${g.phone}&text=${encodeURIComponent(fill(message, g))}`;
-  const sendProps = (g) => ({ href: sendUrl(g), ...(g.noWa ? {} : { target: '_blank', rel: 'noopener noreferrer' }) });
+  const sendProps = (g) => ({ href: sendUrl(g), ...(bySms(g) ? {} :{ target: '_blank', rel: 'noopener noreferrer' }) });
   const smsLength = fill(smsMessage, guests[0] ?? { name: 'Sharma Ji', party: 'solo' }).length;
   const update = (id, change) => setSettings({ ...settings, [id]: { ...settings[id], ...change } });
   const setNames = (g, friends) => update(g.id, { friends });
@@ -193,18 +214,28 @@ const InviteLinks = () => {
   const byId = new Map(guests.map((g) => [g.id, g]));
   const cur = queue && byId.get(queue.ids[queue.i]);
   const nextUp = queue && byId.get(queue.ids[queue.i + 1]);
-  const advance = (opened = false) =>
-    setQueue((qu) => (qu && qu.i + 1 < qu.ids.length ? { ...qu, i: qu.i + 1, opened } : null));
+  const advance = (opened = false, more = {}) =>
+    setQueue((qu) => (qu && qu.i + 1 < qu.ids.length ? { ...qu, ...more, i: qu.i + 1, opened } : null));
   const openCur = () => {
     openedWhatsApp(cur);
     setQueue({ ...queue, opened: true });
   };
+  // WhatsApp messages sent in this run, counting this one. SMS don't count towards the break.
+  const waCount = cur ? (queue.waCount ?? 0) + (bySms(cur) ? 0 : 1) : 0;
+  const breakDue = Boolean(cur && nextUp && !bySms(cur) && waCount % BATCH === 0);
   // One tap confirms this guest and opens the next one's chat
   const sentOpenNext = () => {
     confirmSent(cur);
     openedWhatsApp(nextUp);
-    advance(true);
+    advance(true, { waCount });
   };
+  // Every BATCH WhatsApp sends, confirm and wait instead of opening the next chat
+  const sentTakeBreak = () => {
+    confirmSent(cur);
+    advance(false, { waCount, breakUntil: Date.now() + BREAK_MIN * 60000 });
+    setNow(Date.now());
+  };
+  const left = Math.max(0, Math.ceil(((queue?.breakUntil ?? 0) - now) / 1000));
   const notOnWhatsApp = (g) => {
     update(g.id, { noWa: true });
     clearPending(g);
@@ -265,17 +296,27 @@ const InviteLinks = () => {
               </span>
               <span className="font-semibold">{invitedAs(cur.name, cur.party, names(cur))}</span>
               <span className="text-xs" style={{ color: 'var(--text-muted)' }}>
-                +{cur.phone} · {cur.noWa ? 'SMS' : 'WhatsApp'}
+                +{cur.phone} · {bySms(cur) ? 'SMS' : 'WhatsApp'}
               </span>
             </div>
-            {!queue.opened ? (
+            {!queue.opened && onBreak && !bySms(cur) ? (
+              <>
+                <span className="text-sm flex-1 min-w-[12rem]">
+                  Short break so WhatsApp doesn&apos;t flag the number. Next chat in{' '}
+                  <b>{Math.floor(left / 60)}:{String(left % 60).padStart(2, '0')}</b>
+                </span>
+                <Button variant="ghost" onClick={() => setQueue({ ...queue, breakUntil: 0 })}>
+                  Skip break
+                </Button>
+              </>
+            ) : !queue.opened ? (
               <>
                 <a
                   {...sendProps(cur)}
                   onClick={openCur}
                   className="inline-flex items-center gap-2 h-10 rounded-lg px-4 text-sm font-medium bg-[#128c4a] text-white hover:opacity-90 cursor-pointer"
                 >
-                  {cur.noWa ? <MessageSquare size={16} /> : <Send size={16} />} {cur.noWa ? 'Open SMS' : 'Open WhatsApp'}
+                  {bySms(cur) ? <MessageSquare size={16} /> : <Send size={16} />} {bySms(cur) ? 'Open SMS' : 'Open WhatsApp'}
                 </a>
                 <Button variant="outline" onClick={() => advance()}>
                   <SkipForward size={16} /> Skip
@@ -284,7 +325,11 @@ const InviteLinks = () => {
             ) : (
               <>
                 <span className="basis-full text-sm">Pressed Send? Then:</span>
-                {nextUp ? (
+                {breakDue ? (
+                  <Button onClick={sentTakeBreak}>
+                    <Check size={16} /> Sent, take a {BREAK_MIN} min break
+                  </Button>
+                ) : nextUp ? (
                   <a
                     {...sendProps(nextUp)}
                     onClick={sentOpenNext}
@@ -303,7 +348,7 @@ const InviteLinks = () => {
                 <a {...sendProps(cur)} className="text-sm underline cursor-pointer px-1">Open again</a>
               </>
             )}
-            {cur.noWa ? (
+            {bySms(cur) ? (
               <Button variant="ghost" onClick={() => copy(cur, 'sms')}>
                 {copied === cur.id + 'sms' ? 'Copied' : 'Copy SMS'}
               </Button>
@@ -356,6 +401,10 @@ const InviteLinks = () => {
               <Play size={16} /> Send all ({toSend.length})
             </Button>
           )}
+          <label className="inline-flex items-center gap-1.5 text-sm cursor-pointer">
+            <input type="checkbox" checked={smsOnly} onChange={(e) => setSmsOnly(e.target.checked)} className="accent-amber-500" />
+            WhatsApp restricted: send by SMS for now
+          </label>
           <div className="relative ml-auto w-full sm:w-64">
             <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 opacity-50 pointer-events-none" aria-hidden="true" />
             <input
@@ -502,10 +551,10 @@ const InviteLinks = () => {
                   onClick={() => !g.sent && openedWhatsApp(g)}
                   className="inline-flex items-center gap-2 h-10 rounded-lg px-4 text-sm font-medium bg-[#128c4a] text-white hover:opacity-90 cursor-pointer"
                 >
-                  {g.noWa ? <MessageSquare size={16} /> : <Send size={16} />} {g.sent ? 'Send again' : g.noWa ? 'SMS' : 'WhatsApp'}
+                  {bySms(g) ? <MessageSquare size={16} /> : <Send size={16} />} {g.sent ? 'Send again' : bySms(g) ? 'SMS' : 'WhatsApp'}
                 </a>
               )}
-              {g.phone && g.noWa && (
+              {g.phone && bySms(g) && (
                 <Button variant="outline" onClick={() => copy(g, 'sms')}>
                   {copied === g.id + 'sms' ? 'Copied' : 'Copy SMS'}
                 </Button>
