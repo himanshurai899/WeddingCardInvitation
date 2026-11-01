@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Send, Link as LinkIcon, Plus, X, Check, Undo2, Search } from 'lucide-react';
+import { Send, Link as LinkIcon, Plus, X, Check, Undo2, Search, MessageSquare, Play, Square, SkipForward } from 'lucide-react';
 import { Button } from '@admin/components/ui/Button';
 import { Badge } from '@admin/components/ui/Badge';
 import { cn } from '@admin/lib/utils/cn';
@@ -24,6 +24,12 @@ With the blessings of our elders, Himanshu & Samiksha begin their life together 
 आपके स्नेह की प्रतीक्षा में,
 With love and gratitude,
 राय एवं यादव परिवार / Rai & Yadav families`;
+
+// For guests not on WhatsApp: short, English only (Hindi turns an SMS into the 70-character kind), same fill-ins
+const DEFAULT_SMS = `Namaste {name}, with the blessings of our elders Himanshu & Samiksha are getting married on 25 Nov 2026 in Vadodara. We would love to have you with us.
+Your invitation: {link}
+Venue: {map}
+Rai & Yadav families`;
 
 const venue = `${wedding.venue.nameHindi} (${wedding.venue.name}), ${wedding.venue.address}`;
 
@@ -57,6 +63,9 @@ const InviteLinks = () => {
   // Invite type and names, by Guest List id. Saved in this browser only.
   const [settings, setSettings] = useStored('inviteSettings', {});
   const [message, setMessage] = useStored('guestMessage3', DEFAULT_MESSAGE);
+  const [smsMessage, setSmsMessage] = useStored('guestSms', DEFAULT_SMS);
+  // Send all: the guests left to send to and where we are. Kept so a reload carries on from the same guest.
+  const [queue, setQueue] = useStored('inviteQueue', null);
   const [copied, setCopied] = useState('');
   const [show, setShow] = useState('all');
   const [query, setQuery] = useState('');
@@ -129,13 +138,20 @@ const InviteLinks = () => {
   }, [unsynced]);
 
   const link = (g) => inviteUrl(g.name, g.party, names(g), g.prime);
-  const text = (g) =>
-    message
+  const fill = (template, g) =>
+    template
       .replaceAll('{name}', invitedAs(g.name, g.party, names(g)))
       .replaceAll('{hname}', invitedAs(g.name, g.party, names(g), 'hi'))
       .replaceAll('{venue}', venue)
       .replaceAll('{map}', mapsUrl)
       .replaceAll('{link}', link(g));
+  // Guests marked not on WhatsApp get the SMS instead. sms:NUMBER?&body= opens Messages prefilled on both iPhone and Android.
+  const sendUrl = (g) =>
+    g.noWa
+      ? `sms:+${g.phone}?&body=${encodeURIComponent(fill(smsMessage, g))}`
+      : `https://api.whatsapp.com/send?phone=${g.phone}&text=${encodeURIComponent(fill(message, g))}`;
+  const sendProps = (g) => ({ href: sendUrl(g), ...(g.noWa ? {} : { target: '_blank', rel: 'noopener noreferrer' }) });
+  const smsLength = fill(smsMessage, guests[0] ?? { name: 'Sharma Ji', party: 'solo' }).length;
   const update = (id, change) => setSettings({ ...settings, [id]: { ...settings[id], ...change } });
   const setNames = (g, friends) => update(g.id, { friends });
   // Opening WhatsApp only flags the guest as waiting for confirmation; nothing is marked invited until they confirm
@@ -151,9 +167,9 @@ const InviteLinks = () => {
     tick([g, ...membersOf(g)].filter((x) => x.sent).map((x) => x.id), false);
     clearPending(g);
   };
-  const copy = async (g) => {
-    await navigator.clipboard.writeText(link(g));
-    setCopied(g.id);
+  const copy = async (g, what = 'link') => {
+    await navigator.clipboard.writeText(what === 'sms' ? fill(smsMessage, g) : link(g));
+    setCopied(g.id + what);
     setTimeout(() => setCopied(''), 1500);
   };
 
@@ -161,15 +177,41 @@ const InviteLinks = () => {
   const sentCount = guests.filter(invited).length;
   const rows = guests.filter((g) => !hostOf[g.id]);
   const q = query.trim().toLowerCase();
-  const shown = (show === 'all' ? rows : rows.filter((g) => g.sent === (show === 'sent'))).filter(
+  const filters = { all: () => true, sent: (g) => g.sent, pending: (g) => !g.sent, nowa: (g) => g.noWa };
+  const shown = rows.filter(filters[show] ?? filters.all).filter(
     (g) => !q || g.name.toLowerCase().includes(q) || g.phone.includes(q),
   );
+
+  // Send all goes through everyone shown (so a filter or search narrows it) who is not invited yet and has a number.
+  // Each one still needs a tap on Send in WhatsApp or Messages: a website can't send from your own number by itself.
+  const toSend = shown.filter((g) => !g.sent && g.phone);
+  const byId = new Map(guests.map((g) => [g.id, g]));
+  const cur = queue && byId.get(queue.ids[queue.i]);
+  const nextUp = queue && byId.get(queue.ids[queue.i + 1]);
+  const advance = (opened = false) =>
+    setQueue((qu) => (qu && qu.i + 1 < qu.ids.length ? { ...qu, i: qu.i + 1, opened } : null));
+  const openCur = () => {
+    openedWhatsApp(cur);
+    setQueue({ ...queue, opened: true });
+  };
+  // One tap confirms this guest and opens the next one's chat
+  const sentOpenNext = () => {
+    confirmSent(cur);
+    openedWhatsApp(nextUp);
+    advance(true);
+  };
+  const notOnWhatsApp = (g) => {
+    update(g.id, { noWa: true });
+    clearPending(g);
+    if (cur?.id === g.id) setQueue({ ...queue, opened: false });
+  };
 
   return (
     <div className="grid gap-6 lg:grid-cols-[minmax(320px,420px)_minmax(0,1fr)] items-start">
       <p className="text-sm text-ink-dim lg:col-span-2">
-        Personal links for the invitation card, sent over WhatsApp, for everyone in the Guest List. Press WhatsApp, send
-        the message, then come back and confirm it was sent. To add people, sort them on the Sort tab and press Add to
+        Personal links for the invitation card, sent over WhatsApp, for everyone in the Guest List. Set each guest up,
+        then press Send all: it opens one chat after another, you press Send in WhatsApp, and one tap here marks them
+        invited and opens the next. Guests not on WhatsApp get the SMS instead. To add people, sort them on the Sort tab and press Add to
         Guest List.
       </p>
 
@@ -185,14 +227,97 @@ const InviteLinks = () => {
           rows={18}
           className={`${box} resize-y`}
         />
+        <h2 className="font-semibold mt-3">SMS, for guests not on WhatsApp</h2>
+        <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
+          Same fill-ins. Keep it short and in English: about {smsLength} characters, {Math.ceil(smsLength / 153)} SMS.
+        </p>
+        <textarea
+          value={smsMessage}
+          onChange={(e) => setSmsMessage(e.target.value)}
+          aria-label="SMS message"
+          rows={6}
+          className={`${box} resize-y`}
+        />
       </section>
 
       <section className="flex flex-col gap-2">
+        {queue && dbGuests && !cur && (
+          <div className="card px-4 py-3 flex items-center gap-2">
+            <span className="flex-1 text-sm">The guest this run was on is no longer in the list.</span>
+            <Button variant="outline" onClick={() => advance()}>Next</Button>
+            <Button variant="ghost" onClick={() => setQueue(null)}>Stop</Button>
+          </div>
+        )}
+        {cur && (
+          <div
+            role="group"
+            aria-label="Send all"
+            className="card px-4 py-3 flex flex-wrap items-center gap-2 border-2 border-[#128c4a]/50 sticky top-16 z-10"
+          >
+            <div className="basis-full flex flex-wrap items-baseline gap-x-2">
+              <span className="text-xs font-semibold uppercase tracking-wide" style={{ color: 'var(--text-muted)' }}>
+                Sending {queue.i + 1} of {queue.ids.length}
+              </span>
+              <span className="font-semibold">{invitedAs(cur.name, cur.party, names(cur))}</span>
+              <span className="text-xs" style={{ color: 'var(--text-muted)' }}>
+                +{cur.phone} · {cur.noWa ? 'SMS' : 'WhatsApp'}
+              </span>
+            </div>
+            {!queue.opened ? (
+              <>
+                <a
+                  {...sendProps(cur)}
+                  onClick={openCur}
+                  className="inline-flex items-center gap-2 h-10 rounded-lg px-4 text-sm font-medium bg-[#128c4a] text-white hover:opacity-90 cursor-pointer"
+                >
+                  {cur.noWa ? <MessageSquare size={16} /> : <Send size={16} />} {cur.noWa ? 'Open SMS' : 'Open WhatsApp'}
+                </a>
+                <Button variant="outline" onClick={() => advance()}>
+                  <SkipForward size={16} /> Skip
+                </Button>
+              </>
+            ) : (
+              <>
+                <span className="basis-full text-sm">Pressed Send? Then:</span>
+                {nextUp ? (
+                  <a
+                    {...sendProps(nextUp)}
+                    onClick={sentOpenNext}
+                    className="inline-flex items-center gap-2 h-10 rounded-lg px-4 text-sm font-medium bg-[#128c4a] text-white hover:opacity-90 cursor-pointer"
+                  >
+                    <Check size={16} /> Sent, open {nextUp.name.split(' ')[0]}
+                  </a>
+                ) : (
+                  <Button onClick={() => { confirmSent(cur); setQueue(null); }}>
+                    <Check size={16} /> Sent, all done
+                  </Button>
+                )}
+                <Button variant="outline" onClick={() => { clearPending(cur); advance(); }}>
+                  Not sent, skip
+                </Button>
+                <a {...sendProps(cur)} className="text-sm underline cursor-pointer px-1">Open again</a>
+              </>
+            )}
+            {cur.noWa ? (
+              <Button variant="ghost" onClick={() => copy(cur, 'sms')}>
+                {copied === cur.id + 'sms' ? 'Copied' : 'Copy SMS'}
+              </Button>
+            ) : (
+              <Button variant="ghost" onClick={() => notOnWhatsApp(cur)}>
+                Not on WhatsApp
+              </Button>
+            )}
+            <Button variant="ghost" onClick={() => setQueue(null)} className="ml-auto">
+              <Square size={14} /> Stop
+            </Button>
+          </div>
+        )}
         <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Show guests">
           {[
             ['all', 'All', guests.length],
             ['sent', 'Invited', sentCount],
             ['pending', 'Not yet invited', guests.length - sentCount],
+            ['nowa', 'Not on WhatsApp', rows.filter(filters.nowa).length],
           ].map(([key, label, n]) => (
             <button
               key={key}
@@ -217,6 +342,14 @@ const InviteLinks = () => {
               </span>
             </button>
           ))}
+          {!queue && (
+            <Button
+              onClick={() => setQueue({ ids: toSend.map((g) => g.id), i: 0, opened: false })}
+              disabled={!toSend.length}
+            >
+              <Play size={16} /> Send all ({toSend.length})
+            </Button>
+          )}
           <div className="relative ml-auto w-full sm:w-64">
             <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 opacity-50 pointer-events-none" aria-hidden="true" />
             <input
@@ -255,6 +388,7 @@ const InviteLinks = () => {
                 {g.name}
                 {g.sent ? <Badge color="green">Invited</Badge> : <Badge>Not yet</Badge>}
                 {g.prime && <Badge color="yellow">Prime</Badge>}
+                {g.noWa && <Badge color="orange">No WhatsApp</Badge>}
               </p>
               <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
                 {g.phone ? `+${g.phone}` : 'No mobile number'}
@@ -313,17 +447,29 @@ const InviteLinks = () => {
             <div className="basis-full order-last flex flex-wrap items-center gap-2">
               {g.phone && (
                 <a
-                  href={`https://api.whatsapp.com/send?phone=${g.phone}&text=${encodeURIComponent(text(g))}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  {...sendProps(g)}
                   onClick={() => !g.sent && openedWhatsApp(g)}
                   className="inline-flex items-center gap-2 h-10 rounded-lg px-4 text-sm font-medium bg-[#128c4a] text-white hover:opacity-90 cursor-pointer"
                 >
-                  <Send size={16} /> {g.sent ? 'Send again' : 'WhatsApp'}
+                  {g.noWa ? <MessageSquare size={16} /> : <Send size={16} />} {g.sent ? 'Send again' : g.noWa ? 'SMS' : 'WhatsApp'}
                 </a>
               )}
+              {g.phone && g.noWa && (
+                <Button variant="outline" onClick={() => copy(g, 'sms')}>
+                  {copied === g.id + 'sms' ? 'Copied' : 'Copy SMS'}
+                </Button>
+              )}
+              {g.phone && (
+                <Button
+                  variant="ghost"
+                  onClick={() => (g.noWa ? update(g.id, { noWa: false }) : notOnWhatsApp(g))}
+                  aria-label={g.noWa ? `${g.name} is on WhatsApp` : `${g.name} is not on WhatsApp`}
+                >
+                  {g.noWa ? 'On WhatsApp after all' : 'Not on WhatsApp'}
+                </Button>
+              )}
               <Button variant="outline" onClick={() => copy(g)}>
-                <LinkIcon size={16} /> {copied === g.id ? 'Copied' : 'Copy link'}
+                <LinkIcon size={16} /> {copied === g.id + 'link' ? 'Copied' : 'Copy link'}
               </Button>
               {g.sent && (
                 <Button variant="ghost" onClick={() => revert(g)} aria-label={`Mark ${g.name} as not invited`}>
@@ -331,7 +477,7 @@ const InviteLinks = () => {
                 </Button>
               )}
             </div>
-            {!g.sent && pending.includes(g.id) && (
+            {!g.sent && pending.includes(g.id) && cur?.id !== g.id && (
               <div
                 role="group"
                 aria-label={`Confirm invite to ${g.name}`}
