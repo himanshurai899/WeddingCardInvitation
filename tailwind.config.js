@@ -82,5 +82,8 @@ export default {
       }
     },
   },
-  plugins: [],
+  plugins: [
+    // short: tighter spacing on short screens; the Prime card has more to say, so it tightens on phones up to 900px tall
+    ({ addVariant }) => addVariant('short', ['@media (max-height: 700px)', '@media (max-height: 900px) { .zari & }']),
+  ],
 }

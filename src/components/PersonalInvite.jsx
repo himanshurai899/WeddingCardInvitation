@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { wedding } from '../config/wedding';
-import { guest, guestName, party, plusOne } from '../lib/guests';
+import { guest, guestName, party, plusOne, prime } from '../lib/guests';
 import { Crest, ThemeDivider } from './art/Symbols';
 
 // On a guest's own link, a card with their name opens once the gates have swung apart.
@@ -50,23 +50,30 @@ const PersonalInvite = ({ opened }) => {
             exit={{ opacity: 0, y: 12, scale: 0.98 }}
             transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-sm max-h-[92svh] overflow-y-auto rounded-2xl bg-cream-card border-2 border-gold shadow-[0_20px_60px_rgba(11,18,48,.45)] p-2 text-center"
+            className={`w-full max-w-sm max-h-[92svh] overflow-y-auto rounded-2xl text-center ${prime ? 'zari' : 'bg-cream-card border-2 border-gold shadow-[0_20px_60px_rgba(11,18,48,.45)] p-2'}`}
           >
-            <div className="rounded-xl border border-gold/40 px-5 py-6 [@media(max-height:700px)]:py-4">
-              <Crest className="mx-auto h-9 [@media(max-height:700px)]:h-6 w-auto" />
+            <div className={`rounded-xl px-5 py-6 short:py-4 ${prime ? 'zari-stitch bg-cream-card' : 'border border-gold/40'}`}>
+              {/* On a Prime card the pill is the crown */}
+              {prime ? <p className="zari-pill">✦ {text.prime.badge} ✦</p> : <Crest className="mx-auto h-9 short:h-6 w-auto" />}
               <p className="deva text-marigold-deep text-lg mt-1">{text.heading}</p>
 
-              <p className="font-serif italic text-ink-soft text-lg mt-3 [@media(max-height:700px)]:mt-1">Dear</p>
+              <p className="font-serif italic text-ink-soft text-lg mt-3 short:mt-1">Dear</p>
               <h2 id="personal-invite-name" className={`script-font text-maroon leading-tight break-words ${guest.length > 30 ? 'text-[clamp(1.5rem,7vw,1.9rem)]' : 'text-[clamp(2.1rem,10vw,2.75rem)]'}`}>
                 {guest}
               </h2>
 
-              <ThemeDivider className="my-3 [@media(max-height:700px)]:my-1" />
+              <ThemeDivider className="my-3 short:my-1" />
 
-              <p className="font-serif text-ink text-[17px] leading-relaxed [@media(max-height:700px)]:text-[15px] [@media(max-height:700px)]:leading-snug">{line.en}</p>
-              <p className="font-devaText text-maroon-deep text-[17px] leading-relaxed mt-3 [@media(max-height:700px)]:text-[15px] [@media(max-height:700px)]:mt-2">{line.hi}</p>
+              <p className="font-serif text-ink text-[17px] leading-relaxed short:text-[15px] short:leading-snug">{line.en}</p>
+              <p className="font-devaText text-maroon-deep text-[17px] leading-relaxed mt-3 short:text-[15px] short:mt-2">{line.hi}</p>
+              {prime && (
+                <div className="mt-4 short:mt-2 rounded-lg border border-gold/60 bg-gold-pale/40 px-3 py-2.5 short:py-1 short:px-2">
+                  <p className="font-serif italic text-maroon text-[16px] leading-snug short:text-[13px] short:leading-tight">{text.prime.en}</p>
+                  <p className="font-devaText text-maroon-deep text-[15px] leading-snug mt-1 short:text-[12px] short:mt-0.5">{text.prime.hi}</p>
+                </div>
+              )}
 
-              <p className="mt-5 [@media(max-height:700px)]:mt-3 text-[11px] tracking-[0.25em] uppercase font-bold text-ink-soft">
+              <p className="mt-5 short:mt-3 text-[11px] tracking-[0.25em] uppercase font-bold text-ink-soft">
                 25 November 2026 · Vadodara
               </p>
               <p className="deva text-marigold-deep mt-1">
@@ -77,7 +84,7 @@ const PersonalInvite = ({ opened }) => {
                 ref={button}
                 type="button"
                 onClick={() => setShow(false)}
-                className="mt-6 [@media(max-height:700px)]:mt-3 rounded-full bg-maroon px-7 py-3 [@media(max-height:700px)]:py-2.5 font-serif font-semibold tracking-wide text-cream shadow-[0_8px_24px_rgba(123,30,43,.3)] focus:outline-none focus-visible:ring-4 focus-visible:ring-gold/50"
+                className="mt-6 short:mt-3 rounded-full bg-maroon px-7 py-3 short:py-2.5 font-serif font-semibold tracking-wide text-cream shadow-[0_8px_24px_rgba(123,30,43,.3)] focus:outline-none focus-visible:ring-4 focus-visible:ring-gold/50"
               >
                 {text.button}
               </button>

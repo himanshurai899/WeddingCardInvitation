@@ -128,7 +128,7 @@ const InviteLinks = () => {
     putSent(ids);
   }, [unsynced]);
 
-  const link = (g) => inviteUrl(g.name, g.party, names(g));
+  const link = (g) => inviteUrl(g.name, g.party, names(g), g.prime);
   const text = (g) =>
     message
       .replaceAll('{name}', invitedAs(g.name, g.party, names(g)))
@@ -254,6 +254,7 @@ const InviteLinks = () => {
               <p className="font-semibold break-words flex flex-wrap items-center gap-2">
                 {g.name}
                 {g.sent ? <Badge color="green">Invited</Badge> : <Badge>Not yet</Badge>}
+                {g.prime && <Badge color="yellow">Prime</Badge>}
               </p>
               <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
                 {g.phone ? `+${g.phone}` : 'No mobile number'}
@@ -271,6 +272,10 @@ const InviteLinks = () => {
                 </option>
               ))}
             </select>
+            <label className="inline-flex items-center gap-1.5 text-sm cursor-pointer" title="Gold zari card that tells them they are on the Prime list">
+              <input type="checkbox" checked={Boolean(g.prime)} onChange={(e) => update(g.id, { prime: e.target.checked })} className="accent-amber-500" />
+              Prime
+            </label>
             {g.party !== 'solo' && (
               <div className="basis-full order-last flex flex-wrap items-center gap-2">
                 {names(g).map((f, i) => (

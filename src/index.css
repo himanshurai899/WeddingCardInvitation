@@ -217,6 +217,35 @@ h1, h2, h3, h4 {
   background-position: center;
 }
 
+/* Prime invite: a gold zari frame, criss-cross thread with sequins, and a running stitch inside */
+.zari {
+  padding: 12px;
+  background:
+    radial-gradient(circle, #fff6d6 0 1.3px, transparent 2px) 0 0 / 12px 12px,
+    repeating-linear-gradient(45deg, rgba(92, 69, 18, .45) 0 1.5px, transparent 1.5px 6px),
+    repeating-linear-gradient(-45deg, rgba(92, 69, 18, .45) 0 1.5px, transparent 1.5px 6px),
+    linear-gradient(135deg, #8a6a1f, #e0b45f 25%, #f7e2a8 50%, #c9a24b 75%, #8a6a1f);
+  box-shadow: inset 0 0 0 1px #5c4512, inset 0 0 0 3px #f7e2a8, 0 20px 60px rgba(11, 18, 48, .45);
+}
+@media (max-height: 700px) { .zari { padding: 9px; } }
+.zari-stitch {
+  outline: 2px dashed #c9a24b;
+  outline-offset: -7px;
+  box-shadow: 0 0 0 2px #8a6a1f, inset 0 0 0 3px #f7e2a8;
+}
+.zari-pill {
+  display: inline-block;
+  border-radius: 9999px;
+  padding: 4px 14px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: #5c1420;
+  background: linear-gradient(135deg, #c9a24b, #f7e2a8 50%, #c9a24b);
+  box-shadow: 0 0 0 1px #8a6a1f, 0 2px 8px rgba(138, 106, 31, .35);
+}
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
 

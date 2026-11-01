@@ -34,12 +34,14 @@ const withAll = query.getAll('with').flatMap((v) => v.split(',')).map((n) => n.t
 export const withNames = party === 'plusone' ? withAll.slice(0, 1) : NAMED.includes(party) ? withAll : [];
 export const plusOne = party === 'plusone' ? (withNames[0] ?? '') : '';
 export const guest = guestName && invitedAs(guestName, party, withNames);
+// Close family and elders on the Prime list get the gold zari card: ?prime=1
+export const prime = query.get('prime') === '1';
 
-export const inviteUrl = (name, p = 'solo', withNames = '') => {
+export const inviteUrl = (name, p = 'solo', withNames = '', isPrime = false) => {
   const others = NAMED.includes(p) ? cleanNames(withNames) : [];
   return `${wedding.siteUrl}/?guest=${encodeURIComponent(name.trim())}${p === 'solo' ? '' : `&party=${p}`}` +
     // One &with= per name: a comma (%2C) in the link made WhatsApp cut it short after the first friend
-    others.map((n) => `&with=${encodeURIComponent(n)}`).join('');
+    others.map((n) => `&with=${encodeURIComponent(n)}`).join('') + (isPrime ? '&prime=1' : '');
 };
 
 // Digits only, with country code. A bare 10-digit number is taken as Indian. Returns '' if it can't be a phone.

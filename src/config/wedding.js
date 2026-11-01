@@ -197,6 +197,12 @@ export const content = {
       en: 'We warmly invite you and the whole gang to the wedding of Himanshu and Samiksha. The baraat is not complete without our friends, so come together and let us dance till the shehnai stops.',
       hi: 'हिमांशु और समीक्षा के शुभ विवाह में आप अपनी मित्र मंडली के साथ सादर आमंत्रित हैं।',
     },
+    // Added under the line above on a Prime link (?prime=1)
+    prime: {
+      badge: 'Prime Invitation',
+      en: 'You are on our Prime invitation list, so please bless us with your presence.',
+      hi: 'आप हमारी विशेष आमंत्रण सूची में हैं, कृपया पधारकर हमें आशीर्वाद दें।',
+    },
     button: 'View the invitation',
   },
 
@@ -430,6 +436,8 @@ export let coupleShort, mapsUrl, mapsEmbedUrl;
 // Swaps in the admin's saved content. The derived exports above are live bindings, so every importer sees the update.
 export const applyContent = (saved) => {
   Object.assign(wedding, content, saved, { theme: themeKey, ...themes[themeKey] });
+  // Content saved before a new invite line existed still gets that line
+  wedding.invite = { ...content.invite, ...saved?.invite };
   if (side === 'bride') Object.assign(wedding, brideSide(wedding));
   wedding.couple = side === 'bride' ? [wedding.bride, wedding.groom] : [wedding.groom, wedding.bride];
   coupleShort = `${wedding.couple[0].name} & ${wedding.couple[1].name}`;
