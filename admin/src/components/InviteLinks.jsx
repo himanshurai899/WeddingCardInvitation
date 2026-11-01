@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Send, Link as LinkIcon, Plus, X, Check, Undo2, Search, MessageSquare, Play, Square, SkipForward } from 'lucide-react';
+import { Send, Link as LinkIcon, Plus, X, Check, Undo2, Search, MessageSquare, Play, Square, SkipForward, Pencil, UserMinus } from 'lucide-react';
 import { Button } from '@admin/components/ui/Button';
 import { Badge } from '@admin/components/ui/Badge';
 import { cn } from '@admin/lib/utils/cn';
@@ -67,6 +67,7 @@ const InviteLinks = () => {
   // Send all: the guests left to send to and where we are. Kept so a reload carries on from the same guest.
   const [queue, setQueue] = useStored('inviteQueue', null);
   const [copied, setCopied] = useState('');
+  const [editing, setEditing] = useState(null);
   const [show, setShow] = useState('all');
   const [query, setQuery] = useState('');
   // Guests whose WhatsApp was opened but not yet confirmed as sent. Kept in this browser so a reload doesn't lose them.
@@ -88,7 +89,7 @@ const InviteLinks = () => {
     }
   }, []);
 
-  const guests = (dbGuests ?? []).map((d) => {
+  const allGuests = (dbGuests ?? []).map((d) => {
     const phone = normalizePhone(d.mobile);
     const prev = oldByPhone[phone] ?? {};
     return {
@@ -99,10 +100,14 @@ const InviteLinks = () => {
       party: prev.party ?? 'solo',
       plusOne: prev.plusOne,
       friends: prev.friends,
+      // A name edited here (settings name) replaces this one in the link and the message
       ...settings[d.id],
       sent: d.invitationSent || Boolean(prev.sent),
     };
   });
+  // Removed from the invite list (they stay in the Guest List), and can be put back from the Removed filter
+  const guests = allGuests.filter((g) => !g.removed);
+  const removed = allGuests.filter((g) => g.removed);
 
   // Who comes along, by name: the plus one, family members or friends. One list per guest, kept when the type
   // changes; a plus one saved before this as a single name still counts.
@@ -178,13 +183,13 @@ const InviteLinks = () => {
   const rows = guests.filter((g) => !hostOf[g.id]);
   const q = query.trim().toLowerCase();
   const filters = { all: () => true, sent: (g) => g.sent, pending: (g) => !g.sent, nowa: (g) => g.noWa };
-  const shown = rows.filter(filters[show] ?? filters.all).filter(
+  const shown = (show === 'removed' ? removed : rows.filter(filters[show] ?? filters.all)).filter(
     (g) => !q || g.name.toLowerCase().includes(q) || g.phone.includes(q),
   );
 
   // Send all goes through everyone shown (so a filter or search narrows it) who is not invited yet and has a number.
   // Each one still needs a tap on Send in WhatsApp or Messages: a website can't send from your own number by itself.
-  const toSend = shown.filter((g) => !g.sent && g.phone);
+  const toSend = shown.filter((g) => !g.sent && g.phone && !g.removed);
   const byId = new Map(guests.map((g) => [g.id, g]));
   const cur = queue && byId.get(queue.ids[queue.i]);
   const nextUp = queue && byId.get(queue.ids[queue.i + 1]);
@@ -318,6 +323,7 @@ const InviteLinks = () => {
             ['sent', 'Invited', sentCount],
             ['pending', 'Not yet invited', guests.length - sentCount],
             ['nowa', 'Not on WhatsApp', rows.filter(filters.nowa).length],
+            ...(removed.length || show === 'removed' ? [['removed', 'Removed', removed.length]] : []),
           ].map(([key, label, n]) => (
             <button
               key={key}
@@ -381,15 +387,60 @@ const InviteLinks = () => {
           </p>
         )}
         <div className="grid gap-3 xl:grid-cols-2">
-        {shown.map((g) => (
+        {shown.map((g) => g.removed ? (
+          <div key={g.id} className="card px-4 py-3 flex flex-wrap items-center gap-3">
+            <p className="flex-1 min-w-[9rem] font-semibold break-words">
+              {g.name}
+              <span className="block text-xs font-normal" style={{ color: 'var(--text-muted)' }}>
+                {g.phone ? `+${g.phone}` : 'No mobile number'} · not on the invite list
+              </span>
+            </p>
+            <Button variant="outline" onClick={() => update(g.id, { removed: false })}>
+              <Undo2 size={16} /> Put back
+            </Button>
+          </div>
+        ) : (
           <div key={g.id} className="card px-4 py-3 flex flex-wrap items-center gap-x-3 gap-y-2 content-start">
             <div className="flex-1 min-w-[9rem]">
-              <p className="font-semibold break-words flex flex-wrap items-center gap-2">
-                {g.name}
+              <div className="font-semibold break-words flex flex-wrap items-center gap-2">
+                {editing?.id === g.id ? (
+                  <form
+                    className="flex flex-wrap items-center gap-1"
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      if (editing.value.trim()) update(g.id, { name: editing.value.trim().slice(0, 40) });
+                      setEditing(null);
+                    }}
+                  >
+                    <input
+                      value={editing.value}
+                      onChange={(e) => setEditing({ id: g.id, value: e.target.value })}
+                      onKeyDown={(e) => e.key === 'Escape' && setEditing(null)}
+                      autoFocus
+                      maxLength={40}
+                      aria-label={`Name on the invite for ${g.name}`}
+                      className={cn(box, 'w-48 font-normal')}
+                    />
+                    <Button type="submit" aria-label="Save name"><Check size={16} /></Button>
+                    <Button type="button" variant="ghost" aria-label="Cancel" onClick={() => setEditing(null)}><X size={16} /></Button>
+                  </form>
+                ) : (
+                  <>
+                    {g.name}
+                    <button
+                      type="button"
+                      onClick={() => setEditing({ id: g.id, value: g.name })}
+                      aria-label={`Edit the name on ${g.name}'s invite`}
+                      className="opacity-60 hover:opacity-100 cursor-pointer"
+                    >
+                      <Pencil size={14} />
+                    </button>
+                  </>
+                )}
                 {g.sent ? <Badge color="green">Invited</Badge> : <Badge>Not yet</Badge>}
                 {g.prime && <Badge color="yellow">Prime</Badge>}
                 {g.noWa && <Badge color="orange">No WhatsApp</Badge>}
-              </p>
+              </div>
               <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
                 {g.phone ? `+${g.phone}` : 'No mobile number'}
               </p>
@@ -476,6 +527,14 @@ const InviteLinks = () => {
                   <Undo2 size={16} /> Mark not invited
                 </Button>
               )}
+              <Button
+                variant="ghost"
+                onClick={() => { update(g.id, { removed: true }); clearPending(g); }}
+                aria-label={`Remove ${g.name} from the invite list`}
+                className="ml-auto"
+              >
+                <UserMinus size={16} /> Remove
+              </Button>
             </div>
             {!g.sent && pending.includes(g.id) && cur?.id !== g.id && (
               <div
