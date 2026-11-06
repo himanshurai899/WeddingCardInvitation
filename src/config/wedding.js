@@ -367,17 +367,26 @@ const themeKey = asked in themes ? asked : side === 'bride' ? 'sita' : DEFAULT_T
 // What changes on the bride's side, laid over the admin's saved copy so dates, times and venues still come from there.
 // Lines marked VERIFY need a check with the Yadav family.
 const patch = (list, id, changes) => list.map((item) => ({ ...item, ...changes[item[id]] }));
+// The Yadav family's own week. No tithi on the 21st: the card doesn't print one for that day. VERIFY: the tithi
+const brideWeek = (w) => {
+  const fn = (key) => w.functions.find((f) => f.key === key);
+  const gadarwara = { date: '2026-11-21', venue: w.bride.address.label, mapsQuery: w.bride.address.mapsQuery };
+  return [
+    { ...gadarwara, key: 'puja', name: 'Satyanarayan Puja', short: 'Satyanarayan Puja', hindi: 'सत्यनारायण पूजा', time: 'Morning', about: 'Satyanarayan puja at home to begin the week, with prasad for everyone.' },
+    { ...gadarwara, key: 'haldi', name: 'Haldi Celebration', short: 'Haldi', hindi: 'हल्दी', time: '11:00 AM to 2:00 PM', about: "Samiksha's haldi at home in Gadarwara, with all her mausis, chachis and buas teasing her the whole time. Wear something you don't mind getting yellow." },
+    { ...gadarwara, key: 'rasams', name: 'Bihari Traditional Rituals', short: 'Bihari Rituals', hindi: 'बिहारी पारंपरिक रस्में', time: 'After the haldi', about: 'Once the haldi is done, the old Bihari rasams, the way the elders of the family have always done them.' },
+    { ...fn('mehendi'), time: '4:00 PM to 8:00 PM', venue: 'Vadodara', mapsQuery: '', about: 'Mehendi for Samiksha and all the ladies in Vadodara, with the dholak going and the old Maithili geet. They say the darker it gets, the more she will be loved.' },
+    { ...fn('tilak'), name: 'Tilak Ceremony', venue: "Groom's Home, Vadodara", about: "We go over to Himanshu's home to put tilak on him and bless him. Then we all sit down to lunch together." },
+    { key: 'photoshoot', name: 'Fun Photoshoot', short: 'Photoshoot', hindi: 'फ़न फ़ोटोशूट', date: '2026-11-25', tithi: 'मार्गशीर्ष कृष्ण प्रतिपदा', time: '11:00 AM to 1:00 PM', about: 'A couple of easy hours in front of the camera before the big evening. Bring your best smile.' },
+    { ...fn('vivah'), name: 'Wedding Ceremony', time: 'Evening, Jaimala & Pheras', about: 'Jaimala and then the pheras. The big one!' },
+  ];
+};
 const brideSide = (w) => ({
   coverLine: "You're invited to our daughter's wedding",
-  // Shorter than the groom's card: the baraat and vivah are told in the wedding night section, and no dress code
+  // Shorter than the groom's card: no dress code
   dressCode: [],
-  weekNote: 'Haldi at home in Gadarwara, then on to Vadodara for the rest. Come for as many as you can!',
-  functions: patch(w.functions.filter((f) => !['baraat', 'vivah'].includes(f.key)), 'key', {
-    // Haldi is at the Yadav home in Gadarwara. VERIFY: its time, which still follows the Rai family's haldi
-    haldi: { venue: w.bride.address.label, mapsQuery: w.bride.address.mapsQuery, about: "Samiksha's haldi at home in Gadarwara, with all her mausis, chachis and buas teasing her the whole time. Wear something you don't mind getting yellow." },
-    mehendi: { time: '4:00 PM to 7:00 PM', venue: 'Vadodara', mapsQuery: '', about: 'Mehendi for Samiksha and all the ladies in Vadodara, with the dholak going and the old Maithili geet. They say the darker it gets, the more she will be loved.' },
-    tilak: { about: "We go over to Himanshu's home to put tilak on him and bless him. Then we all sit down to lunch together." },
-  }),
+  weekNote: 'Puja and haldi at home in Gadarwara, then on to Vadodara for the rest. Come for as many as you can!',
+  functions: brideWeek(w),
   // The family asked for no kanyadaan line on their card
   weddingDay: patch(w.weddingDay.filter((m) => m.hindi !== 'कन्यादान'), 'hindi', {
     'बारात प्रस्थान': { name: 'Baraat Aagman', hindi: 'बारात आगमन', about: "Himanshu sets off from home with the baraat, and we wait at the venue for them to dance their way in." },

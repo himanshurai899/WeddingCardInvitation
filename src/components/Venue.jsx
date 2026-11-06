@@ -4,9 +4,8 @@ import { wedding, mapsUrl, mapsEmbedUrl, directionsUrl, telUrl } from '../config
 import SaveTheDate from './SaveTheDate';
 import { Divider } from './art/Motifs';
 
-const atHome = new Intl.ListFormat('en', { style: 'long', type: 'conjunction' }).format(
-  wedding.functions.filter((f) => f.mapsQuery === wedding.home.mapsQuery).map((f) => f.short ?? f.name)
-);
+const homeFunctions = wedding.functions.filter((f) => f.mapsQuery === wedding.home.mapsQuery).map((f) => f.short ?? f.name);
+const atHome = new Intl.ListFormat('en', { style: 'long', type: 'conjunction' }).format(homeFunctions);
 
 const Venue = () => {
   return (
@@ -66,7 +65,7 @@ const Venue = () => {
           <div className="min-w-0">
             <h3 className="font-serif text-xl font-bold text-maroon-deep">Rai family home</h3>
             <p className="text-xs font-bold tracking-wide text-marigold-deep">
-              {atHome} are all here
+              {atHome} {homeFunctions.length > 1 ? 'are all' : 'is'} here
             </p>
             <p className="mt-1 text-sm leading-relaxed text-ink-soft">{wedding.home.address}</p>
             <a
