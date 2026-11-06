@@ -12,6 +12,7 @@ assert.match(inviteUrl('Sharma Ji', 'family'), /\/\?guest=Sharma%20Ji&party=fami
 assert.match(inviteUrl('Rahul', 'plusone', 'Priya'), /&party=plusone&with=Priya$/);
 assert.match(inviteUrl('Rahul', 'friends', ['Amit', ' ', 'Riya']), /&party=friends&with=Amit&with=Riya$/);
 assert.doesNotMatch(inviteUrl('Nidhi Patel', 'friends', ['Ashok Nai', 'Harshil Thakkar', 'Khevana Thakkar']), /%2C/);
+assert.match(inviteUrl('Sejal', 'plusone', 'Abhishek', true, true), /\/samiksha\?guest=Sejal&party=plusone&with=Abhishek&prime=1$/);
 assert.equal(invitedAs('Rahul', 'plusone', 'Priya'), 'Rahul & Priya');
 assert.equal(invitedAs('Rahul', 'friends', ['Amit', 'Riya', 'Neha']), 'Rahul, Amit, Riya & Neha');
 assert.equal(

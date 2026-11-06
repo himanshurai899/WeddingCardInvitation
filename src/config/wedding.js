@@ -359,7 +359,7 @@ export const content = {
 // Which family is sending the card. The main address is the groom's side; /samiksha (the bride's first name), or a
 // samiksha. subdomain on a custom domain, is the bride's side: her name first, her family as hosts, the Siya-Ram look.
 const where = typeof window === 'undefined' ? null : window.location;
-const brideSlug = content.bride.name.toLowerCase();
+export const brideSlug = content.bride.name.toLowerCase();
 export const side = where && [where.pathname.split('/')[1], where.hostname.split('.')[0]].some((s) => s?.toLowerCase() === brideSlug) ? 'bride' : 'groom';
 
 const themeKey = asked in themes ? asked : side === 'bride' ? 'sita' : DEFAULT_THEME;

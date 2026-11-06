@@ -1,4 +1,4 @@
-import { wedding } from '../config/wedding.js';
+import { wedding, brideSlug } from '../config/wedding.js';
 
 // The guest named in the link, e.g. https://your-site.vercel.app/?guest=Sharma%20Ji&party=family
 // party: 'solo' (just them), 'plusone' (them and a guest), 'family' (them and their family) or 'friends' (their friend circle)
@@ -37,9 +37,9 @@ export const guest = guestName && invitedAs(guestName, party, withNames);
 // Close family and elders on the Prime list get the gold zari card: ?prime=1
 export const prime = query.get('prime') === '1';
 
-export const inviteUrl = (name, p = 'solo', withNames = '', isPrime = false) => {
+export const inviteUrl = (name, p = 'solo', withNames = '', isPrime = false, brideSide = false) => {
   const others = NAMED.includes(p) ? cleanNames(withNames) : [];
-  return `${wedding.siteUrl}/?guest=${encodeURIComponent(name.trim())}${p === 'solo' ? '' : `&party=${p}`}` +
+  return `${wedding.siteUrl}/${brideSide ? brideSlug : ''}?guest=${encodeURIComponent(name.trim())}${p === 'solo' ? '' : `&party=${p}`}` +
     // One &with= per name: a comma (%2C) in the link made WhatsApp cut it short after the first friend
     others.map((n) => `&with=${encodeURIComponent(n)}`).join('') + (isPrime ? '&prime=1' : '');
 };

@@ -42,15 +42,14 @@ const useStored = (key, initial) => {
   return [value, setValue];
 };
 
+const putGuest = (id, change) =>
+  fetch(`/api/admin/guests/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(change),
+  }).catch(() => {});
 // Sets Invitation Sent, the same flag the Guests page shows
-const putSent = (ids, value = true) =>
-  ids.forEach((id) =>
-    fetch(`/api/admin/guests/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ invitationSent: value }),
-    }).catch(() => {}),
-  );
+const putSent = (ids, value = true) => ids.forEach((id) => putGuest(id, { invitationSent: value }));
 const nameKey = (n) => (n ?? '').trim().toLowerCase();
 
 // WhatsApp restricts a number that sends the same text to many chats quickly. Send all pauses after every
@@ -60,6 +59,9 @@ const BREAK_MIN = 10;
 const GREETINGS = [['Namaste', 'नमस्ते'], ['Pranam', 'प्रणाम'], ['Sadar Pranam', 'सादर प्रणाम'], ['Namaskar', 'नमस्कार']];
 const greeting = (g) => GREETINGS[Math.abs([...(g.id ?? '')].reduce((h, c) => (h * 31 + c.charCodeAt(0)) | 0, 0)) % GREETINGS.length];
 const ADD = { plusone: 'plus one', family: 'family member', friends: 'friend' };
+// A bride's side guest reads her name and her family first, the same as her card. Also works on an edited message.
+const BRIDE_WORDS = [['Himanshu & Samiksha', 'Samiksha & Himanshu'], ['हिमांशु और समीक्षा', 'समीक्षा और हिमांशु'], ['Rai & Yadav', 'Yadav & Rai'], ['राय एवं यादव', 'यादव एवं राय']];
+const forSide = (template, g) => (g.side === 'BRIDE' ? BRIDE_WORDS.reduce((t, [from, to]) => t.replaceAll(from, to), template) : template);
 
 const box =
   'rounded-lg border px-3 py-2 text-sm outline-none bg-[#F5F3F8] border-[rgba(15,6,18,0.10)] text-[#0F0612] dark:bg-[#2A1842] dark:border-[rgba(201,168,76,0.16)] dark:text-[#F0EBF7] focus:ring-2 focus:ring-violet-500';
@@ -113,6 +115,7 @@ const InviteLinks = () => {
       // The sorter saves a one-word name as both name and family name
       name: d.name === d.familyName ? d.name : `${d.name} ${d.familyName}`.trim(),
       phone,
+      side: d.side,
       party: prev.party ?? 'solo',
       plusOne: prev.plusOne,
       friends: prev.friends,
@@ -158,9 +161,9 @@ const InviteLinks = () => {
     putSent(ids);
   }, [unsynced]);
 
-  const link = (g) => inviteUrl(g.name, g.party, names(g), g.prime);
+  const link = (g) => inviteUrl(g.name, g.party, names(g), g.prime, g.side === 'BRIDE');
   const fill = (template, g) =>
-    template
+    forSide(template, g)
       // A different greeting from guest to guest, so a run isn't hundreds of identical messages
       .replaceAll('Namaste {name}', `${greeting(g)[0]} {name}`)
       .replaceAll('नमस्ते {hname}', `${greeting(g)[1]} {hname}`)
@@ -180,6 +183,11 @@ const InviteLinks = () => {
   const smsLength = fill(smsMessage, guests[0] ?? { name: 'Sharma Ji', party: 'solo' }).length;
   const update = (id, change) => setSettings({ ...settings, [id]: { ...settings[id], ...change } });
   const setNames = (g, friends) => update(g.id, { friends });
+  // The same side the Guests page shows
+  const setSide = (g, side) => {
+    setDbGuests((list) => list.map((d) => (d.id === g.id ? { ...d, side } : d)));
+    putGuest(g.id, { side });
+  };
   // Opening WhatsApp only flags the guest as waiting for confirmation; nothing is marked invited until they confirm
   const openedWhatsApp = (g) => setPending((p) => (p.includes(g.id) ? p : [...p, g.id]));
   const clearPending = (g) => setPending((p) => p.filter((id) => id !== g.id));
@@ -522,6 +530,10 @@ const InviteLinks = () => {
             <label className="inline-flex items-center gap-1.5 text-sm cursor-pointer" title="Gold zari card that tells them they are on the Prime list">
               <input type="checkbox" checked={Boolean(g.prime)} onChange={(e) => update(g.id, { prime: e.target.checked })} className="accent-amber-500" />
               Prime
+            </label>
+            <label className="inline-flex items-center gap-1.5 text-sm cursor-pointer" title="Sends the bride's card at /samiksha, with her family's name first in the message">
+              <input type="checkbox" checked={g.side === 'BRIDE'} onChange={(e) => setSide(g, e.target.checked ? 'BRIDE' : 'GROOM')} className="accent-amber-500" />
+              Bride&apos;s side
             </label>
             {g.party !== 'solo' && (
               <div className="basis-full order-last flex flex-wrap items-center gap-2">
