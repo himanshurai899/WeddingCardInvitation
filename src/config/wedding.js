@@ -383,8 +383,12 @@ const brideWeek = (w) => {
 };
 const brideSide = (w) => ({
   coverLine: "You're invited to our daughter's wedding",
-  // Shorter than the groom's card: no dress code
+  // Shorter than the groom's card: no dress code, and none of the Rai card's name lists
   dressCode: [],
+  swagatatur: [],
+  darshanabhilashi: [],
+  // Her parents first on her side
+  vineet: [...w.vineet].reverse(),
   weekNote: 'Puja and haldi at home in Gadarwara, then on to Vadodara for the rest. Come for as many as you can!',
   functions: brideWeek(w),
   // The family asked for no kanyadaan line on their card

@@ -34,8 +34,8 @@ const Side = ({ label, hindi, person, delay }) => (
   </motion.div>
 );
 
-// A titled list of names, set the way the printed card sets them
-const NameList = ({ title, english, names, tail }) => (
+// A titled list of names, set the way the printed card sets them. An empty list hides it
+const NameList = ({ title, english, names, tail }) => names.length > 0 && (
   <div className="text-center">
     <p className="deva text-lg text-sindoor">✻ {title} ✻</p>
     <p className="text-[10px] tracking-[0.25em] uppercase font-extrabold text-ink-soft">{english}</p>
