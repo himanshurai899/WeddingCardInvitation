@@ -700,9 +700,13 @@ const InviteLinks = ({ onAdded }) => {
               <Button variant="outline" onClick={() => copy(g)}>
                 <LinkIcon size={16} /> {copied === g.id + 'link' ? 'Copied' : 'Copy link'}
               </Button>
-              {g.sent && (
+              {g.sent ? (
                 <Button variant="ghost" onClick={() => revert(g)} aria-label={`Mark ${g.name} as not invited`}>
                   <Undo2 size={16} /> Mark not invited
+                </Button>
+              ) : (
+                <Button variant="ghost" onClick={() => confirmSent(g)} aria-label={`Mark ${g.name} as invited`}>
+                  <Check size={16} /> Mark invited
                 </Button>
               )}
               <Button
