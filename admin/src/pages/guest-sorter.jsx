@@ -19,6 +19,7 @@ import { Modal } from '@admin/components/ui/Modal';
 import { useToastContext } from '@admin/components/ui/Toast';
 import { cn } from '@admin/lib/utils/cn';
 import InviteLinks from '@admin/components/InviteLinks';
+import { splitName } from '../../../src/lib/guests';
 const LS_KEY = 'vivah_sorter_contacts';
 const EVENT_COLORS = [
   {
@@ -87,12 +88,6 @@ function getInitials(name) {
   if (!parts.length) return '?';
   if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
   return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-}
-function splitName(full) {
-  const parts = full.trim().split(/\s+/).filter(Boolean);
-  if (!parts.length) return { given: 'Unknown', family: 'Unknown' };
-  if (parts.length === 1) return { given: parts[0], family: parts[0] };
-  return { given: parts.slice(0, -1).join(' '), family: parts[parts.length - 1] };
 }
 // ─── Parsers ───────────────────────────────────────────────────────────────
 function parseVCF(text) {
@@ -753,7 +748,7 @@ export default function GuestSorterPage() {
       </div>
 
       {tab === 'invite' ? (
-        <InviteLinks />
+        <InviteLinks onAdded={() => { refreshGuestCount(); refreshExistingSigs(); }} />
       ) : (
         <>
 

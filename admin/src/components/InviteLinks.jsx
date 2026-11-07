@@ -2,9 +2,13 @@ import { useState, useEffect, useMemo } from 'react';
 import { Send, Link as LinkIcon, Plus, X, Check, Undo2, Search, MessageSquare, Play, Square, SkipForward, Pencil, UserMinus } from 'lucide-react';
 import { Button } from '@admin/components/ui/Button';
 import { Badge } from '@admin/components/ui/Badge';
+import { Input } from '@admin/components/ui/Input';
+import { Select } from '@admin/components/ui/Select';
+import { Modal } from '@admin/components/ui/Modal';
+import { useToastContext } from '@admin/components/ui/Toast';
 import { cn } from '@admin/lib/utils/cn';
 import { wedding, mapsUrl } from '../../../src/config/wedding';
-import { inviteUrl, invitedAs, normalizePhone, PARTIES } from '../../../src/lib/guests';
+import { inviteUrl, invitedAs, normalizePhone, splitName, PARTIES } from '../../../src/lib/guests';
 
 const DEFAULT_MESSAGE = `🙏 नमस्ते {hname},
 
@@ -66,9 +70,88 @@ const forSide = (template, g) => (g.side === 'BRIDE' ? BRIDE_WORDS.reduce((t, [f
 const box =
   'rounded-lg border px-3 py-2 text-sm outline-none bg-[#F5F3F8] border-[rgba(15,6,18,0.10)] text-[#0F0612] dark:bg-[#2A1842] dark:border-[rgba(201,168,76,0.16)] dark:text-[#F0EBF7] focus:ring-2 focus:ring-violet-500';
 
+const NEW_GUEST = { name: '', phone: '', side: 'GROOM', party: 'solo', prime: false };
+
+// Saves one guest to the Guest List by hand. onSave gets the form and the number with its country code.
+const AddGuestForm = ({ guests, onSave, onCancel }) => {
+  const [form, setForm] = useState(NEW_GUEST);
+  const [errors, setErrors] = useState({});
+  const [saving, setSaving] = useState(false);
+  const set = (change) => setForm({ ...form, ...change });
+
+  const submit = async (e) => {
+    e.preventDefault();
+    const name = form.name.trim().replace(/\s+/g, ' ');
+    const phone = normalizePhone(form.phone);
+    const twin = phone && guests.find((g) => g.phone === phone);
+    const found = {
+      ...(!name && { name: 'Please enter a name' }),
+      ...(form.phone.trim() && !phone && { phone: 'That does not look like a phone number' }),
+      ...(twin && { phone: `This number is already saved for ${twin.name}` }),
+    };
+    setErrors(found);
+    if (Object.keys(found).length) return;
+    setSaving(true);
+    try {
+      await onSave({ ...form, name }, phone);
+    } catch (e) {
+      setErrors({ form: e.message });
+      setSaving(false);
+    }
+  };
+
+  return (
+    <form onSubmit={submit} noValidate className="flex flex-col gap-4">
+      <Input
+        label="Name on the invite"
+        value={form.name}
+        onChange={(e) => set({ name: e.target.value })}
+        error={errors.name}
+        maxLength={40}
+        autoFocus
+        autoComplete="off"
+      />
+      <Input
+        label="Mobile number"
+        type="tel"
+        value={form.phone}
+        onChange={(e) => set({ phone: e.target.value })}
+        error={errors.phone}
+        hint="Optional. 10 digits for India, or the full number with its country code."
+        autoComplete="off"
+      />
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Select
+          label="Side"
+          value={form.side}
+          onChange={(e) => set({ side: e.target.value })}
+          options={[{ value: 'GROOM', label: "Groom's side" }, { value: 'BRIDE', label: "Bride's side" }]}
+        />
+        <Select
+          label="Invitation"
+          value={form.party}
+          onChange={(e) => set({ party: e.target.value })}
+          options={Object.entries(PARTIES).map(([value, v]) => ({ value, label: v.label }))}
+        />
+      </div>
+      <label className="inline-flex items-center gap-1.5 text-sm cursor-pointer">
+        <input type="checkbox" checked={form.prime} onChange={(e) => set({ prime: e.target.checked })} className="accent-amber-500" />
+        Prime (gold zari card)
+      </label>
+      {errors.form && <p role="alert" className="text-sm text-red-600 dark:text-red-400">{errors.form}</p>}
+      <div className="flex gap-2 justify-end">
+        <Button type="button" variant="outline" onClick={onCancel} disabled={saving}>Cancel</Button>
+        <Button type="submit" disabled={saving}>{saving ? 'Adding…' : 'Add guest'}</Button>
+      </div>
+    </form>
+  );
+};
+
 // The Invite tab of the Guest Sorter: everyone sorted into the Guest List, each with their own link
-const InviteLinks = () => {
+const InviteLinks = ({ onAdded }) => {
+  const { toast } = useToastContext();
   const [dbGuests, setDbGuests] = useState(null);
+  const [adding, setAdding] = useState(false);
   // Invite type and names, by Guest List id. Saved in this browser only.
   const [settings, setSettings] = useStored('inviteSettings', {});
   const [message, setMessage] = useStored('guestMessage3', DEFAULT_MESSAGE);
@@ -183,6 +266,24 @@ const InviteLinks = () => {
   const smsLength = fill(smsMessage, guests[0] ?? { name: 'Sharma Ji', party: 'solo' }).length;
   const update = (id, change) => setSettings({ ...settings, [id]: { ...settings[id], ...change } });
   const setNames = (g, friends) => update(g.id, { friends });
+  const addGuest = async ({ name, side, party, prime }, phone) => {
+    const { given, family } = splitName(name);
+    const res = await fetch('/api/admin/guests', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: given, familyName: family, mobile: phone || undefined, side }),
+    });
+    const saved = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(saved.error ?? 'Could not save this guest. Please try again.');
+    // First in the list, and the filters cleared, so the new card is right there to send
+    setDbGuests((list) => [saved, ...list]);
+    update(saved.id, { party, prime });
+    setShow('all');
+    setQuery('');
+    setAdding(false);
+    toast({ message: `${name} added to the Guest List`, variant: 'success' });
+    onAdded?.();
+  };
   // The same side the Guests page shows
   const setSide = (g, side) => {
     setDbGuests((list) => list.map((d) => (d.id === g.id ? { ...d, side } : d)));
@@ -255,8 +356,8 @@ const InviteLinks = () => {
       <p className="text-sm text-ink-dim">
         Personal links for the invitation card, sent over WhatsApp, for everyone in the Guest List. Set each guest up,
         then press Send all: it opens one chat after another, you press Send in WhatsApp, and one tap here marks them
-        invited and opens the next. Guests not on WhatsApp get the SMS instead. To add people, sort them on the Sort tab and press Add to
-        Guest List.
+        invited and opens the next. Guests not on WhatsApp get the SMS instead. To add people, press Add guest, or sort them on the Sort tab
+        and press Add to Guest List.
       </p>
 
       {/* Set once, so it folds away and the guests get the full width */}
@@ -422,6 +523,9 @@ const InviteLinks = () => {
               <Play size={16} /> Send all ({toSend.length})
             </Button>
           )}
+          <Button variant="outline" onClick={() => setAdding(true)} disabled={!dbGuests}>
+            <Plus size={16} /> Add guest
+          </Button>
           <label className="inline-flex items-center gap-1.5 text-sm cursor-pointer">
             <input type="checkbox" checked={smsOnly} onChange={(e) => setSmsOnly(e.target.checked)} className="accent-amber-500" />
             WhatsApp restricted: send by SMS for now
@@ -453,7 +557,7 @@ const InviteLinks = () => {
         )}
         {dbGuests && shown.length === 0 && (
           <p className="text-center py-6" style={{ color: 'var(--text-muted)' }}>
-            {guests.length ? 'No one here.' : 'No one in the Guest List yet. Sort contacts on the Sort tab and press Add to Guest List.'}
+            {guests.length ? 'No one here.' : 'No one in the Guest List yet. Press Add guest, or sort contacts on the Sort tab and press Add to Guest List.'}
           </p>
         )}
         <div className="grid gap-3 lg:grid-cols-2 2xl:grid-cols-3">
@@ -629,6 +733,10 @@ const InviteLinks = () => {
         ))}
         </div>
       </section>
+
+      <Modal open={adding} onClose={() => setAdding(false)} title="Add guest">
+        <AddGuestForm guests={allGuests} onSave={addGuest} onCancel={() => setAdding(false)} />
+      </Modal>
     </div>
   );
 };

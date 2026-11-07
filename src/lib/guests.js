@@ -44,6 +44,14 @@ export const inviteUrl = (name, p = 'solo', withNames = '', isPrime = false, bri
     others.map((n) => `&with=${encodeURIComponent(n)}`).join('') + (isPrime ? '&prime=1' : '');
 };
 
+// The Guest List needs a family name: the last word, or the whole name again when there is only one word
+export const splitName = (full) => {
+  const parts = full.trim().split(/\s+/).filter(Boolean);
+  if (!parts.length) return { given: 'Unknown', family: 'Unknown' };
+  if (parts.length === 1) return { given: parts[0], family: parts[0] };
+  return { given: parts.slice(0, -1).join(' '), family: parts[parts.length - 1] };
+};
+
 // Digits only, with country code. A bare 10-digit number is taken as Indian. Returns '' if it can't be a phone.
 export const normalizePhone = (raw) => {
   const d = String(raw ?? '').replace(/\D/g, '').replace(/^0+/, '');
